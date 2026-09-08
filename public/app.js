@@ -44,9 +44,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnGenerateFortified = document.getElementById('btn-generate-fortified');
   const linkGenerateFortified = document.getElementById('link-generate-fortified');
 
-  // ELEMENTOS DA FASE 4 (AVISOS DE SEGURANÇA & DESBLOQUEIO COM SENHA 'FecartCiber2026')
+  // ELEMENTOS DA FASE 4 (AVISOS DE SEGURANÇA)
   const stepAlertSection = document.getElementById('step-alert-section');
   const securityAlertBox = document.getElementById('security-alert-box');
+  const btnGoToFecart = document.getElementById('btn-go-to-fecart');
+
+  // ELEMENTOS DA FASE 5 (TELA SEPARADA EXCLUSIVA DA FECART & DESBLOQUEIO COM SENHA 'FecartCiber2026')
+  const stepFecartSection = document.getElementById('step-fecart-section');
+  const btnBackToAlerts = document.getElementById('btn-back-to-alerts');
+  const btnTestAgainFecart = document.getElementById('btn-test-again-fecart');
   const unlockPasswordBox = document.getElementById('unlock-password-box');
   const unlockPasswordInput = document.getElementById('unlock-password-input');
   const toggleUnlockPassword = document.getElementById('toggle-unlock-password');
@@ -262,6 +268,31 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnProceedToSecurity) btnProceedToSecurity.addEventListener('click', showSecurityExplanationPhase);
   if (btnTestAgain) btnTestAgain.addEventListener('click', resetToStart);
+
+  // NAVEGAÇÃO ENTRE AVISOS DE SEGURANÇA E TELA EXCLUSIVA DA FECART
+  if (btnGoToFecart) {
+    btnGoToFecart.addEventListener('click', () => {
+      stepAlertSection.classList.add('hidden');
+      if (stepFecartSection) {
+        stepFecartSection.classList.remove('hidden');
+        stepFecartSection.classList.add('fade-in');
+        stepFecartSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }
+
+  if (btnBackToAlerts) {
+    btnBackToAlerts.addEventListener('click', () => {
+      if (stepFecartSection) stepFecartSection.classList.add('hidden');
+      stepAlertSection.classList.remove('hidden');
+      stepAlertSection.classList.add('fade-in');
+      stepAlertSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
+
+  if (btnTestAgainFecart) {
+    btnTestAgainFecart.addEventListener('click', resetToStart);
+  }
 
   // COPIAR SENHA BLINDADA PARA O CLIPBOARD
   if (btnCopyFortified && fortifiedPasswordText) {
@@ -677,6 +708,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     hackerBlackScreen.classList.add('hidden');
     stepCompletedSection.classList.add('hidden');
+    if (stepFecartSection) stepFecartSection.classList.add('hidden');
 
     if (currentCheckData) {
       // =========================================================================
@@ -794,16 +826,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (fakeCloseToast) fakeCloseToast.classList.add('hidden');
     allCloseButtons.forEach(btn => btn.style.transform = 'none');
 
-    // Reseta a caixa de desbloqueio para o estado inicial com input
+    // Reseta a caixa de desbloqueio para o estado inicial com input da FECART
     if (unlockPasswordBox) {
       unlockPasswordBox.innerHTML = `
         <div class="unlock-header">
           <div class="unlock-badge-icon">🔐</div>
           <div class="unlock-title-wrap">
-            <span class="unlock-tag">ACESSO RESTRITO &bull; VALIDAÇÃO PEDAGÓGICA</span>
-            <h3>Desbloquear Diagnóstico Técnico Real</h3>
+            <span class="unlock-tag">ACESSO RESTRITO &bull; DEMONSTRAÇÃO PRÁTICA</span>
+            <h3>Insira a Chave Secreta da FECART</h3>
             <p class="unlock-desc">
-              Para visualizar a <strong>força real da sua senha</strong> e os dados técnicos verdadeiros, insira a senha de liberação abaixo: a senha deve ser <strong><code>FecartCiber2026</code></strong>.
+              Digite a chave de liberação obtida no stand da <strong>FECART de Cibersegurança</strong> para liberar a análise:
             </p>
           </div>
         </div>
@@ -815,7 +847,7 @@ document.addEventListener('DOMContentLoaded', () => {
               type="password" 
               id="unlock-password-input" 
               class="unlock-text-input" 
-              placeholder="Digite a senha (FecartCiber2026)..."
+              placeholder="Digite a chave secreta da FECART..."
               autocomplete="off"
             >
             <button type="button" id="toggle-unlock-password" class="unlock-toggle-btn" title="Exibir/Ocultar Senha">
@@ -826,12 +858,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
           <button type="button" id="btn-unlock-real-diag" class="btn-unlock-diag">
             <span class="unlock-btn-icon">🔓</span>
-            <span>Ver Força Real da Senha</span>
+            <span>Desbloquear Análise Completa</span>
           </button>
         </div>
 
         <div id="unlock-error-msg" class="unlock-error-msg hidden">
-          ❌ Senha incorreta! Digite exatamente <strong>FecartCiber2026</strong> para liberar a análise real.
+          ❌ Chave incorreta! Solicite a chave secreta no stand da <strong>FECART de Cibersegurança</strong> para desbloquear.
         </div>
       `;
 
@@ -866,6 +898,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     stepCompletedSection.classList.add('hidden');
     stepAlertSection.classList.add('hidden');
+    if (stepFecartSection) stepFecartSection.classList.add('hidden');
     stepInputSection.classList.remove('hidden');
     stepInputSection.classList.add('fade-in');
 

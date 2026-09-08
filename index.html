@@ -402,133 +402,24 @@
 
           <div class="alert-body">
 
-            <!-- BOX DE DESBLOQUEIO POR SENHA (FecartCiber2026) PARA VER A FORÇA REAL -->
-            <div class="unlock-password-box" id="unlock-password-box">
-              <div class="unlock-header">
-                <div class="unlock-badge-icon">🔐</div>
-                <div class="unlock-title-wrap">
-                  <span class="unlock-tag">ACESSO RESTRITO &bull; VALIDAÇÃO PEDAGÓGICA</span>
-                  <h3>Desbloquear Diagnóstico Técnico Real</h3>
-                  <p class="unlock-desc">
-                    Para visualizar a <strong>força real da sua senha</strong> e os dados técnicos verdadeiros, insira a senha de liberação abaixo: a senha deve ser <strong><code>FecartCiber2026</code></strong>.
-                  </p>
-                </div>
+            <!-- CHAMADA EM DESTAQUE PARA A TELA SEPARADA DA FECART -->
+            <div class="fecart-cta-card">
+              <div class="fecart-cta-icon-wrap">
+                <span class="fecart-cta-icon">🎯</span>
+                <span class="fecart-cta-spark">⚡</span>
               </div>
-
-              <div class="unlock-form-wrapper">
-                <div class="unlock-input-group">
-                  <span class="unlock-input-icon">🔑</span>
-                  <input 
-                    type="password" 
-                    id="unlock-password-input" 
-                    class="unlock-text-input" 
-                    placeholder="Digite a senha (FecartCiber2026)..."
-                    autocomplete="off"
-                  >
-                  <button type="button" id="toggle-unlock-password" class="unlock-toggle-btn" title="Exibir/Ocultar Senha">
-                    <span id="unlock-eye-open">👁️</span>
-                    <span id="unlock-eye-closed" class="hidden">🙈</span>
+              <div class="fecart-cta-content">
+                <span class="fecart-cta-badge">STAND FECART &bull; CIBERSEGURANÇA</span>
+                <h3>Quer descobrir a Força REAL da sua senha e que tipo de ataque foi esse?</h3>
+                <p class="fecart-invitation-text">
+                  👉 <strong>Vá para a FECART de Cibersegurança para descobrir o diagnóstico real e que tipo de ataque foi esse!</strong>
+                </p>
+                <div class="fecart-cta-action">
+                  <button type="button" id="btn-go-to-fecart" class="btn-fecart-cta">
+                    <span class="fecart-btn-icon">🎪</span>
+                    <span>Acessar Tela de Desbloqueio da FECART</span>
+                    <span class="fecart-btn-arrow">&rarr;</span>
                   </button>
-                </div>
-
-                <button type="button" id="btn-unlock-real-diag" class="btn-unlock-diag">
-                  <span class="unlock-btn-icon">🔓</span>
-                  <span>Ver Força Real da Senha</span>
-                </button>
-              </div>
-
-              <div id="unlock-error-msg" class="unlock-error-msg hidden">
-                ❌ Senha incorreta! Digite exatamente <strong>FecartCiber2026</strong> para liberar a análise real.
-              </div>
-            </div>
-
-            <!-- CONTEÚDO REAL DESBLOQUEADO (INICIALMENTE OCULTO) -->
-            <div id="real-diag-locked-wrapper" class="real-diag-locked-wrapper hidden">
-              <!-- CARD 1: DIAGNÓSTICO REAL DA SUA SENHA (A VERDADE REVELADA) -->
-              <div class="card-glass real-diagnosis-card">
-                <div class="real-diag-header">
-                  <div class="real-diag-icon">🔍</div>
-                  <div class="real-diag-titles">
-                    <span class="real-badge">DIAGNÓSTICO TÉCNICO VERDADEIRO &bull; SEM ENGANAÇÃO</span>
-                    <h3>Qual é a Força REAL da sua Senha?</h3>
-                    <p class="real-diag-sub">
-                      Na tela anterior, o site <strong>afirmou de propósito que sua senha era muito fraca</strong> para te induzir ao clique — essa tática de pânico forçado se chama <strong>Scareware</strong>. Abaixo está a avaliação técnica e honesta da senha digitada:
-                    </p>
-                  </div>
-                </div>
-
-                <div class="real-diag-body">
-                  <!-- BARRA DE FORÇA REAL -->
-                  <div class="meter-container">
-                    <div class="meter-header">
-                      <span class="meter-label">Classificação Real da Senha:</span>
-                      <span id="real-meter-level-text" class="level-badge level-empty">Calculando...</span>
-                    </div>
-                    <div class="meter-track">
-                      <div id="real-meter-bar" class="meter-fill" style="width: 0%;"></div>
-                    </div>
-                  </div>
-
-                  <div class="diagnosis-grid">
-                    <div class="diag-item">
-                      <span class="diag-title">Nível Real de Segurança</span>
-                      <span id="real-diag-level" class="diag-value">--</span>
-                    </div>
-                    <div class="diag-item">
-                      <span class="diag-title">Tempo Real para Quebra por Força Bruta</span>
-                      <span id="real-diag-crack-time" class="diag-value text-red">--</span>
-                    </div>
-                  </div>
-
-                  <!-- REGRAS REAIS CUMPRIDAS -->
-                  <div class="rules-grid">
-                    <div class="rule-item" id="real-rule-length">
-                      <span class="rule-icon">⚪</span> 8+ caracteres (14+ ideal)
-                    </div>
-                    <div class="rule-item" id="real-rule-upper">
-                      <span class="rule-icon">⚪</span> Letras maiúsculas (A-Z)
-                    </div>
-                    <div class="rule-item" id="real-rule-lower">
-                      <span class="rule-icon">⚪</span> Letras minúsculas (a-z)
-                    </div>
-                    <div class="rule-item" id="real-rule-number">
-                      <span class="rule-icon">⚪</span> Números (0-9)
-                    </div>
-                    <div class="rule-item" id="real-rule-special">
-                      <span class="rule-icon">⚪</span> Símbolos (@, #, $, %, &)
-                    </div>
-                  </div>
-
-                  <div class="feedback-list" id="real-feedback-list">
-                    <!-- Dicas reais geradas via JS -->
-                  </div>
-                </div>
-              </div>
-
-              <!-- CARD 2: RECOMENDAÇÃO DE SENHA BLINDADA GERADA DE FORMA SEGURA -->
-              <div class="safe-suggestion-box">
-                <div class="safe-box-title">
-                  <span class="lock-icon">🔐</span>
-                  <span>Exemplo de Senha Blindada Recomendada para Substituição:</span>
-                </div>
-                <div class="safe-code-row">
-                  <div class="safe-code-content">
-                    <span class="safe-lock-glow">🛡️</span>
-                    <code id="fortified-password-text" class="safe-password-code">Carregando sugestão...</code>
-                  </div>
-                  <div class="safe-actions-group">
-                    <button type="button" id="btn-copy-fortified" class="btn-copy-pwd" title="Copiar Senha Blindada">
-                      <span class="copy-icon">📋</span>
-                      <span class="copy-text">Copiar Senha</span>
-                    </button>
-                    <span class="safe-badge">Blindada (+100.000 Anos)</span>
-                  </div>
-                </div>
-                <div class="safe-tips-list">
-                  <div class="safe-tip-item">
-                    <span class="safe-tip-icon">🛡️</span>
-                    <p><strong>Onde gerar e guardar senhas fortes:</strong> Utilize sempre gerenciadores de senhas seguros (como <strong>Bitwarden, 1Password ou KeePass</strong>) instalados diretamente no seu dispositivo.</p>
-                  </div>
                 </div>
               </div>
             </div>
@@ -665,6 +556,214 @@
           <button id="btn-test-again" class="btn-secondary-large">
             <span>🔄 Fazer Novo Teste de Senha</span>
           </button>
+        </div>
+      </section>
+
+      <!-- ETAPA 5: TELA SEPARADA EXCLUSIVA DA FECART (DESBLOQUEIO COM SENHA & REVELAÇÃO DO ATAQUE) -->
+      <section id="step-fecart-section" class="fecart-section hidden">
+        <div class="fecart-hero-box">
+          <!-- HEADER FECART -->
+          <div class="fecart-hero-header">
+            <div class="fecart-badge-lg">
+              <span class="pulse-dot"></span>
+              <span>🎯 FECART 2026 &bull; STAND DE CIBERSEGURANÇA</span>
+            </div>
+            <h2 class="fecart-main-title">Diagnóstico Real & Revelação do Ataque</h2>
+            <div class="fecart-banner-highlight">
+              <span class="fecart-megaphone">📢</span>
+              <p><strong>"Vá para a FECART de Cibersegurança para descobrir o diagnóstico real e que tipo de ataque foi esse!"</strong></p>
+            </div>
+            <p class="fecart-sub">
+              No stand de Cibersegurança da FECART, solicite a chave secreta aos instrutores para desbloquear a análise técnica da sua senha e entender como os cibercriminosos agem.
+            </p>
+          </div>
+
+          <!-- BOX DE DESBLOQUEIO POR CHAVE DA FECART -->
+          <div class="unlock-password-box" id="unlock-password-box">
+            <div class="unlock-header">
+              <div class="unlock-badge-icon">🔐</div>
+              <div class="unlock-title-wrap">
+                <span class="unlock-tag">ACESSO RESTRITO &bull; DEMONSTRAÇÃO PRÁTICA</span>
+                <h3>Insira a Chave Secreta da FECART</h3>
+                <p class="unlock-desc">
+                  Digite a chave de liberação obtida no stand da <strong>FECART de Cibersegurança</strong> para liberar a análise:
+                </p>
+              </div>
+            </div>
+
+            <div class="unlock-form-wrapper">
+              <div class="unlock-input-group">
+                <span class="unlock-input-icon">🔑</span>
+                <input 
+                  type="password" 
+                  id="unlock-password-input" 
+                  class="unlock-text-input" 
+                  placeholder="Digite a chave secreta da FECART..."
+                  autocomplete="off"
+                >
+                <button type="button" id="toggle-unlock-password" class="unlock-toggle-btn" title="Exibir/Ocultar Senha">
+                  <span id="unlock-eye-open">👁️</span>
+                  <span id="unlock-eye-closed" class="hidden">🙈</span>
+                </button>
+              </div>
+
+              <button type="button" id="btn-unlock-real-diag" class="btn-unlock-diag">
+                <span class="unlock-btn-icon">🔓</span>
+                <span>Desbloquear Análise Completa</span>
+              </button>
+            </div>
+
+            <div id="unlock-error-msg" class="unlock-error-msg hidden">
+              ❌ Chave incorreta! Solicite a chave secreta no stand da <strong>FECART de Cibersegurança</strong> para desbloquear.
+            </div>
+          </div>
+
+          <!-- CONTEÚDO REVELADO APÓS DIGITAR A SENHA CORRETA (FecartCiber2026) -->
+          <div id="real-diag-locked-wrapper" class="real-diag-locked-wrapper hidden">
+            <!-- CARD 1: DIAGNÓSTICO REAL DA SUA SENHA -->
+            <div class="card-glass real-diagnosis-card">
+              <div class="real-diag-header">
+                <div class="real-diag-icon">🔍</div>
+                <div class="real-diag-titles">
+                  <span class="real-badge">DIAGNÓSTICO TÉCNICO VERDADEIRO</span>
+                  <h3>Qual é a Força REAL da sua Senha?</h3>
+                  <p class="real-diag-sub">
+                    Na tela inicial da armadilha, o site afirmou de propósito que sua senha era muito fraca para te induzir ao clique — essa tática de pânico forçado se chama <strong>Scareware</strong>. Abaixo está a avaliação honesta da senha testada:
+                  </p>
+                </div>
+              </div>
+
+              <div class="real-diag-body">
+                <!-- BARRA DE FORÇA REAL -->
+                <div class="meter-container">
+                  <div class="meter-header">
+                    <span class="meter-label">Classificação Real da Senha:</span>
+                    <span id="real-meter-level-text" class="level-badge level-empty">Calculando...</span>
+                  </div>
+                  <div class="meter-track">
+                    <div id="real-meter-bar" class="meter-fill" style="width: 0%;"></div>
+                  </div>
+                </div>
+
+                <div class="diagnosis-grid">
+                  <div class="diag-item">
+                    <span class="diag-title">Nível Real de Segurança</span>
+                    <span id="real-diag-level" class="diag-value">--</span>
+                  </div>
+                  <div class="diag-item">
+                    <span class="diag-title">Tempo Real para Quebra por Força Bruta</span>
+                    <span id="real-diag-crack-time" class="diag-value text-red">--</span>
+                  </div>
+                </div>
+
+                <!-- REGRAS REAIS CUMPRIDAS -->
+                <div class="rules-grid">
+                  <div class="rule-item" id="real-rule-length">
+                    <span class="rule-icon">⚪</span> 8+ caracteres (14+ ideal)
+                  </div>
+                  <div class="rule-item" id="real-rule-upper">
+                    <span class="rule-icon">⚪</span> Letras maiúsculas (A-Z)
+                  </div>
+                  <div class="rule-item" id="real-rule-lower">
+                    <span class="rule-icon">⚪</span> Letras minúsculas (a-z)
+                  </div>
+                  <div class="rule-item" id="real-rule-number">
+                    <span class="rule-icon">⚪</span> Números (0-9)
+                  </div>
+                  <div class="rule-item" id="real-rule-special">
+                    <span class="rule-icon">⚪</span> Símbolos (@, #, $, %, &)
+                  </div>
+                </div>
+
+                <div class="feedback-list" id="real-feedback-list">
+                  <!-- Dicas reais geradas via JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- CARD 2: RECOMENDAÇÃO DE SENHA BLINDADA -->
+            <div class="safe-suggestion-box">
+              <div class="safe-box-title">
+                <span class="lock-icon">🔐</span>
+                <span>Exemplo de Senha Blindada Recomendada para Substituição:</span>
+              </div>
+              <div class="safe-code-row">
+                <div class="safe-code-content">
+                  <span class="safe-lock-glow">🛡️</span>
+                  <code id="fortified-password-text" class="safe-password-code">Carregando sugestão...</code>
+                </div>
+                <div class="safe-actions-group">
+                  <button type="button" id="btn-copy-fortified" class="btn-copy-pwd" title="Copiar Senha Blindada">
+                    <span class="copy-icon">📋</span>
+                    <span class="copy-text">Copiar Senha</span>
+                  </button>
+                  <span class="safe-badge">Blindada (+100.000 Anos)</span>
+                </div>
+              </div>
+              <div class="safe-tips-list">
+                <div class="safe-tip-item">
+                  <span class="safe-tip-icon">🛡️</span>
+                  <p><strong>Onde gerar e guardar senhas fortes:</strong> Utilize sempre gerenciadores de senhas seguros (como <strong>Bitwarden, 1Password ou KeePass</strong>) instalados diretamente no seu dispositivo.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- CARD 3: ANÁLISE FORENSE: QUE TIPO DE ATAQUE FOI ESSE? -->
+            <div class="attack-breakdown-card">
+              <div class="attack-header">
+                <span class="attack-icon">🕵️</span>
+                <div>
+                  <span class="attack-tag">ANÁLISE FORENSE &bull; EXCLUSIVO FECART</span>
+                  <h3>Que Tipo de Ataque foi Esse?</h3>
+                  <p class="attack-sub">Entenda passo a passo a anatomia do golpe simulado nesta experiência:</p>
+                </div>
+              </div>
+
+              <div class="attack-grid">
+                <div class="attack-step-card">
+                  <div class="attack-step-num">1</div>
+                  <div class="attack-step-body">
+                    <strong>🎣 Isca de Engenharia Social (Baiting / Phishing)</strong>
+                    <p>O site prometeu um <em>"Gerador de Senhas Blindadas"</em> para resolver a vulnerabilidade, explorando a curiosidade e confiança da vítima para fazê-la clicar.</p>
+                  </div>
+                </div>
+
+                <div class="attack-step-card">
+                  <div class="attack-step-num">2</div>
+                  <div class="attack-step-body">
+                    <strong>🚨 Scareware & Pânico Forçado</strong>
+                    <p>Ao clicar na isca, o site exibiu alertas falsos de antivírus (Windows Defender, Avast, Kaspersky) e travamento de tela para desorientar e assustar.</p>
+                  </div>
+                </div>
+
+                <div class="attack-step-card">
+                  <div class="attack-step-num">3</div>
+                  <div class="attack-step-body">
+                    <strong>🕹️ Dark Pattern: Botão "Fechar" Fake</strong>
+                    <p>O botão de fechar evasivo que fugia do clique simulou como ransomwares e malwares impedem o usuário de fechar janelas e interromper o ataque.</p>
+                  </div>
+                </div>
+
+                <div class="attack-step-card">
+                  <div class="attack-step-num">4</div>
+                  <div class="attack-step-body">
+                    <strong>💀 Exposição das Credenciais Capturadas</strong>
+                    <p>Na tela preta, os dados foram exibidos em texto claro para demonstrar que qualquer site não confiável pode interceptar o que você digita em tempo real.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BOTÕES DE NAVEGAÇÃO DA TELA FECART -->
+          <div class="fecart-nav-actions">
+            <button type="button" id="btn-back-to-alerts" class="btn-secondary-large">
+              <span>⬅️ Voltar aos Avisos de Segurança</span>
+            </button>
+            <button type="button" id="btn-test-again-fecart" class="btn-primary-large">
+              <span>🔄 Fazer Novo Teste de Senha</span>
+            </button>
+          </div>
         </div>
       </section>
 
