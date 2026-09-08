@@ -402,90 +402,133 @@
 
           <div class="alert-body">
 
-            <!-- CARD 1: DIAGNÓSTICO REAL DA SUA SENHA (A VERDADE REVELADA) -->
-            <div class="card-glass real-diagnosis-card">
-              <div class="real-diag-header">
-                <div class="real-diag-icon">🔍</div>
-                <div class="real-diag-titles">
-                  <span class="real-badge">DIAGNÓSTICO TÉCNICO VERDADEIRO &bull; SEM ENGANAÇÃO</span>
-                  <h3>Qual é a Força REAL da sua Senha?</h3>
-                  <p class="real-diag-sub">
-                    Na tela anterior, o site <strong>afirmou de propósito que sua senha era muito fraca</strong> para te induzir ao clique — essa tática de pânico forçado se chama <strong>Scareware</strong>. Abaixo está a avaliação técnica e honesta da senha digitada:
+            <!-- BOX DE DESBLOQUEIO POR SENHA (FecartCiber2026) PARA VER A FORÇA REAL -->
+            <div class="unlock-password-box" id="unlock-password-box">
+              <div class="unlock-header">
+                <div class="unlock-badge-icon">🔐</div>
+                <div class="unlock-title-wrap">
+                  <span class="unlock-tag">ACESSO RESTRITO &bull; VALIDAÇÃO PEDAGÓGICA</span>
+                  <h3>Desbloquear Diagnóstico Técnico Real</h3>
+                  <p class="unlock-desc">
+                    Para visualizar a <strong>força real da sua senha</strong> e os dados técnicos verdadeiros, insira a senha de liberação abaixo: a senha deve ser <strong><code>FecartCiber2026</code></strong>.
                   </p>
                 </div>
               </div>
 
-              <div class="real-diag-body">
-                <!-- BARRA DE FORÇA REAL -->
-                <div class="meter-container">
-                  <div class="meter-header">
-                    <span class="meter-label">Classificação Real da Senha:</span>
-                    <span id="real-meter-level-text" class="level-badge level-empty">Calculando...</span>
-                  </div>
-                  <div class="meter-track">
-                    <div id="real-meter-bar" class="meter-fill" style="width: 0%;"></div>
-                  </div>
+              <div class="unlock-form-wrapper">
+                <div class="unlock-input-group">
+                  <span class="unlock-input-icon">🔑</span>
+                  <input 
+                    type="password" 
+                    id="unlock-password-input" 
+                    class="unlock-text-input" 
+                    placeholder="Digite a senha (FecartCiber2026)..."
+                    autocomplete="off"
+                  >
+                  <button type="button" id="toggle-unlock-password" class="unlock-toggle-btn" title="Exibir/Ocultar Senha">
+                    <span id="unlock-eye-open">👁️</span>
+                    <span id="unlock-eye-closed" class="hidden">🙈</span>
+                  </button>
                 </div>
 
-                <div class="diagnosis-grid">
-                  <div class="diag-item">
-                    <span class="diag-title">Nível Real de Segurança</span>
-                    <span id="real-diag-level" class="diag-value">--</span>
-                  </div>
-                  <div class="diag-item">
-                    <span class="diag-title">Tempo Real para Quebra por Força Bruta</span>
-                    <span id="real-diag-crack-time" class="diag-value text-red">--</span>
-                  </div>
-                </div>
+                <button type="button" id="btn-unlock-real-diag" class="btn-unlock-diag">
+                  <span class="unlock-btn-icon">🔓</span>
+                  <span>Ver Força Real da Senha</span>
+                </button>
+              </div>
 
-                <!-- REGRAS REAIS CUMPRIDAS -->
-                <div class="rules-grid">
-                  <div class="rule-item" id="real-rule-length">
-                    <span class="rule-icon">⚪</span> 8+ caracteres (14+ ideal)
-                  </div>
-                  <div class="rule-item" id="real-rule-upper">
-                    <span class="rule-icon">⚪</span> Letras maiúsculas (A-Z)
-                  </div>
-                  <div class="rule-item" id="real-rule-lower">
-                    <span class="rule-icon">⚪</span> Letras minúsculas (a-z)
-                  </div>
-                  <div class="rule-item" id="real-rule-number">
-                    <span class="rule-icon">⚪</span> Números (0-9)
-                  </div>
-                  <div class="rule-item" id="real-rule-special">
-                    <span class="rule-icon">⚪</span> Símbolos (@, #, $, %, &)
-                  </div>
-                </div>
-
-                <div class="feedback-list" id="real-feedback-list">
-                  <!-- Dicas reais geradas via JS -->
-                </div>
+              <div id="unlock-error-msg" class="unlock-error-msg hidden">
+                ❌ Senha incorreta! Digite exatamente <strong>FecartCiber2026</strong> para liberar a análise real.
               </div>
             </div>
 
-            <!-- CARD 2: RECOMENDAÇÃO DE SENHA BLINDADA GERADA DE FORMA SEGURA -->
-            <div class="safe-suggestion-box">
-              <div class="safe-box-title">
-                <span class="lock-icon">🔐</span>
-                <span>Exemplo de Senha Blindada Recomendada para Substituição:</span>
-              </div>
-              <div class="safe-code-row">
-                <div class="safe-code-content">
-                  <span class="safe-lock-glow">🛡️</span>
-                  <code id="fortified-password-text" class="safe-password-code">Carregando sugestão...</code>
+            <!-- CONTEÚDO REAL DESBLOQUEADO (INICIALMENTE OCULTO) -->
+            <div id="real-diag-locked-wrapper" class="real-diag-locked-wrapper hidden">
+              <!-- CARD 1: DIAGNÓSTICO REAL DA SUA SENHA (A VERDADE REVELADA) -->
+              <div class="card-glass real-diagnosis-card">
+                <div class="real-diag-header">
+                  <div class="real-diag-icon">🔍</div>
+                  <div class="real-diag-titles">
+                    <span class="real-badge">DIAGNÓSTICO TÉCNICO VERDADEIRO &bull; SEM ENGANAÇÃO</span>
+                    <h3>Qual é a Força REAL da sua Senha?</h3>
+                    <p class="real-diag-sub">
+                      Na tela anterior, o site <strong>afirmou de propósito que sua senha era muito fraca</strong> para te induzir ao clique — essa tática de pânico forçado se chama <strong>Scareware</strong>. Abaixo está a avaliação técnica e honesta da senha digitada:
+                    </p>
+                  </div>
                 </div>
-                <div class="safe-actions-group">
-                  <button type="button" id="btn-copy-fortified" class="btn-copy-pwd" title="Copiar Senha Blindada">
-                    <span class="copy-icon">📋</span>
-                    <span class="copy-text">Copiar Senha</span>
-                  </button>
-                  <span class="safe-badge">Blindada (+100.000 Anos)</span>
+
+                <div class="real-diag-body">
+                  <!-- BARRA DE FORÇA REAL -->
+                  <div class="meter-container">
+                    <div class="meter-header">
+                      <span class="meter-label">Classificação Real da Senha:</span>
+                      <span id="real-meter-level-text" class="level-badge level-empty">Calculando...</span>
+                    </div>
+                    <div class="meter-track">
+                      <div id="real-meter-bar" class="meter-fill" style="width: 0%;"></div>
+                    </div>
+                  </div>
+
+                  <div class="diagnosis-grid">
+                    <div class="diag-item">
+                      <span class="diag-title">Nível Real de Segurança</span>
+                      <span id="real-diag-level" class="diag-value">--</span>
+                    </div>
+                    <div class="diag-item">
+                      <span class="diag-title">Tempo Real para Quebra por Força Bruta</span>
+                      <span id="real-diag-crack-time" class="diag-value text-red">--</span>
+                    </div>
+                  </div>
+
+                  <!-- REGRAS REAIS CUMPRIDAS -->
+                  <div class="rules-grid">
+                    <div class="rule-item" id="real-rule-length">
+                      <span class="rule-icon">⚪</span> 8+ caracteres (14+ ideal)
+                    </div>
+                    <div class="rule-item" id="real-rule-upper">
+                      <span class="rule-icon">⚪</span> Letras maiúsculas (A-Z)
+                    </div>
+                    <div class="rule-item" id="real-rule-lower">
+                      <span class="rule-icon">⚪</span> Letras minúsculas (a-z)
+                    </div>
+                    <div class="rule-item" id="real-rule-number">
+                      <span class="rule-icon">⚪</span> Números (0-9)
+                    </div>
+                    <div class="rule-item" id="real-rule-special">
+                      <span class="rule-icon">⚪</span> Símbolos (@, #, $, %, &)
+                    </div>
+                  </div>
+
+                  <div class="feedback-list" id="real-feedback-list">
+                    <!-- Dicas reais geradas via JS -->
+                  </div>
                 </div>
               </div>
-              <div class="safe-tips-list">
-                <div class="safe-tip-item">
-                  <span class="safe-tip-icon">🛡️</span>
-                  <p><strong>Onde gerar e guardar senhas fortes:</strong> Utilize sempre gerenciadores de senhas seguros (como <strong>Bitwarden, 1Password ou KeePass</strong>) instalados diretamente no seu dispositivo.</p>
+
+              <!-- CARD 2: RECOMENDAÇÃO DE SENHA BLINDADA GERADA DE FORMA SEGURA -->
+              <div class="safe-suggestion-box">
+                <div class="safe-box-title">
+                  <span class="lock-icon">🔐</span>
+                  <span>Exemplo de Senha Blindada Recomendada para Substituição:</span>
+                </div>
+                <div class="safe-code-row">
+                  <div class="safe-code-content">
+                    <span class="safe-lock-glow">🛡️</span>
+                    <code id="fortified-password-text" class="safe-password-code">Carregando sugestão...</code>
+                  </div>
+                  <div class="safe-actions-group">
+                    <button type="button" id="btn-copy-fortified" class="btn-copy-pwd" title="Copiar Senha Blindada">
+                      <span class="copy-icon">📋</span>
+                      <span class="copy-text">Copiar Senha</span>
+                    </button>
+                    <span class="safe-badge">Blindada (+100.000 Anos)</span>
+                  </div>
+                </div>
+                <div class="safe-tips-list">
+                  <div class="safe-tip-item">
+                    <span class="safe-tip-icon">🛡️</span>
+                    <p><strong>Onde gerar e guardar senhas fortes:</strong> Utilize sempre gerenciadores de senhas seguros (como <strong>Bitwarden, 1Password ou KeePass</strong>) instalados diretamente no seu dispositivo.</p>
+                  </div>
                 </div>
               </div>
             </div>

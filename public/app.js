@@ -11,6 +11,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('err-win-6')
   ];
 
+  // ELEMENTOS DO BOTÃO "FECHAR" FAKE QUE FOGE DO CLIQUE
+  const btnFakeClose = document.getElementById('btn-fake-close');
+  const fakeCloseToast = document.getElementById('fake-close-toast');
+  const allCloseButtons = document.querySelectorAll('.error-close');
+  let fakeCloseCount = 0;
+
   // ELEMENTOS DA FASE 2: TELA PRETA & MENSAGEM "VOCÊ FOI HACKEADO"
   const hackerBlackScreen = document.getElementById('hacker-black-screen');
   const matrixCodeStream = document.getElementById('matrix-code-stream');
@@ -28,20 +34,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const eyeClosed = document.getElementById('eye-closed');
   const btnSubmit = document.getElementById('btn-submit-check');
 
-  // ELEMENTOS DA ETAPA 2 (TELA DE CONCLUÍDO & SENHA RECOMENDADA CLICÁVEL)
+  // ELEMENTOS DA ETAPA 2 (TELA DE CONCLUÍDO & ISCA DO GERADOR)
   const stepCompletedSection = document.getElementById('step-completed-section');
   const meterBar = document.getElementById('meter-bar');
   const meterLevelText = document.getElementById('meter-level-text');
   const diagLevel = document.getElementById('diag-level');
   const diagCrackTime = document.getElementById('diag-crack-time');
   const feedbackList = document.getElementById('feedback-list');
-  const fortifiedPasswordText = document.getElementById('fortified-password-text');
   const btnGenerateFortified = document.getElementById('btn-generate-fortified');
   const linkGenerateFortified = document.getElementById('link-generate-fortified');
 
-  // ELEMENTOS DO DIAGNÓSTICO REAL (FASE 4 - PÁGINA SEPARADA)
+  // ELEMENTOS DA FASE 4 (AVISOS DE SEGURANÇA & DESBLOQUEIO COM SENHA 'FecartCiber2026')
   const stepAlertSection = document.getElementById('step-alert-section');
   const securityAlertBox = document.getElementById('security-alert-box');
+  const unlockPasswordBox = document.getElementById('unlock-password-box');
+  const unlockPasswordInput = document.getElementById('unlock-password-input');
+  const toggleUnlockPassword = document.getElementById('toggle-unlock-password');
+  const unlockEyeOpen = document.getElementById('unlock-eye-open');
+  const unlockEyeClosed = document.getElementById('unlock-eye-closed');
+  const btnUnlockRealDiag = document.getElementById('btn-unlock-real-diag');
+  const unlockErrorMsg = document.getElementById('unlock-error-msg');
+  const realDiagLockedWrapper = document.getElementById('real-diag-locked-wrapper');
+
+  // ELEMENTOS DO DIAGNÓSTICO REAL (REVELADOS APÓS DIGITAR 'FecartCiber2026')
   const realMeterBar = document.getElementById('real-meter-bar');
   const realMeterLevelText = document.getElementById('real-meter-level-text');
   const realDiagLevel = document.getElementById('real-diag-level');
@@ -52,14 +67,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const realRuleNumber = document.getElementById('real-rule-number');
   const realRuleSpecial = document.getElementById('real-rule-special');
   const realFeedbackList = document.getElementById('real-feedback-list');
+  const fortifiedPasswordText = document.getElementById('fortified-password-text');
   const btnCopyFortified = document.getElementById('btn-copy-fortified');
   const btnTestAgain = document.getElementById('btn-test-again');
 
-  // ELEMENTOS DO BOTÃO "FECHAR" FAKE QUE FOGE DO CLIQUE
-  const btnFakeClose = document.getElementById('btn-fake-close');
-  const fakeCloseToast = document.getElementById('fake-close-toast');
-  const allCloseButtons = document.querySelectorAll('.error-close');
-  let fakeCloseCount = 0;
+  // SENHA MESTRA PARA DESBLOQUEAR O DIAGNÓSTICO REAL
+  const MASTER_UNLOCK_PASSWORD = 'FecartCiber2026';
 
   // Dados da verificação atual em memória (sem salvar em banco nem localStorage)
   let currentCheckData = null;
@@ -80,7 +93,112 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const API_BASE = getApiBase();
 
-  // Toggle Exibir / Ocultar Senha
+  // Função para tocar som sintético de glitch/erro/sucesso (Web Audio API)
+  function playGlitchBeep(type = 'dodge') {
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      if (type === 'dodge') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(740, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(140, ctx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.12);
+      } else if (type === 'unlock') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+        osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.08); // E5
+        osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.16); // G5
+        gain.gain.setValueAtTime(0.25, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.28);
+      } else {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(220, ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(110, ctx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+      }
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start();
+      osc.stop(ctx.currentTime + (type === 'unlock' ? 0.28 : 0.14));
+    } catch (e) {}
+  }
+
+  // =========================================================================
+  // SISTEMA DO BOTÃO "FECHAR" FAKE QUE MUDA DE LUGAR QUANDO CLICADO
+  // =========================================================================
+  function dodgeFakeCloseButton(element, isSmallClose = false) {
+    fakeCloseCount++;
+    playGlitchBeep('dodge');
+
+    if (isSmallClose) {
+      // Para os botões "X" das janelas de erro
+      const randX = (Math.random() - 0.5) * 140;
+      const randY = (Math.random() - 0.5) * 70;
+      element.style.transform = `translate(${randX}px, ${randY}px) rotate(${Math.random() * 24 - 12}deg)`;
+    } else {
+      // Para o botão principal "Fechar Janela"
+      const maxDistanceX = 160;
+      const maxDistanceY = 70;
+      const randX = (Math.random() * 2 - 1) * maxDistanceX;
+      const randY = (Math.random() * 2 - 1) * maxDistanceY;
+      const rot = (Math.random() * 20 - 10);
+
+      element.style.transform = `translate(${randX}px, ${randY}px) scale(0.96) rotate(${rot}deg)`;
+      element.style.backgroundColor = 'rgba(255, 51, 102, 0.55)';
+
+      const messages = [
+        '⚠️ Acesso Negado: Não é possível fechar esta janela!',
+        '🚫 O malware desabilitou o botão Fechar.',
+        '⚡ Tentativa de escapar falhou!',
+        '💀 BOTÃO BLOQUEADO PELO SISTEMA!',
+        '🔥 Sistema 100% comprometido! O botão continuará fugindo.'
+      ];
+
+      if (fakeCloseToast) {
+        const msg = messages[Math.min(fakeCloseCount - 1, messages.length - 1)];
+        fakeCloseToast.textContent = `[Tentativa #${fakeCloseCount}] ${msg}`;
+        fakeCloseToast.classList.remove('hidden');
+      }
+
+      // Adiciona um tremor extra à tela
+      document.body.classList.add('system-crashing');
+    }
+  }
+
+  if (btnFakeClose) {
+    btnFakeClose.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dodgeFakeCloseButton(btnFakeClose, false);
+    });
+    btnFakeClose.addEventListener('mouseenter', () => {
+      if (fakeCloseCount >= 2 && Math.random() > 0.4) {
+        dodgeFakeCloseButton(btnFakeClose, false);
+      }
+    });
+    btnFakeClose.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      dodgeFakeCloseButton(btnFakeClose, false);
+    });
+  }
+
+  allCloseButtons.forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dodgeFakeCloseButton(btn, true);
+    });
+  });
+
+  // Toggle Exibir / Ocultar Senha do Formulário Inicial
   if (toggleBtn && passwordInput) {
     toggleBtn.addEventListener('click', () => {
       const isPassword = passwordInput.type === 'password';
@@ -90,7 +208,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Enter para verificar
+  // Toggle Exibir / Ocultar Senha de Desbloqueio (FecartCiber2026)
+  if (toggleUnlockPassword && unlockPasswordInput) {
+    toggleUnlockPassword.addEventListener('click', () => {
+      const isPassword = unlockPasswordInput.type === 'password';
+      unlockPasswordInput.type = isPassword ? 'text' : 'password';
+      if (unlockEyeOpen) unlockEyeOpen.classList.toggle('hidden', !isPassword);
+      if (unlockEyeClosed) unlockEyeClosed.classList.toggle('hidden', isPassword);
+    });
+  }
+
+  // Enter para verificar no formulário inicial
   if (userNameInput) {
     userNameInput.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') passwordInput.focus();
@@ -103,8 +231,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Enter para desbloquear diagnóstico com senha
+  if (unlockPasswordInput) {
+    unlockPasswordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleUnlockRealDiagnosis();
+    });
+  }
+
   // Event Listeners principais
   if (btnSubmit) btnSubmit.addEventListener('click', submitCheck);
+  if (btnUnlockRealDiag) btnUnlockRealDiag.addEventListener('click', handleUnlockRealDiagnosis);
 
   // CLIQUE NO BOTÃO OU LINK CHAMATIVO DO GERADOR DISPARA A SIMULAÇÃO DE HACK
   const handleTriggerHack = (e) => {
@@ -158,6 +294,54 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Erro ao copiar senha:', err);
       }
     });
+  }
+
+  // =========================================================================
+  // SISTEMA DE DESBLOQUEIO DA FORÇA REAL COM A SENHA 'FecartCiber2026'
+  // =========================================================================
+  function handleUnlockRealDiagnosis() {
+    if (!unlockPasswordInput) return;
+    const typed = unlockPasswordInput.value.trim();
+
+    if (typed === MASTER_UNLOCK_PASSWORD) {
+      // SENHA CORRETA: DESBLOQUEIA O DIAGNÓSTICO TÉCNICO REAL
+      playGlitchBeep('unlock');
+      if (unlockErrorMsg) unlockErrorMsg.classList.add('hidden');
+      unlockPasswordInput.classList.remove('shake-error');
+
+      // Substitui a caixa de input por um banner de sucesso
+      if (unlockPasswordBox) {
+        unlockPasswordBox.innerHTML = `
+          <div class="unlock-success-banner">
+            <span style="font-size: 1.6rem;">🔓</span>
+            <div>
+              <strong style="color: #00e676; font-size: 1.05rem;">Chave 'FecartCiber2026' Validada com Sucesso!</strong>
+              <p style="color: #cbd5e1; font-size: 0.88rem; margin-top: 2px;">
+                Acesso liberado. Confira abaixo a <strong>avaliação técnica verdadeira</strong> e a força real da senha testada:
+              </p>
+            </div>
+          </div>
+        `;
+      }
+
+      // Revela os cartões do diagnóstico real
+      if (realDiagLockedWrapper) {
+        realDiagLockedWrapper.classList.remove('hidden');
+        realDiagLockedWrapper.classList.add('fade-in');
+        realDiagLockedWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+    } else {
+      // SENHA INCORRETA
+      playGlitchBeep('error');
+      if (unlockErrorMsg) unlockErrorMsg.classList.remove('hidden');
+      unlockPasswordInput.classList.add('shake-error');
+      setTimeout(() => {
+        unlockPasswordInput.classList.remove('shake-error');
+      }, 450);
+      unlockPasswordInput.focus();
+      unlockPasswordInput.select();
+    }
   }
 
   // Avaliação no cliente (Fallback caso o backend esteja offline)
@@ -234,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // Gerador de senha blindada no cliente
+  // Gerador de senha blindada no cliente baseada na senha digitada
   function clientGenerateFortified(base) {
     const cleanBase = (base && base.trim()) || 'Senha';
     const leetMap = {
@@ -392,6 +576,15 @@ document.addEventListener('DOMContentLoaded', () => {
       crashLogPwd.textContent = `[CRITICAL] SENHA DIGITADA NO FORMULÁRIO: "${currentCheckData.password}"`;
     }
 
+    // Reseta posição do botão fake fechar
+    fakeCloseCount = 0;
+    if (btnFakeClose) {
+      btnFakeClose.style.transform = 'none';
+      btnFakeClose.style.backgroundColor = '';
+    }
+    if (fakeCloseToast) fakeCloseToast.classList.add('hidden');
+    allCloseButtons.forEach(btn => btn.style.transform = 'none');
+
     // ---------------------------------------------------------------------------------
     // FASE 1: O SITE TRAVA, TREME E APARECEM AVISOS DE SEGURANÇA E ANTIVÍRUS (0s a 2.5s)
     // ---------------------------------------------------------------------------------
@@ -454,9 +647,9 @@ document.addEventListener('DOMContentLoaded', () => {
       `PAYLOAD_INTERCEPTED: "${currentCheckData ? currentCheckData.password : '******'}"`,
       `TARGET_NAME: "${currentCheckData ? currentCheckData.userName : 'Visitante'}"`,
       'BYPASSING_BROWSER_ISOLATION_POLICIES... [SUCCESS]',
-      'INTERCEPTING_USER_INPUT_KEYSTROKES...',
+      'LOCAL_STORAGE_CREDENTIAL_OVERWRITE_PREVENTED... [OFFLINE_SANDBOX]',
       'OVERWRITING_RETURN_ADDRESS: 0xDEADBEEFCAFE',
-      'SIMULATING_EXFILTRATION_VECTOR...',
+      'EXFILTRATING_LOCAL_STORAGE_TOKENS_TO_REMOTE_HOST...',
       'WINDOWS_DEFENDER_HOOK_TRIGGERED... [EVADED]',
       'ROOT_ACCESS_ELEVATION_GRANTED... SYSTEM_COMPROMISED.'
     ];
@@ -487,7 +680,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (currentCheckData) {
       // =========================================================================
-      // PREENCHE O DIAGNÓSTICO REAL DA SENHA NA PÁGINA SEPARADA DE SEGURANÇA
+      // PREPARA OS DADOS DO DIAGNÓSTICO REAL (FICAM PRONTOS EM SEGREDO ATÉ DESBLOQUEAR)
       // =========================================================================
       const realEval = currentCheckData.evaluation;
       const pwd = currentCheckData.password;
@@ -559,6 +752,14 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    // Mantém o conteúdo real bloqueado inicialmente até o usuário digitar FecartCiber2026
+    if (realDiagLockedWrapper) realDiagLockedWrapper.classList.add('hidden');
+    if (unlockPasswordInput) {
+      unlockPasswordInput.value = '';
+      unlockPasswordInput.classList.remove('shake-error');
+    }
+    if (unlockErrorMsg) unlockErrorMsg.classList.add('hidden');
+
     // Revela a seção educativa
     stepAlertSection.classList.remove('hidden');
     stepAlertSection.classList.add('fade-in');
@@ -576,13 +777,92 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (passwordInput) passwordInput.value = '';
     if (userNameInput) userNameInput.value = '';
+    if (unlockPasswordInput) unlockPasswordInput.value = '';
     currentCheckData = null;
+    fakeCloseCount = 0;
 
     document.body.classList.remove('system-crashing');
     crashOverlay.classList.add('hidden');
     hackerBlackScreen.classList.add('hidden');
     if (hackerMessageCard) hackerMessageCard.classList.add('hidden');
     errWins.forEach(win => win && win.classList.remove('show'));
+
+    if (btnFakeClose) {
+      btnFakeClose.style.transform = 'none';
+      btnFakeClose.style.backgroundColor = '';
+    }
+    if (fakeCloseToast) fakeCloseToast.classList.add('hidden');
+    allCloseButtons.forEach(btn => btn.style.transform = 'none');
+
+    // Reseta a caixa de desbloqueio para o estado inicial com input
+    if (unlockPasswordBox) {
+      unlockPasswordBox.innerHTML = `
+        <div class="unlock-header">
+          <div class="unlock-badge-icon">🔐</div>
+          <div class="unlock-title-wrap">
+            <span class="unlock-tag">ACESSO RESTRITO &bull; VALIDAÇÃO PEDAGÓGICA</span>
+            <h3>Desbloquear Diagnóstico Técnico Real</h3>
+            <p class="unlock-desc">
+              Para visualizar a <strong>força real da sua senha</strong> e os dados técnicos verdadeiros, insira a senha de liberação abaixo: a senha deve ser <strong><code>FecartCiber2026</code></strong>.
+            </p>
+          </div>
+        </div>
+
+        <div class="unlock-form-wrapper">
+          <div class="unlock-input-group">
+            <span class="unlock-input-icon">🔑</span>
+            <input 
+              type="password" 
+              id="unlock-password-input" 
+              class="unlock-text-input" 
+              placeholder="Digite a senha (FecartCiber2026)..."
+              autocomplete="off"
+            >
+            <button type="button" id="toggle-unlock-password" class="unlock-toggle-btn" title="Exibir/Ocultar Senha">
+              <span id="unlock-eye-open">👁️</span>
+              <span id="unlock-eye-closed" class="hidden">🙈</span>
+            </button>
+          </div>
+
+          <button type="button" id="btn-unlock-real-diag" class="btn-unlock-diag">
+            <span class="unlock-btn-icon">🔓</span>
+            <span>Ver Força Real da Senha</span>
+          </button>
+        </div>
+
+        <div id="unlock-error-msg" class="unlock-error-msg hidden">
+          ❌ Senha incorreta! Digite exatamente <strong>FecartCiber2026</strong> para liberar a análise real.
+        </div>
+      `;
+
+      // Re-associa eventos do input de desbloqueio recém-recriado
+      const newUnlockInput = document.getElementById('unlock-password-input');
+      const newUnlockToggle = document.getElementById('toggle-unlock-password');
+      const newUnlockEyeOpen = document.getElementById('unlock-eye-open');
+      const newUnlockEyeClosed = document.getElementById('unlock-eye-closed');
+      const newUnlockBtn = document.getElementById('btn-unlock-real-diag');
+
+      if (newUnlockToggle && newUnlockInput) {
+        newUnlockToggle.addEventListener('click', () => {
+          const isPass = newUnlockInput.type === 'password';
+          newUnlockInput.type = isPass ? 'text' : 'password';
+          if (newUnlockEyeOpen) newUnlockEyeOpen.classList.toggle('hidden', !isPass);
+          if (newUnlockEyeClosed) newUnlockEyeClosed.classList.toggle('hidden', isPass);
+        });
+      }
+
+      if (newUnlockInput) {
+        newUnlockInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') handleUnlockRealDiagnosis();
+        });
+      }
+
+      if (newUnlockBtn) {
+        newUnlockBtn.addEventListener('click', handleUnlockRealDiagnosis);
+      }
+    }
+
+    if (realDiagLockedWrapper) realDiagLockedWrapper.classList.add('hidden');
 
     stepCompletedSection.classList.add('hidden');
     stepAlertSection.classList.add('hidden');

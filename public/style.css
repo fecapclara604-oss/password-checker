@@ -3063,3 +3063,200 @@ body.system-crashing {
     font-size: 0.92rem;
   }
 }
+
+/* ========================================================
+   BOX DE DESBLOQUEIO POR SENHA (FecartCiber2026)
+   ======================================================== */
+.unlock-password-box {
+  background: linear-gradient(135deg, rgba(16, 24, 40, 0.95) 0%, rgba(10, 15, 26, 0.98) 100%);
+  border: 2px solid #00f2fe;
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  box-shadow: 0 0 35px rgba(0, 242, 254, 0.25), inset 0 0 20px rgba(0, 242, 254, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.unlock-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.unlock-badge-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+  background: rgba(0, 242, 254, 0.12);
+  border: 1px solid rgba(0, 242, 254, 0.4);
+  padding: 10px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+  flex-shrink: 0;
+}
+
+.unlock-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.unlock-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #00f2fe;
+  text-transform: uppercase;
+}
+
+.unlock-title-wrap h3 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.unlock-desc {
+  font-size: 0.92rem;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+
+.unlock-desc strong code {
+  color: #00f2fe;
+  background: rgba(0, 242, 254, 0.15);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: var(--code-font);
+  font-size: 0.95rem;
+}
+
+.unlock-form-wrapper {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.unlock-input-group {
+  position: relative;
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  align-items: center;
+}
+
+.unlock-input-icon {
+  position: absolute;
+  left: 14px;
+  font-size: 1.1rem;
+  pointer-events: none;
+}
+
+.unlock-text-input {
+  width: 100%;
+  background: rgba(5, 8, 16, 0.9);
+  border: 2px solid rgba(0, 242, 254, 0.35);
+  border-radius: var(--radius-md);
+  padding: 14px 46px 14px 44px;
+  color: #fff;
+  font-family: var(--code-font);
+  font-size: 1rem;
+  transition: all 0.25s ease;
+}
+
+.unlock-text-input:focus {
+  outline: none;
+  border-color: #00f2fe;
+  box-shadow: 0 0 0 3px rgba(0, 242, 254, 0.25), 0 0 20px rgba(0, 242, 254, 0.3);
+}
+
+.unlock-text-input.shake-error {
+  border-color: #ff3366 !important;
+  box-shadow: 0 0 0 3px rgba(255, 51, 102, 0.3), 0 0 20px rgba(255, 51, 102, 0.4) !important;
+  animation: inputShake 0.4s ease;
+}
+
+@keyframes inputShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+.unlock-toggle-btn {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.btn-unlock-diag {
+  background: linear-gradient(135deg, #00f2fe 0%, #00e676 100%);
+  color: #090d16;
+  border: none;
+  font-family: var(--main-font);
+  font-size: 0.98rem;
+  font-weight: 800;
+  padding: 14px 24px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(0, 242, 254, 0.35);
+  flex-shrink: 0;
+}
+
+.btn-unlock-diag:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(0, 230, 118, 0.5);
+}
+
+.unlock-error-msg {
+  background: rgba(255, 51, 102, 0.15);
+  border: 1px solid rgba(255, 51, 102, 0.5);
+  color: #ff6b8b;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: toastPop 0.25s ease-out;
+}
+
+.unlock-error-msg strong {
+  color: #fff;
+  background: rgba(255, 51, 102, 0.3);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-family: var(--code-font);
+}
+
+.unlock-success-banner {
+  background: rgba(0, 230, 118, 0.12);
+  border: 1px solid rgba(0, 230, 118, 0.4);
+  color: #00e676;
+  font-size: 0.92rem;
+  font-weight: 800;
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 0 20px rgba(0, 230, 118, 0.2);
+  animation: toastPop 0.3s ease-out;
+  margin-bottom: 20px;
+}
+
