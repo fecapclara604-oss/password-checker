@@ -331,18 +331,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // SISTEMA DE DESBLOQUEIO DA FORÇA REAL COM A SENHA 'FecartCiber2026'
   // =========================================================================
   function handleUnlockRealDiagnosis() {
-    if (!unlockPasswordInput) return;
-    const typed = unlockPasswordInput.value.trim();
+    const inputEl = document.getElementById('unlock-password-input');
+    const errEl = document.getElementById('unlock-error-msg');
+    const boxEl = document.getElementById('unlock-password-box');
+    const wrapperEl = document.getElementById('real-diag-locked-wrapper');
+    if (!inputEl) return;
+    const typed = inputEl.value.trim();
 
     if (typed === MASTER_UNLOCK_PASSWORD) {
       // SENHA CORRETA: DESBLOQUEIA O DIAGNÓSTICO TÉCNICO REAL
       playGlitchBeep('unlock');
-      if (unlockErrorMsg) unlockErrorMsg.classList.add('hidden');
-      unlockPasswordInput.classList.remove('shake-error');
+      if (errEl) errEl.classList.add('hidden');
+      inputEl.classList.remove('shake-error');
 
       // Substitui a caixa de input por um banner de sucesso
-      if (unlockPasswordBox) {
-        unlockPasswordBox.innerHTML = `
+      if (boxEl) {
+        boxEl.innerHTML = `
           <div class="unlock-success-banner">
             <span style="font-size: 1.6rem;">🔓</span>
             <div>
@@ -356,22 +360,22 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // Revela os cartões do diagnóstico real
-      if (realDiagLockedWrapper) {
-        realDiagLockedWrapper.classList.remove('hidden');
-        realDiagLockedWrapper.classList.add('fade-in');
-        realDiagLockedWrapper.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (wrapperEl) {
+        wrapperEl.classList.remove('hidden');
+        wrapperEl.classList.add('fade-in');
+        wrapperEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
 
     } else {
       // SENHA INCORRETA
       playGlitchBeep('error');
-      if (unlockErrorMsg) unlockErrorMsg.classList.remove('hidden');
-      unlockPasswordInput.classList.add('shake-error');
+      if (errEl) errEl.classList.remove('hidden');
+      inputEl.classList.add('shake-error');
       setTimeout(() => {
-        unlockPasswordInput.classList.remove('shake-error');
+        inputEl.classList.remove('shake-error');
       }, 450);
-      unlockPasswordInput.focus();
-      unlockPasswordInput.select();
+      inputEl.focus();
+      inputEl.select();
     }
   }
 
@@ -632,7 +636,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ---------------------------------------------------------------------------------
-    // FASE 2: TELA PRETA COM CÓDIGOS MATRIX EM EXECUÇÃO (2.5s)
+    // FASE 2: TELA PRETA COM CÓDIGOS MATRIX EM EXECUÇÃO (2.2s)
     // ---------------------------------------------------------------------------------
     setTimeout(() => {
       document.body.classList.remove('system-crashing');
@@ -645,26 +649,22 @@ document.addEventListener('DOMContentLoaded', () => {
       startMatrixCodeStream();
 
       // ---------------------------------------------------------------------------------
-      // FASE 3: SURGE A MENSAGEM "VOCÊ FOI HACKEADO" APÓS OS CÓDIGOS (4.5s)
+      // FASE 3: SURGE O CARTÃO COM AVISO, SENHA INTERCEPTADA E O CAMPO DE SENHA FECART (0.8s)
       // ---------------------------------------------------------------------------------
       hackCardTimeout = setTimeout(() => {
         if (currentCheckData) {
           if (hackScreenName) hackScreenName.textContent = currentCheckData.userName;
           if (hackScreenPassword) hackScreenPassword.textContent = currentCheckData.password;
+          prepareRealDiagnosisData();
         }
 
         if (hackerMessageCard) {
           hackerMessageCard.classList.remove('hidden');
           hackerMessageCard.classList.add('fade-in');
         }
+      }, 800);
 
-        autoSecurityTimeout = setTimeout(() => {
-          showSecurityExplanationPhase();
-        }, 6500);
-
-      }, 2000);
-
-    }, 2500);
+    }, 2200);
   }
 
   // Chuva de códigos/logs no terminal da tela preta
@@ -698,105 +698,77 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 100);
   }
 
-  // =========================================================================
-  // FASE 4: AVISOS DE SEGURANÇA E CONSCIENTIZAÇÃO EDUCATIVA (PÁGINA SEPARADA)
-  // =========================================================================
-  function showSecurityExplanationPhase() {
-    if (hackCardTimeout) clearTimeout(hackCardTimeout);
-    if (autoSecurityTimeout) clearTimeout(autoSecurityTimeout);
-    if (matrixInterval) clearInterval(matrixInterval);
+  // Prepara os dados do diagnóstico real na memória e no DOM
+  function prepareRealDiagnosisData() {
+    if (!currentCheckData) return;
+    const realEval = currentCheckData.evaluation;
+    const pwd = currentCheckData.password;
 
-    hackerBlackScreen.classList.add('hidden');
-    stepCompletedSection.classList.add('hidden');
-    if (stepFecartSection) stepFecartSection.classList.add('hidden');
-
-    if (currentCheckData) {
-      // =========================================================================
-      // PREPARA OS DADOS DO DIAGNÓSTICO REAL (FICAM PRONTOS EM SEGREDO ATÉ DESBLOQUEAR)
-      // =========================================================================
-      const realEval = currentCheckData.evaluation;
-      const pwd = currentCheckData.password;
-
-      if (realDiagLevel && realEval) realDiagLevel.textContent = realEval.level;
-      if (realDiagCrackTime && realEval) {
-        realDiagCrackTime.textContent = realEval.crackTime;
-        if (realEval.score <= 3) {
-          realDiagCrackTime.className = 'diag-value text-red';
-        } else {
-          realDiagCrackTime.className = 'diag-value text-green';
-        }
-      }
-
-      if (realMeterBar && realMeterLevelText && realEval) {
-        const percentage = (realEval.score / 7) * 100;
-        realMeterBar.style.width = `${Math.max(percentage, 10)}%`;
-
-        if (realEval.score <= 2) {
-          realMeterBar.style.backgroundColor = '#ff3366';
-          realMeterLevelText.className = 'level-badge level-very-weak';
-          realMeterLevelText.textContent = 'Muito Fraca';
-        } else if (realEval.score <= 4) {
-          realMeterBar.style.backgroundColor = '#ff9100';
-          realMeterLevelText.className = 'level-badge level-weak';
-          realMeterLevelText.textContent = 'Fraca';
-        } else if (realEval.score <= 5) {
-          realMeterBar.style.backgroundColor = '#ffd600';
-          realMeterLevelText.className = 'level-badge level-medium';
-          realMeterLevelText.textContent = 'Média';
-        } else if (realEval.score === 6) {
-          realMeterBar.style.backgroundColor = '#00e676';
-          realMeterLevelText.className = 'level-badge level-strong';
-          realMeterLevelText.textContent = 'Forte';
-        } else {
-          realMeterBar.style.backgroundColor = '#00f2fe';
-          realMeterLevelText.className = 'level-badge level-unbreakable';
-          realMeterLevelText.textContent = 'Blindada / Imbatível';
-        }
-      }
-
-      // Regras Reais
-      const hasLen = pwd.length >= 8;
-      const hasUpper = /[A-Z]/.test(pwd);
-      const hasLower = /[a-z]/.test(pwd);
-      const hasNum = /[0-9]/.test(pwd);
-      const hasSpec = /[^A-Za-z0-9]/.test(pwd);
-
-      if (realRuleLength) updateRule(realRuleLength, hasLen);
-      if (realRuleUpper) updateRule(realRuleUpper, hasUpper);
-      if (realRuleLower) updateRule(realRuleLower, hasLower);
-      if (realRuleNumber) updateRule(realRuleNumber, hasNum);
-      if (realRuleSpecial) updateRule(realRuleSpecial, hasSpec);
-
-      // Feedback Real
-      if (realFeedbackList && realEval) {
-        realFeedbackList.innerHTML = '';
-        realEval.feedback.forEach(item => {
-          const div = document.createElement('div');
-          div.className = 'feedback-item';
-          div.textContent = item;
-          realFeedbackList.appendChild(div);
-        });
-      }
-
-      // Renderiza Sugestão Blindada
-      if (fortifiedPasswordText && currentCheckData.fortifiedSuggestion) {
-        fortifiedPasswordText.textContent = currentCheckData.fortifiedSuggestion;
+    if (realDiagLevel && realEval) realDiagLevel.textContent = realEval.level;
+    if (realDiagCrackTime && realEval) {
+      realDiagCrackTime.textContent = realEval.crackTime;
+      if (realEval.score <= 3) {
+        realDiagCrackTime.className = 'diag-value text-red';
+      } else {
+        realDiagCrackTime.className = 'diag-value text-green';
       }
     }
 
-    // Mantém o conteúdo real bloqueado inicialmente até o usuário digitar FecartCiber2026
-    if (realDiagLockedWrapper) realDiagLockedWrapper.classList.add('hidden');
-    if (unlockPasswordInput) {
-      unlockPasswordInput.value = '';
-      unlockPasswordInput.classList.remove('shake-error');
+    if (realMeterBar && realMeterLevelText && realEval) {
+      const percentage = (realEval.score / 7) * 100;
+      realMeterBar.style.width = `${Math.max(percentage, 10)}%`;
+
+      if (realEval.score <= 2) {
+        realMeterBar.style.backgroundColor = '#ff3366';
+        realMeterLevelText.className = 'level-badge level-very-weak';
+        realMeterLevelText.textContent = 'Muito Fraca';
+      } else if (realEval.score <= 4) {
+        realMeterBar.style.backgroundColor = '#ff9100';
+        realMeterLevelText.className = 'level-badge level-weak';
+        realMeterLevelText.textContent = 'Fraca';
+      } else if (realEval.score <= 5) {
+        realMeterBar.style.backgroundColor = '#ffd600';
+        realMeterLevelText.className = 'level-badge level-medium';
+        realMeterLevelText.textContent = 'Média';
+      } else if (realEval.score === 6) {
+        realMeterBar.style.backgroundColor = '#00e676';
+        realMeterLevelText.className = 'level-badge level-strong';
+        realMeterLevelText.textContent = 'Forte';
+      } else {
+        realMeterBar.style.backgroundColor = '#00f2fe';
+        realMeterLevelText.className = 'level-badge level-unbreakable';
+        realMeterLevelText.textContent = 'Blindada / Imbatível';
+      }
     }
-    if (unlockErrorMsg) unlockErrorMsg.classList.add('hidden');
 
-    // Revela a seção educativa
-    stepAlertSection.classList.remove('hidden');
-    stepAlertSection.classList.add('fade-in');
+    // Regras Reais
+    const hasLen = pwd.length >= 8;
+    const hasUpper = /[A-Z]/.test(pwd);
+    const hasLower = /[a-z]/.test(pwd);
+    const hasNum = /[0-9]/.test(pwd);
+    const hasSpec = /[^A-Za-z0-9]/.test(pwd);
 
-    securityAlertBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (realRuleLength) updateRule(realRuleLength, hasLen);
+    if (realRuleUpper) updateRule(realRuleUpper, hasUpper);
+    if (realRuleLower) updateRule(realRuleLower, hasLower);
+    if (realRuleNumber) updateRule(realRuleNumber, hasNum);
+    if (realRuleSpecial) updateRule(realRuleSpecial, hasSpec);
+
+    // Feedback Real
+    if (realFeedbackList && realEval) {
+      realFeedbackList.innerHTML = '';
+      realEval.feedback.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'feedback-item';
+        div.textContent = item;
+        realFeedbackList.appendChild(div);
+      });
+    }
+
+    // Renderiza Sugestão Blindada
+    if (fortifiedPasswordText && currentCheckData.fortifiedSuggestion) {
+      fortifiedPasswordText.textContent = currentCheckData.fortifiedSuggestion;
+    }
   }
 
   // ==========================================

@@ -454,16 +454,16 @@ body.system-crashing {
   background: #020408;
   z-index: 100000;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 20px;
+  padding: 40px 16px 100px 16px;
   -webkit-overflow-scrolling: touch;
 }
 
 .matrix-code-stream {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
@@ -483,7 +483,8 @@ body.system-crashing {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 680px;
+  max-width: 880px;
+  margin: 0 auto;
   animation: hackerCardPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
