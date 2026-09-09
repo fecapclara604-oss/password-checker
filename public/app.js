@@ -272,7 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // NAVEGAÇÃO ENTRE AVISOS DE SEGURANÇA E TELA EXCLUSIVA DA FECART
   if (btnGoToFecart) {
     btnGoToFecart.addEventListener('click', () => {
-      stepAlertSection.classList.add('hidden');
+      if (stepAlertSection) stepAlertSection.classList.add('hidden');
       if (stepFecartSection) {
         stepFecartSection.classList.remove('hidden');
         stepFecartSection.classList.add('fade-in');
@@ -284,9 +284,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnBackToAlerts) {
     btnBackToAlerts.addEventListener('click', () => {
       if (stepFecartSection) stepFecartSection.classList.add('hidden');
-      stepAlertSection.classList.remove('hidden');
-      stepAlertSection.classList.add('fade-in');
-      stepAlertSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (stepAlertSection) {
+        stepAlertSection.classList.remove('hidden');
+        stepAlertSection.classList.add('fade-in');
+        stepAlertSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     });
   }
 
@@ -582,14 +584,15 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // TRANSIÇÃO: Oculta Input e Exibe Tela de Concluído (Falsa)
-      stepInputSection.classList.add('hidden');
-      stepCompletedSection.classList.remove('hidden');
-      stepCompletedSection.classList.add('fade-in');
+      if (stepInputSection) stepInputSection.classList.add('hidden');
+      if (stepCompletedSection) {
+        stepCompletedSection.classList.remove('hidden');
+        stepCompletedSection.classList.add('fade-in');
+        stepCompletedSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
 
-      stepAlertSection.classList.add('hidden');
-      hackerBlackScreen.classList.add('hidden');
-
-      stepCompletedSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (stepAlertSection) stepAlertSection.classList.add('hidden');
+      if (hackerBlackScreen) hackerBlackScreen.classList.add('hidden');
 
     } catch (err) {
       console.error(err);
@@ -868,11 +871,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (realDiagLockedWrapper) realDiagLockedWrapper.classList.add('hidden');
 
-    stepCompletedSection.classList.add('hidden');
-    stepAlertSection.classList.add('hidden');
+    if (stepCompletedSection) stepCompletedSection.classList.add('hidden');
+    if (stepAlertSection) stepAlertSection.classList.add('hidden');
     if (stepFecartSection) stepFecartSection.classList.add('hidden');
-    stepInputSection.classList.remove('hidden');
-    stepInputSection.classList.add('fade-in');
+    if (stepInputSection) {
+      stepInputSection.classList.remove('hidden');
+      stepInputSection.classList.add('fade-in');
+    }
 
     if (userNameInput) userNameInput.focus();
     window.scrollTo({ top: 0, behavior: 'smooth' });
