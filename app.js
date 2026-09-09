@@ -621,7 +621,7 @@ document.addEventListener('DOMContentLoaded', () => {
     allCloseButtons.forEach(btn => btn.style.transform = 'none');
 
     // ---------------------------------------------------------------------------------
-    // FASE 1: O SITE TRAVA, TREME E APARECEM AVISOS DE SEGURANÇA E ANTIVÍRUS (0s a 2.5s)
+    // FASE 1: O SITE TRAVA, TREME E APARECEM AVISOS DE SEGURANÇA E ANTIVÍRUS (0s a 5.2s)
     // ---------------------------------------------------------------------------------
     document.body.classList.add('system-crashing');
     crashOverlay.classList.remove('hidden');
@@ -636,7 +636,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ---------------------------------------------------------------------------------
-    // FASE 2: TELA PRETA COM CÓDIGOS MATRIX EM EXECUÇÃO (2.2s)
+    // FASE 2: TELA PRETA COM CÓDIGOS MATRIX EM EXECUÇÃO (inicia após 5.2s)
     // ---------------------------------------------------------------------------------
     setTimeout(() => {
       document.body.classList.remove('system-crashing');
@@ -664,7 +664,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }, 800);
 
-    }, 2200);
+    }, 5200);
   }
 
   // Chuva de códigos/logs no terminal da tela preta
