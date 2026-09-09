@@ -669,43 +669,117 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 5200);
   }
 
-  // Chuva sequencial de códigos/logs no terminal da tela preta
+  // Chuva sequencial de códigos/logs no terminal da tela preta que desce até ~3/4 da tela
   function startMatrixCodeStream(onComplete) {
     if (matrixInterval) clearInterval(matrixInterval);
-    if (matrixCodeStream) matrixCodeStream.textContent = '';
+    if (matrixCodeStream) matrixCodeStream.innerHTML = '';
 
-    const hexCodes = [
+    const baseLines = [
       '0x7FFE041B_EXFILTRATION_SOCKET_CONNECTED [PORT:3000]',
-      'DUMPING_V8_HEAP_MEMORY_BUFFER_AT_OFFSET_0x004011B',
+      'DUMPING_V8_HEAP_MEMORY_BUFFER_AT_OFFSET_0x004011B...',
       `PAYLOAD_INTERCEPTED: "${currentCheckData ? currentCheckData.password : '******'}"`,
       `TARGET_NAME: "${currentCheckData ? currentCheckData.userName : 'Visitante'}"`,
       'BYPASSING_BROWSER_ISOLATION_POLICIES... [SUCCESS]',
       'LOCAL_STORAGE_CREDENTIAL_OVERWRITE_PREVENTED... [OFFLINE_SANDBOX]',
       'OVERWRITING_RETURN_ADDRESS: 0xDEADBEEFCAFE',
-      'EXFILTRATING_LOCAL_STORAGE_TOKENS_TO_REMOTE_HOST...',
+      'EXFILTRATING_INPUT_KEYSTROKES_TO_REMOTE_BUFFER...',
+      'INTERCEPTING_SESSION_COOKIES_AND_AUTH_TOKENS...',
+      'RESOLVING_TCP_ENCRYPTED_TUNNEL: 198.51.100.42:8443',
+      'INJECTING_DYNAMIC_HOOK_INTO_EVENT_LOOP... [ACTIVE]',
+      '0x7FFF8021_PACKET_TRANSFER: 2048 BYTES EXFILTRATED',
+      'SCANNING_MEMORY_PAGES_FOR_PASSWORDS_AND_PINS...',
+      'EXTRACTING_CLEARTEXT_CREDENTIALS_FROM_HEAP [OK]',
+      'PARSING_DOM_EVENT_LISTENERS [KEYLOGGER_HOOK_ACTIVE]',
+      'EVADING_ENDPOINT_PROTECTION_AND_SANDBOX_DETECTION...',
+      'FIREWALL_STATE_OVERRIDE: DISABLING_PACKET_INSPECTION',
+      '0x7FFF8054_PACKET_TRANSFER: 4096 BYTES EXFILTRATED',
+      'SIMULATING_REMOTE_ADMIN_PRIVILEGE_ESCALATION...',
+      '0x7FFE9912_HEAP_ALLOCATION: 0x00A40000 [COMMITTED]',
       'WINDOWS_DEFENDER_HOOK_TRIGGERED... [EVADED]',
+      'BYPASSING_ANTIVIRUS_REALTIME_PROTECTION_SHIELD...',
+      '0x7FFF8099_PACKET_TRANSFER: 8192 BYTES EXFILTRATED',
+      'KERNEL_MODE_DRIVER_SIGNATURE_BYPASS [SUCCESS]',
+      'CAPTURE_BUFFER_FLUSHED_TO_EXFILTRATION_NODE...',
+      'SEARCHING_ACTIVE_BROWSER_TABS_FOR_SESSION_DATA...',
+      '0x7FFEA14B_THREAD_HIJACKING_COMPLETED [TID:4012]',
+      'COMPROMISING_LOCAL_SECURITY_SUBSYSTEM... [COMPLETED]',
+      '0x7FFF9120_PACKET_TRANSFER: 16384 BYTES EXFILTRATED',
+      'CREDENTIAL_VAULT_DUMP_ROUTINE_EXECUTED [100%]',
+      'DISABLING_BROWSER_DEVTOOLS_SECURITY_POLICY...',
+      '0x7FFEB890_MEMORY_SEGMENT_OVERWRITE [0x8004011B]',
+      'DECRYPTION_OF_ENCRYPTED_TOKENS_FINALIZED...',
+      'BACKDOOR_LISTENER_ESTABLISHED_ON_LOCAL_PORT...',
+      '0x7FFF9999_PACKET_TRANSFER: 32768 BYTES EXFILTRATED',
+      'DATA_EXFILTRATION_PIPELINE: STREAM_ESTABLISHED [OK]',
       'ROOT_ACCESS_ELEVATION_GRANTED... SYSTEM_COMPROMISED.'
     ];
 
     let index = 0;
+    const threeFourthsThreshold = window.innerHeight * 0.75;
+    let finished = false;
+
     matrixInterval = setInterval(() => {
-      if (index < hexCodes.length) {
-        const line = hexCodes[index];
+      if (finished) return;
+
+      if (index < baseLines.length) {
+        const line = baseLines[index];
         const timeTag = `[${new Date().toISOString().substring(11, 23)}] `;
+
+        const lineEl = document.createElement('div');
+        lineEl.className = 'matrix-line';
+        lineEl.textContent = `${timeTag} ${line}`;
+
+        if (line.includes('PAYLOAD_INTERCEPTED') || line.includes('ROOT_ACCESS') || line.includes('SYSTEM_COMPROMISED')) {
+          lineEl.style.color = '#ff3366';
+          lineEl.style.fontWeight = 'bold';
+        } else if (line.includes('TARGET_NAME')) {
+          lineEl.style.color = '#00f2fe';
+          lineEl.style.fontWeight = 'bold';
+        }
+
         if (matrixCodeStream) {
-          matrixCodeStream.textContent += `${timeTag} ${line}\n`;
+          matrixCodeStream.appendChild(lineEl);
           matrixCodeStream.scrollTop = matrixCodeStream.scrollHeight;
         }
+
+        // Verifica se a última linha de comando ultrapassou aproximadamente 3/4 da altura da tela
+        const rect = lineEl.getBoundingClientRect();
+        const reachedThreeFourths = rect.bottom >= threeFourthsThreshold;
+        const isLastAvailableLine = index >= baseLines.length - 1;
+
+        if ((reachedThreeFourths && index >= 6) || isLastAvailableLine) {
+          finished = true;
+          clearInterval(matrixInterval);
+          matrixInterval = null;
+
+          // Se a linha final de sistema comprometido ainda não tiver sido impressa, adiciona para efeito dramático
+          if (!line.includes('SYSTEM_COMPROMISED') && matrixCodeStream) {
+            const finalEl = document.createElement('div');
+            finalEl.className = 'matrix-line';
+            finalEl.style.color = '#ff3366';
+            finalEl.style.fontWeight = 'bold';
+            finalEl.textContent = `[${new Date().toISOString().substring(11, 23)}] ROOT_ACCESS_ELEVATION_GRANTED... SYSTEM_COMPROMISED.`;
+            matrixCodeStream.appendChild(finalEl);
+            matrixCodeStream.scrollTop = matrixCodeStream.scrollHeight;
+          }
+
+          // Pausa curta após cruzar os 3/4 da tela para exibir o cartão de alerta
+          if (typeof onComplete === 'function') {
+            hackCardTimeout = setTimeout(onComplete, 650);
+          }
+          return;
+        }
+
         index++;
       } else {
+        finished = true;
         clearInterval(matrixInterval);
         matrixInterval = null;
-        // Todas as linhas de comando foram impressas na tela; agora exibe o cartão
         if (typeof onComplete === 'function') {
-          hackCardTimeout = setTimeout(onComplete, 700);
+          hackCardTimeout = setTimeout(onComplete, 650);
         }
       }
-    }, 220);
+    }, 110);
   }
 
   // Prepara os dados do diagnóstico real na memória e no DOM
