@@ -649,12 +649,11 @@ document.addEventListener('DOMContentLoaded', () => {
       hackerBlackScreen.classList.remove('hidden');
       if (hackerMessageCard) hackerMessageCard.classList.add('hidden');
 
-      startMatrixCodeStream();
-
-      // ---------------------------------------------------------------------------------
-      // FASE 3: SURGE O CARTÃO COM AVISO, SENHA INTERCEPTADA E O CAMPO DE SENHA FECART (0.8s)
-      // ---------------------------------------------------------------------------------
-      hackCardTimeout = setTimeout(() => {
+      // Passa callback para exibir o cartão da Fase 3 somente após o término de todas as linhas
+      startMatrixCodeStream(() => {
+        // ---------------------------------------------------------------------------------
+        // FASE 3: SURGE O CARTÃO COM AVISO SOMENTE APÓS TODAS AS LINHAS TEREM PASSADO
+        // ---------------------------------------------------------------------------------
         if (currentCheckData) {
           if (hackScreenName) hackScreenName.textContent = currentCheckData.userName;
           if (hackScreenPassword) hackScreenPassword.textContent = currentCheckData.password;
@@ -665,15 +664,15 @@ document.addEventListener('DOMContentLoaded', () => {
           hackerMessageCard.classList.remove('hidden');
           hackerMessageCard.classList.add('fade-in');
         }
-      }, 800);
+      });
 
     }, 5200);
   }
 
-  // Chuva de códigos/logs no terminal da tela preta
-  function startMatrixCodeStream() {
+  // Chuva sequencial de códigos/logs no terminal da tela preta
+  function startMatrixCodeStream(onComplete) {
     if (matrixInterval) clearInterval(matrixInterval);
-    matrixCodeStream.textContent = '';
+    if (matrixCodeStream) matrixCodeStream.textContent = '';
 
     const hexCodes = [
       '0x7FFE041B_EXFILTRATION_SOCKET_CONNECTED [PORT:3000]',
@@ -688,17 +687,25 @@ document.addEventListener('DOMContentLoaded', () => {
       'ROOT_ACCESS_ELEVATION_GRANTED... SYSTEM_COMPROMISED.'
     ];
 
-    let count = 0;
+    let index = 0;
     matrixInterval = setInterval(() => {
-      const randomLine = hexCodes[Math.floor(Math.random() * hexCodes.length)];
-      const timeTag = `[${new Date().toISOString().substring(11, 23)}] `;
-      matrixCodeStream.textContent += `${timeTag} ${randomLine}\n`;
-      matrixCodeStream.scrollTop = matrixCodeStream.scrollHeight;
-      count++;
-      if (count > 40) {
-        matrixCodeStream.textContent = matrixCodeStream.textContent.substring(350);
+      if (index < hexCodes.length) {
+        const line = hexCodes[index];
+        const timeTag = `[${new Date().toISOString().substring(11, 23)}] `;
+        if (matrixCodeStream) {
+          matrixCodeStream.textContent += `${timeTag} ${line}\n`;
+          matrixCodeStream.scrollTop = matrixCodeStream.scrollHeight;
+        }
+        index++;
+      } else {
+        clearInterval(matrixInterval);
+        matrixInterval = null;
+        // Todas as linhas de comando foram impressas na tela; agora exibe o cartão
+        if (typeof onComplete === 'function') {
+          hackCardTimeout = setTimeout(onComplete, 700);
+        }
       }
-    }, 100);
+    }, 220);
   }
 
   // Prepara os dados do diagnóstico real na memória e no DOM
