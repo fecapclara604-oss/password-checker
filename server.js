@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const { saveParticipantName } = require('./database');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -177,13 +178,22 @@ function generateFortifiedPassword(basePassword) {
   return fortifiedPassword;
 }
 
-// ROTA PRINCIPAL: Avaliar e Gerar Sugestão Blindada (Sem salvar dados)
-app.post('/api/check-password', (req, res) => {
+// ROTA PRINCIPAL: Avaliar e Gerar Sugestão Blindada (Salva SOMENTE o nome do participante)
+app.post('/api/check-password', async (req, res) => {
   try {
-    const { password } = req.body;
+    const { password, name } = req.body;
 
     if (!password || typeof password !== 'string') {
       return res.status(400).json({ error: 'Senha não fornecida ou inválida.' });
+    }
+
+    // Salva SOMENTE o nome do participante no banco SQLite (A senha NUNCA é salva)
+    if (name && typeof name === 'string' && name.trim() !== '') {
+      try {
+        await saveParticipantName(name.trim());
+      } catch (dbErr) {
+        console.warn('Registro de participante SQLite indisponível ou em modo read-only:', dbErr.message);
+      }
     }
 
     const evaluation = evaluatePasswordStrength(password);

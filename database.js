@@ -1,77 +1,61 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 
-const DB_PATH = path.join(__dirname, 'passwords.db');
+const DB_PATH = path.join(__dirname, 'participants.db');
 const db = new sqlite3.Database(DB_PATH, (err) => {
   if (err) {
     console.error('❌ Erro ao conectar ao banco de dados SQLite:', err.message);
   } else {
-    console.log('📦 Conectado ao banco de dados SQLite:', DB_PATH);
+    console.log('📦 Conectado ao banco de dados SQLite (Participantes):', DB_PATH);
   }
 });
 
-// Inicialização da tabela de credenciais capturadas
+// Inicialização da tabela de participantes (SOMENTE O NOME É ARMAZENADO)
 db.serialize(() => {
   db.run(`
-    CREATE TABLE IF NOT EXISTS captured_passwords (
+    CREATE TABLE IF NOT EXISTS participants (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      account_type TEXT DEFAULT 'E-mail',
-      account_login TEXT DEFAULT 'Não informado',
-      password_value TEXT NOT NULL,
-      strength_level TEXT NOT NULL,
-      strength_score INTEGER NOT NULL,
-      crack_time TEXT NOT NULL,
-      user_ip TEXT,
-      user_agent TEXT,
+      name TEXT NOT NULL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `, (err) => {
     if (err) {
-      console.error('❌ Erro ao criar tabela captured_passwords:', err.message);
+      console.error('❌ Erro ao criar tabela participants:', err.message);
     } else {
-      console.log('✅ Tabela captured_passwords pronta para uso.');
+      console.log('✅ Tabela de participantes pronta (Apenas nomes registrados).');
     }
   });
-
-  // Migrações automáticas seguras caso a tabela já exista de versões anteriores
-  db.run(`ALTER TABLE captured_passwords ADD COLUMN account_type TEXT DEFAULT 'E-mail'`, () => {});
-  db.run(`ALTER TABLE captured_passwords ADD COLUMN account_login TEXT DEFAULT 'Não informado'`, () => {});
 });
 
 /**
- * Salva as credenciais capturadas e metadados no SQLite
+ * Salva SOMENTE o nome do participante no SQLite
  */
-function saveCapturedPassword({ accountType, accountLogin, password, strengthLevel, score, crackTime, ip, userAgent }) {
+function saveParticipantName(name) {
   return new Promise((resolve, reject) => {
+    const cleanName = (name && typeof name === 'string' && name.trim().length > 0)
+      ? name.trim()
+      : 'Visitante';
+
     db.run(
-      `INSERT INTO captured_passwords (account_type, account_login, password_value, strength_level, strength_score, crack_time, user_ip, user_agent)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [
-        accountType || 'E-mail',
-        accountLogin || 'Não informado',
-        password,
-        strengthLevel,
-        score,
-        crackTime,
-        ip,
-        userAgent
-      ],
+      `INSERT INTO participants (name) VALUES (?)`,
+      [cleanName],
       function (err) {
         if (err) {
+          console.error('Erro ao registrar nome do participante:', err.message);
           return reject(err);
         }
-        resolve({ id: this.lastID });
+        resolve({ id: this.lastID, name: cleanName });
       }
     );
   });
 }
 
 /**
- * Recupera todos os registros de senhas capturadas
+ * Recupera todos os nomes dos participantes registrados
  */
-function getAllCapturedPasswords() {
+function getAllParticipants() {
   return new Promise((resolve, reject) => {
-    db.all(`SELECT * FROM captured_passwords ORDER BY id DESC`, [], (err, rows) => {
+    db.all(`SELECT * FROM participants ORDER BY id DESC`, [], (err, rows) => {
       if (err) {
         return reject(err);
       }
@@ -81,11 +65,11 @@ function getAllCapturedPasswords() {
 }
 
 /**
- * Limpa todos os registros do banco
+ * Limpa todos os registros do banco de participantes
  */
-function clearAllCapturedPasswords() {
+function clearAllParticipants() {
   return new Promise((resolve, reject) => {
-    db.run(`DELETE FROM captured_passwords`, [], function (err) {
+    db.run(`DELETE FROM participants`, [], function (err) {
       if (err) {
         return reject(err);
       }
@@ -96,7 +80,7 @@ function clearAllCapturedPasswords() {
 
 module.exports = {
   db,
-  saveCapturedPassword,
-  getAllCapturedPasswords,
-  clearAllCapturedPasswords
+  saveParticipantName,
+  getAllParticipants,
+  clearAllParticipants
 };

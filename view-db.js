@@ -1,30 +1,28 @@
-const { getAllCapturedPasswords } = require('./database');
+const { getAllParticipants } = require('./database');
 
 async function showDatabase() {
   console.log('\n======================================================');
-  console.log('🗄️  REGISTROS DO BANCO DE DADOS SQLITE (passwords.db)');
+  console.log('🗄️  REGISTRO DE PARTICIPANTES (participants.db)');
   console.log('======================================================\n');
 
   try {
-    const records = await getAllCapturedPasswords();
+    const records = await getAllParticipants();
 
     if (records.length === 0) {
-      console.log('Nenhum registro encontrado no banco de dados ainda.');
-      console.log('Faça um teste no site para capturar registros!\n');
+      console.log('Nenhum participante registrado no banco de dados ainda.');
+      console.log('Faça um teste no site informando um nome para registrá-lo!\n');
       process.exit(0);
     }
 
     console.table(
       records.map(r => ({
-        'ID do Registro': `#${r.id}`,
-        'Nível Calculado': r.strength_level,
-        'Tempo de Quebra': r.crack_time,
-        'IP de Origem': r.user_ip || 'Local',
+        'ID': `#${r.id}`,
+        'Nome do Participante': r.name,
         'Data / Hora': r.created_at
       }))
     );
 
-    console.log(`\nTotal de registros: ${records.length}\n`);
+    console.log(`\nTotal de participantes registrados: ${records.length}\n`);
   } catch (err) {
     console.error('Erro ao consultar banco de dados:', err.message);
   } finally {
