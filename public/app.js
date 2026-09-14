@@ -577,7 +577,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (meterBar) {
-        meterBar.style.width = '15%';
+        meterBar.style.width = '4%';
         meterBar.style.backgroundColor = '#ff3366';
       }
       if (meterLevelText) {
@@ -811,7 +811,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (realMeterBar && realMeterLevelText && realEval) {
       const percentage = (realEval.score / 7) * 100;
-      realMeterBar.style.width = `${Math.max(percentage, 10)}%`;
+      realMeterBar.style.width = `${Math.max(percentage, 4)}%`;
 
       if (realEval.score <= 2) {
         realMeterBar.style.backgroundColor = '#ff3366';
