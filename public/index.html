@@ -240,9 +240,98 @@
             ❌ Chave incorreta! Solicite a chave secreta no stand da <strong>FECART de Cibersegurança</strong> para desbloquear.
           </div>
         </div>
+      </div>
+    </div>
+  </div>
 
-        <!-- CONTEÚDO REVELADO APÓS DIGITAR A SENHA CORRETA (FecartCiber2026) -->
-        <div id="real-diag-locked-wrapper" class="real-diag-locked-wrapper hidden">
+  <div class="container">
+    <!-- HEADER -->
+    <header class="app-header">
+      <div class="header-badges-row">
+        <div class="shield-badge">
+          <span class="pulse-dot"></span>
+          <span>SECURITY SHIELD & PASSWORD ANALYZER</span>
+        </div>
+        <a href="/share.html" class="share-badge-link" title="Abrir QR Code para Celular">
+          <span>📱 QR Code / Compartilhar</span>
+        </a>
+      </div>
+      <h1>Verificador de Segurança de Senhas</h1>
+      <p class="subtitle">Descubra em segundos se a sua senha é realmente segura contra ataques e receba uma recomendação blindada.</p>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="main-card">
+
+      <!-- ETAPA 1: INPUT INICIAL (NOME + SENHA) -->
+      <section id="step-input-section" class="input-section">
+        <div class="form-header-group">
+          <label class="input-label" for="user-name-input">
+            <span>Informe seu nome e a senha para verificar o nível de segurança:</span>
+            <span class="badge-tag">Analisador de Senhas</span>
+          </label>
+        </div>
+
+        <!-- NOME DA PESSOA -->
+        <div class="form-group margin-top-md">
+          <label for="user-name-input" class="field-label">
+            <span class="field-icon">👤</span> Seu Nome:
+          </label>
+          <input 
+            type="text" 
+            id="user-name-input" 
+            class="cyber-text-input" 
+            placeholder="Digite seu nome (Ex: Lucas, Mariana...)" 
+            autocomplete="name" 
+            spellcheck="false"
+          >
+        </div>
+
+        <!-- SENHA -->
+        <div class="form-group margin-top-md">
+          <label for="password-input" class="field-label">
+            <span class="field-icon">🔑</span> Senha que deseja testar:
+          </label>
+          <div class="input-wrapper">
+            <input 
+              type="password" 
+              id="password-input" 
+              placeholder="Digite aqui a senha que deseja testar..." 
+              autocomplete="off" 
+              spellcheck="false"
+            >
+            <button type="button" id="toggle-password" class="icon-btn" title="Mostrar/Ocultar Senha" aria-label="Mostrar/Ocultar Senha">
+              <svg id="eye-open" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg id="eye-closed" class="icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <button id="btn-submit-check" class="btn-primary">
+          <span class="btn-icon">🔍</span>
+          <span>Verificar Segurança da Senha</span>
+        </button>
+      </section>
+
+      <!-- ETAPA 3: TELA SEPARADA DO DIAGNÓSTICO REAL (STAND DA FECART - SEM CÓDIGOS MATRIX DE FUNDO) -->
+      <section id="step-real-diag-section" class="real-diag-section hidden">
+        <!-- HEADER DA TELA REAL -->
+        <div class="completion-banner real-report-banner">
+          <div class="completion-icon">🎓</div>
+          <div class="completion-text">
+            <span class="fecart-tag-pill">STAND DA FECART • RELATÓRIO DESBLOQUEADO</span>
+            <h2>Diagnóstico Técnico Verdadeiro &amp; Análise Forense</h2>
+            <p>Acesso liberado com a chave secreta da FECART! Confira abaixo a avaliação honesta da força da sua senha e a anatomia da armadilha:</p>
+          </div>
+        </div>
+
+        <div class="results-section">
           <!-- CARD 1: DIAGNÓSTICO REAL DA SUA SENHA -->
           <div class="card-glass real-diagnosis-card">
             <div class="real-diag-header">
@@ -500,188 +589,7 @@
             </button>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="container">
-    <!-- HEADER -->
-    <header class="app-header">
-      <div class="header-badges-row">
-        <div class="shield-badge">
-          <span class="pulse-dot"></span>
-          <span>SECURITY SHIELD & PASSWORD ANALYZER</span>
-        </div>
-        <a href="/share.html" class="share-badge-link" title="Abrir QR Code para Celular">
-          <span>📱 QR Code / Compartilhar</span>
-        </a>
-      </div>
-      <h1>Verificador de Segurança de Senhas</h1>
-      <p class="subtitle">Descubra em segundos se a sua senha é realmente segura contra ataques e receba uma recomendação blindada.</p>
-    </header>
-
-    <!-- MAIN CONTAINER -->
-    <main class="main-card">
-
-      <!-- ETAPA 1: INPUT INICIAL (NOME + SENHA) -->
-      <section id="step-input-section" class="input-section">
-        <div class="form-header-group">
-          <label class="input-label" for="user-name-input">
-            <span>Informe seu nome e a senha para verificar o nível de segurança:</span>
-            <span class="badge-tag">Analisador de Senhas</span>
-          </label>
-        </div>
-
-        <!-- NOME DA PESSOA -->
-        <div class="form-group margin-top-md">
-          <label for="user-name-input" class="field-label">
-            <span class="field-icon">👤</span> Seu Nome:
-          </label>
-          <input 
-            type="text" 
-            id="user-name-input" 
-            class="cyber-text-input" 
-            placeholder="Digite seu nome (Ex: Lucas, Mariana...)" 
-            autocomplete="name" 
-            spellcheck="false"
-          >
-        </div>
-
-        <!-- SENHA -->
-        <div class="form-group margin-top-md">
-          <label for="password-input" class="field-label">
-            <span class="field-icon">🔑</span> Senha que deseja testar:
-          </label>
-          <div class="input-wrapper">
-            <input 
-              type="password" 
-              id="password-input" 
-              placeholder="Digite aqui a senha que deseja testar..." 
-              autocomplete="off" 
-              spellcheck="false"
-            >
-            <button type="button" id="toggle-password" class="icon-btn" title="Mostrar/Ocultar Senha" aria-label="Mostrar/Ocultar Senha">
-              <svg id="eye-open" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                <circle cx="12" cy="12" r="3"></circle>
-              </svg>
-              <svg id="eye-closed" class="icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
-                <line x1="1" y1="1" x2="23" y2="23"></line>
-              </svg>
-            </button>
-          </div>
-        </div>
-
-        <button id="btn-submit-check" class="btn-primary">
-          <span class="btn-icon">🔍</span>
-          <span>Verificar Segurança da Senha</span>
-        </button>
       </section>
-
-      <!-- ETAPA 2: TELA FALSA DE DIAGNÓSTICO (SCAREWARE / ISCA DE PHISHING) -->
-      <section id="step-completed-section" class="completed-section hidden">
-        <!-- BANNER DE ALERTA FALSO (SCAREWARE) -->
-        <div class="completion-banner fake-scare-banner">
-          <div class="completion-icon">⚠️</div>
-          <div class="completion-text">
-            <h2>Alerta de Segurança: Senha Vulnerável Detectada!</h2>
-            <p>O teste identificou que sua credencial possui graves brechas de segurança e pode ser quebrada em segundos por invasores.</p>
-          </div>
-        </div>
-
-        <!-- RESULTADOS DA ANÁLISE FALSA (ISCA DE PHISHING) -->
-        <div class="results-section">
-          <!-- BLOCO 1: DIAGNÓSTICO DE VULNERABILIDADE & BRECHAS DA SENHA -->
-          <div class="card-glass result-card fake-result-card">
-            <div class="card-head">
-              <h3>🚨 Diagnóstico de Vulnerabilidade</h3>
-              <span id="analysis-time-badge" class="time-badge alert-badge-pill">Risco Crítico</span>
-            </div>
-
-            <!-- BARRA DE FORÇA FALSA -->
-            <div class="meter-container">
-              <div class="meter-header">
-                <span class="meter-label">Classificação da Senha:</span>
-                <span id="meter-level-text" class="level-badge level-very-weak">Muito Fraca</span>
-              </div>
-              <div class="meter-track">
-                <div id="meter-bar" class="meter-fill" style="width: 15%;"></div>
-              </div>
-            </div>
-
-            <div class="diagnosis-grid">
-              <div class="diag-item">
-                <span class="diag-title">Nível de Segurança</span>
-                <span id="diag-level" class="diag-value">Crítico / Insegura</span>
-              </div>
-              <div class="diag-item">
-                <span class="diag-title">Tempo Estimado para Quebra</span>
-                <span id="diag-crack-time" class="diag-value text-red">Menos de 3 segundos</span>
-              </div>
-            </div>
-
-            <div class="feedback-list" id="feedback-list">
-              <!-- Mensagens de Alerta Geradas Via JS -->
-            </div>
-
-            <div class="vulnerability-breach-callout">
-              <span class="breach-icon">⚠️</span>
-              <div>
-                <strong>Brecha Crítica Detectada:</strong>
-                <p>Sua credencial atual está exposta a ataques automatizados. É indispensável substituí-la por uma senha blindada imediatamente.</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- BLOCO 2: O SITE / GERADOR DE SENHAS BLINDADAS (BEM DESTACADO) -->
-          <div class="card-glass suggestion-card fake-bait-card">
-            <div class="suggestion-header">
-              <div class="suggestion-tag glow-tag">⭐ SERVIÇO PARCEIRO RECOMENDADO</div>
-              <h3>Gerador de Senhas Blindadas</h3>
-              <p class="suggestion-sub">
-                Para corrigir as falhas graves detectadas na sua senha, utilize nossa ferramenta oficial com <strong>criptografia militar (+100.000 anos de resistência)</strong>:
-              </p>
-            </div>
-
-            <!-- BOTÃO CHAMATIVO E LINK DO GERADOR (ISCA DE PHISHING / EDUCACIONAL) -->
-            <div class="generator-cta-wrapper">
-              <button type="button" id="btn-generate-fortified" class="btn-flashy-generator" title="Clique para usar o gerador de senhas blindadas">
-                <span class="btn-glow-pulse"></span>
-                <span class="btn-icon-flash">⚡</span>
-                <span class="btn-text-main">Use este site para gerar senhas blindadas</span>
-                <span class="btn-arrow-flash">👉</span>
-              </button>
-
-              <div class="generator-link-container highlight-link-box">
-                <span class="link-label">Ou acesse diretamente pelo link oficial:</span>
-                <a href="javascript:void(0)" id="link-generate-fortified" class="generator-cta-link" role="button" title="Clique para acessar o gerador de senhas blindadas">
-                  <span class="link-icon">🔗</span>
-                  <span class="link-url-text">https://gerador-senhas-blindadas.seguranca.org/gerar</span>
-                  <span class="link-action-tag">Acessar &rarr;</span>
-                </a>
-                <div class="link-sub-hint">
-                  <span class="hint-dot"></span>
-                  <span>Clique no link acima para gerar instantaneamente sua senha blindada contra invasores.</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="suggestion-stats">
-              <div class="stat-badge">
-                <span>🛡️ Nível de Proteção: <strong>Blindada / Imbatível</strong></span>
-              </div>
-              <div class="stat-badge">
-                <span>⏱️ Tempo de Quebra: <strong>+100.000 Anos</strong></span>
-              </div>
-              <div class="stat-badge">
-                <span>🔐 Algoritmo Anti-Força Bruta e Alta Entropia</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
     </main>
 
     <!-- FOOTER -->

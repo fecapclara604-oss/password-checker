@@ -341,32 +341,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const typed = inputEl.value.trim();
 
     if (typed === MASTER_UNLOCK_PASSWORD) {
-      // SENHA CORRETA: DESBLOQUEIA O DIAGNÓSTICO TÉCNICO REAL
+      // SENHA CORRETA: DESBLOQUEIA O DIAGNÓSTICO TÉCNICO REAL NA TELA SEPARADA
       playGlitchBeep('unlock');
       if (errEl) errEl.classList.add('hidden');
       inputEl.classList.remove('shake-error');
 
-      // Substitui a caixa de input por um banner de sucesso
-      if (boxEl) {
-        boxEl.innerHTML = `
-          <div class="unlock-success-banner">
-            <span style="font-size: 1.6rem;">🔓</span>
-            <div>
-              <strong style="color: #00e676; font-size: 1.05rem;">Chave 'FecartCiber2026' Validada com Sucesso!</strong>
-              <p style="color: #cbd5e1; font-size: 0.88rem; margin-top: 2px;">
-                Acesso liberado. Confira abaixo a <strong>avaliação técnica verdadeira</strong> e a força real da senha testada:
-              </p>
-            </div>
-          </div>
-        `;
+      // 1. Interrompe a animação dos códigos matrix de fundo
+      if (matrixInterval) {
+        clearInterval(matrixInterval);
+        matrixInterval = null;
       }
 
-      // Revela os cartões do diagnóstico real
-      if (wrapperEl) {
-        wrapperEl.classList.remove('hidden');
-        wrapperEl.classList.add('fade-in');
-        wrapperEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // 2. Oculta completamente a tela preta hacker e a simulação
+      if (hackerBlackScreen) {
+        hackerBlackScreen.classList.add('hidden');
       }
+      if (crashOverlay) {
+        crashOverlay.classList.add('hidden');
+      }
+      if (stepCompletedSection) {
+        stepCompletedSection.classList.add('hidden');
+      }
+      if (stepInputSection) {
+        stepInputSection.classList.add('hidden');
+      }
+
+      // 3. Garante que os dados reais da senha estão preenchidos nos cartões
+      prepareRealDiagnosisData();
+
+      // 4. Exibe a tela separada e limpa da FECART (sem códigos de fundo)
+      const stepRealDiagSection = document.getElementById('step-real-diag-section');
+      if (stepRealDiagSection) {
+        stepRealDiagSection.classList.remove('hidden');
+        stepRealDiagSection.classList.add('fade-in');
+      }
+
+      // 5. Rola suavemente para o início da página
+      window.scrollTo({ top: 0, behavior: 'smooth' });
 
     } else {
       // SENHA INCORRETA
@@ -950,6 +961,8 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
+    const stepRealDiagSection = document.getElementById('step-real-diag-section');
+    if (stepRealDiagSection) stepRealDiagSection.classList.add('hidden');
     if (realDiagLockedWrapper) realDiagLockedWrapper.classList.add('hidden');
 
     if (stepCompletedSection) stepCompletedSection.classList.add('hidden');
