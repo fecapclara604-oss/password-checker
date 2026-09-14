@@ -1323,6 +1323,46 @@ body.system-crashing {
   justify-content: space-between;
 }
 
+.ultra-highlighted-bait {
+  border: 2px solid #00f2fe !important;
+  background: linear-gradient(180deg, rgba(8, 30, 60, 0.98) 0%, rgba(4, 18, 38, 0.98) 100%) !important;
+  box-shadow: 0 0 45px rgba(0, 242, 254, 0.4), inset 0 0 25px rgba(0, 242, 254, 0.12) !important;
+  position: relative;
+  animation: ultraBaitPulse 3s infinite alternate ease-in-out;
+}
+
+@keyframes ultraBaitPulse {
+  0% {
+    border-color: #00f2fe;
+    box-shadow: 0 0 35px rgba(0, 242, 254, 0.35), inset 0 0 20px rgba(0, 242, 254, 0.1);
+  }
+  100% {
+    border-color: #00ff9d;
+    box-shadow: 0 0 60px rgba(0, 255, 157, 0.55), inset 0 0 35px rgba(0, 242, 254, 0.2);
+  }
+}
+
+.glow-tag-gold {
+  background: rgba(255, 215, 0, 0.18) !important;
+  color: #ffd700 !important;
+  border: 1px solid rgba(255, 215, 0, 0.6) !important;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+  font-weight: 800;
+  letter-spacing: 0.8px;
+}
+
+.btn-flashy-guide {
+  background: linear-gradient(135deg, #00f2fe 0%, #00e676 50%, #4facfe 100%) !important;
+  box-shadow: 0 0 35px rgba(0, 242, 254, 0.5), 0 0 70px rgba(0, 230, 118, 0.3) !important;
+  font-size: 1.12rem !important;
+  padding: 20px 26px !important;
+}
+
+.btn-flashy-guide:hover {
+  transform: translateY(-4px) scale(1.035) !important;
+  box-shadow: 0 0 50px rgba(0, 242, 254, 0.85), 0 0 95px rgba(0, 230, 118, 0.6) !important;
+}
+
 .suggestion-tag {
   display: inline-block;
   font-size: 0.72rem;

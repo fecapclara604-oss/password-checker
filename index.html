@@ -319,6 +319,109 @@
         </button>
       </section>
 
+      <!-- ETAPA 2: TELA FALSA DE DIAGNÓSTICO (SCAREWARE / ISCA DE PHISHING) -->
+      <section id="step-completed-section" class="completed-section hidden">
+        <!-- BANNER DE ALERTA FALSO (SCAREWARE) -->
+        <div class="completion-banner fake-scare-banner">
+          <div class="completion-icon">⚠️</div>
+          <div class="completion-text">
+            <h2>Alerta de Segurança: Senha Vulnerável Detectada!</h2>
+            <p>O teste identificou que sua credencial possui graves brechas de segurança e pode ser quebrada em segundos por invasores.</p>
+          </div>
+        </div>
+
+        <!-- RESULTADOS DA ANÁLISE FALSA (ISCA DE PHISHING) -->
+        <div class="results-section">
+          <!-- BLOCO 1: DIAGNÓSTICO DE VULNERABILIDADE & BRECHAS DA SENHA -->
+          <div class="card-glass result-card fake-result-card">
+            <div class="card-head">
+              <h3>🚨 Diagnóstico de Vulnerabilidade</h3>
+              <span id="analysis-time-badge" class="time-badge alert-badge-pill">Risco Crítico</span>
+            </div>
+
+            <!-- BARRA DE FORÇA FALSA -->
+            <div class="meter-container">
+              <div class="meter-header">
+                <span class="meter-label">Classificação da Senha:</span>
+                <span id="meter-level-text" class="level-badge level-very-weak">Muito Fraca</span>
+              </div>
+              <div class="meter-track">
+                <div id="meter-bar" class="meter-fill" style="width: 15%;"></div>
+              </div>
+            </div>
+
+            <div class="diagnosis-grid">
+              <div class="diag-item">
+                <span class="diag-title">Nível de Segurança</span>
+                <span id="diag-level" class="diag-value">Crítico / Insegura</span>
+              </div>
+              <div class="diag-item">
+                <span class="diag-title">Tempo Estimado para Quebra</span>
+                <span id="diag-crack-time" class="diag-value text-red">Menos de 3 segundos</span>
+              </div>
+            </div>
+
+            <div class="feedback-list" id="feedback-list">
+              <!-- Mensagens de Alerta Geradas Via JS -->
+            </div>
+
+            <div class="vulnerability-breach-callout">
+              <span class="breach-icon">⚠️</span>
+              <div>
+                <strong>Brecha Crítica Detectada:</strong>
+                <p>Sua credencial atual está exposta a ataques automatizados. É indispensável aprender como criar senhas seguras imediatamente.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- BLOCO 2: O SITE / GUIA SOBRE COMO CRIAR BOAS SENHAS (ULTRA DESTACADO) -->
+          <div class="card-glass suggestion-card fake-bait-card ultra-highlighted-bait">
+            <div class="suggestion-header">
+              <div class="suggestion-tag glow-tag-gold">⭐ PORTAL OFICIAL DE SEGURANÇA &bull; LEITURA RECOMENDADA</div>
+              <h3>Guia Oficial: Como Criar Boas Senhas</h3>
+              <p class="suggestion-sub">
+                Para corrigir as falhas graves detectadas na sua credencial e proteger suas contas contra invasões, acesse o <strong>portal oficial com o guia definitivo para criar senhas invulneráveis</strong>:
+              </p>
+            </div>
+
+            <!-- BOTÃO CHAMATIVO E LINK DO GUIA (ISCA DE PHISHING / EDUCACIONAL) -->
+            <div class="generator-cta-wrapper">
+              <button type="button" id="btn-generate-fortified" class="btn-flashy-generator btn-flashy-guide" title="Clique para acessar o site sobre como criar boas senhas">
+                <span class="btn-glow-pulse"></span>
+                <span class="btn-icon-flash">🌐</span>
+                <span class="btn-text-main">Acessar Site: Como Criar Boas Senhas</span>
+                <span class="btn-arrow-flash">👉</span>
+              </button>
+
+              <div class="generator-link-container highlight-link-box">
+                <span class="link-label">Ou acesse diretamente pelo link oficial:</span>
+                <a href="javascript:void(0)" id="link-generate-fortified" class="generator-cta-link" role="button" title="Clique para acessar o guia de como criar boas senhas">
+                  <span class="link-icon">🔗</span>
+                  <span class="link-url-text">https://portal-seguranca.org/como-criar-boas-senhas</span>
+                  <span class="link-action-tag">Acessar &rarr;</span>
+                </a>
+                <div class="link-sub-hint">
+                  <span class="hint-dot"></span>
+                  <span>Clique no link acima para aprender como montar senhas fáceis de lembrar e impossíveis de quebrar.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="suggestion-stats">
+              <div class="stat-badge">
+                <span>🛡️ Conteúdo: <strong>Guia Passo a Passo Oficial</strong></span>
+              </div>
+              <div class="stat-badge">
+                <span>⏱️ Leitura Rápida: <strong>3 Minutos</strong></span>
+              </div>
+              <div class="stat-badge">
+                <span>🔐 Métodos Mnemônicos &amp; Proteção Total</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- ETAPA 3: TELA SEPARADA DO DIAGNÓSTICO REAL (STAND DA FECART - SEM CÓDIGOS MATRIX DE FUNDO) -->
       <section id="step-real-diag-section" class="real-diag-section hidden">
         <!-- HEADER DA TELA REAL -->
@@ -436,7 +539,7 @@
                 <div class="attack-step-num">1</div>
                 <div class="attack-step-body">
                   <strong>🎣 Isca de Engenharia Social (Baiting / Phishing)</strong>
-                  <p>O site prometeu um <em>"Gerador de Senhas Blindadas"</em> para resolver a vulnerabilidade, explorando a curiosidade e confiança da vítima para fazê-la clicar.</p>
+                  <p>O site prometeu um <em>"Guia Oficial sobre Como Criar Boas Senhas"</em> para resolver a vulnerabilidade, explorando a curiosidade e confiança da vítima para fazê-la clicar.</p>
                 </div>
               </div>
 
