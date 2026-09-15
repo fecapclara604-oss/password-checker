@@ -3812,4 +3812,40 @@ body.system-crashing {
   }
 }
 
+/* ========================================================
+   ESTRUTURA HIERÁRQUICA E ALINHAMENTO DO RELATÓRIO FECART
+   ======================================================== */
+.real-diag-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.real-diag-top-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 20px;
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .real-diag-top-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.attack-grid-3col {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .attack-grid-3col {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+
 
