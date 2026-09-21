@@ -3988,12 +3988,21 @@ body.system-crashing {
 /* =========================================================================
    BANNER DE RECOMPENSA DO DESAFIO NO CABEÇALHO
    ========================================================================= */
+.challenge-banners-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+  width: 100%;
+}
+
 .challenge-reward-banner {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  margin-top: 18px;
   padding: 10px 24px;
   background: linear-gradient(135deg, rgba(255, 179, 0, 0.12) 0%, rgba(0, 242, 254, 0.12) 100%);
   border: 1px solid rgba(255, 179, 0, 0.5);
@@ -4045,6 +4054,26 @@ body.system-crashing {
   .challenge-reward-banner .reward-text {
     font-size: 0.86rem;
   }
+}
+
+.challenge-location-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 18px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #00f2fe;
+  background: rgba(0, 242, 254, 0.08);
+  border: 1px solid rgba(0, 242, 254, 0.28);
+  border-radius: 9999px;
+  letter-spacing: 0.3px;
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.1);
+}
+
+.challenge-location-tag .location-icon {
+  font-size: 1rem;
 }
 
 
