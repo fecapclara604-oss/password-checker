@@ -912,11 +912,11 @@ document.addEventListener('DOMContentLoaded', () => {
             <span class="unlock-tag">ACESSO RESTRITO &bull; DEMONSTRAÇÃO PRÁTICA</span>
             <h3>Insira a Chave Secreta da FECART</h3>
             <p class="unlock-desc">
-              Digite a chave de liberação obtida no stand da <strong>FECART de Cibersegurança</strong> para liberar a análise:
+              Digite a chave de liberação obtida no <strong>quinto andar do bloco B</strong> para liberar a análise:
             </p>
             <div class="unlock-stand-reward-notice">
               <span class="notice-icon">🎁</span>
-              <span>Vá até o estande com a toalha de mesa para resgatar a senha e a sua recompensa</span>
+              <span>Vá até o quinto andar do bloco B com a toalha de mesa para resgatar a senha e a sua recompensa</span>
             </div>
           </div>
         </div>
@@ -944,7 +944,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
 
         <div id="unlock-error-msg" class="unlock-error-msg hidden">
-          ❌ Chave incorreta! Solicite a chave secreta no stand da <strong>FECART de Cibersegurança</strong> para desbloquear.
+          ❌ Chave incorreta! Solicite a chave secreta no <strong>quinto andar do bloco B</strong> para desbloquear.
         </div>
       `;
 
