@@ -914,6 +914,10 @@ document.addEventListener('DOMContentLoaded', () => {
             <p class="unlock-desc">
               Digite a chave de liberação obtida no stand da <strong>FECART de Cibersegurança</strong> para liberar a análise:
             </p>
+            <div class="unlock-stand-reward-notice">
+              <span class="notice-icon">🎁</span>
+              <span>Vá até o estande com a toalha de mesa para resgatar a senha e a sua recompensa</span>
+            </div>
           </div>
         </div>
 
