@@ -366,8 +366,18 @@ document.addEventListener('DOMContentLoaded', () => {
         stepInputSection.classList.add('hidden');
       }
 
-      // 3. Garante que os dados reais da senha estão preenchidos nos cartões
-      prepareRealDiagnosisData();
+      // 3. Atualiza a mensagem com o nome do participante
+      const fecartWelcomeMsg = document.getElementById('fecart-welcome-msg');
+      if (fecartWelcomeMsg) {
+        const name = (currentCheckData && currentCheckData.userName && currentCheckData.userName !== 'Visitante')
+          ? currentCheckData.userName
+          : '';
+        if (name) {
+          fecartWelcomeMsg.textContent = `Olá, ${name}! Obrigado pela sua participação na demonstração prática de cibersegurança.`;
+        } else {
+          fecartWelcomeMsg.textContent = 'Obrigado pela sua participação na demonstração prática de cibersegurança!';
+        }
+      }
 
       // 4. Exibe a tela separada e limpa da FECART (sem códigos de fundo)
       const stepRealDiagSection = document.getElementById('step-real-diag-section');
