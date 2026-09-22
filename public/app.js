@@ -332,6 +332,160 @@ document.addEventListener('DOMContentLoaded', () => {
   // =========================================================================
   // SISTEMA DE DESBLOQUEIO DA FORÇA REAL COM A SENHA 'FecartCiber2026'
   // =========================================================================
+  let fecartPwdMasked = false;
+
+  function generateBriefPasswordSummary(pwd, evaluation) {
+    const len = pwd ? pwd.length : 0;
+    const score = evaluation ? evaluation.score : 0;
+    const isCommon = evaluation && evaluation.feedback && evaluation.feedback.some(f => f.includes('vazadas') || f.includes('comuns'));
+
+    if (isCommon) {
+      return 'Sua senha é extremamente conhecida e consta em dicionários públicos de ataques cibernéticos. Hackers conseguem quebrar senhas como esta em fração de segundo por meio de scripts prontos.';
+    }
+
+    if (len < 8) {
+      return `Com apenas ${len} ${len === 1 ? 'caractere' : 'caracteres'}, a credencial é excessivamente curta e oferece baixíssima resistência computacional, sendo quebrada em poucos instantes por força bruta.`;
+    }
+
+    if (score <= 3) {
+      return 'A senha possui poucos tipos de caracteres combinados, tornando seu padrão previsível e suscetível a técnicas de quebra automatizadas em computadores convencionais.';
+    }
+
+    if (score <= 5) {
+      return 'A senha possui uma estrutura razoável, mas ainda pode ser fortalecida aumentando seu tamanho (14+ caracteres) e incluindo símbolos especiais (@, #, $, %).';
+    }
+
+    return 'Excelente estrutura de segurança! A senha combina múltiplos tipos de caracteres e ótimo comprimento, gerando alta entropia e proteção máxima contra tentativas de invasão.';
+  }
+
+  function populateFecartPasswordEvaluation() {
+    if (!currentCheckData) return;
+    const pwd = currentCheckData.password || '';
+    const evaluation = currentCheckData.evaluation || clientEvaluatePassword(pwd);
+
+    const evalPwdEl = document.getElementById('fecart-eval-pwd');
+    const toggleBtn = document.getElementById('btn-toggle-fecart-pwd');
+    const levelEl = document.getElementById('fecart-eval-level');
+    const crackTimeEl = document.getElementById('fecart-eval-crack-time');
+    const scoreTextEl = document.getElementById('fecart-eval-score-text');
+    const meterBarEl = document.getElementById('fecart-eval-meter-bar');
+    const summaryTextEl = document.getElementById('fecart-eval-summary-text');
+    const tipsListEl = document.getElementById('fecart-eval-tips-list');
+
+    // Exibição da senha com botão para alternar visibilidade
+    if (evalPwdEl) {
+      evalPwdEl.textContent = pwd;
+      fecartPwdMasked = false;
+      if (toggleBtn) toggleBtn.textContent = '👁️';
+    }
+
+    if (toggleBtn && evalPwdEl) {
+      toggleBtn.onclick = () => {
+        fecartPwdMasked = !fecartPwdMasked;
+        if (fecartPwdMasked) {
+          evalPwdEl.textContent = '•'.repeat(Math.max(pwd.length, 6));
+          toggleBtn.textContent = '🙈';
+        } else {
+          evalPwdEl.textContent = pwd;
+          toggleBtn.textContent = '👁️';
+        }
+      };
+    }
+
+    // Nível de segurança com badge estilizado
+    if (levelEl) {
+      levelEl.textContent = evaluation.level || 'Muito Fraca';
+      levelEl.className = 'stat-badge-level';
+      if (evaluation.score <= 2) {
+        levelEl.classList.add('level-very-weak');
+      } else if (evaluation.score <= 4) {
+        levelEl.classList.add('level-weak');
+      } else if (evaluation.score <= 5) {
+        levelEl.classList.add('level-medium');
+      } else if (evaluation.score === 6) {
+        levelEl.classList.add('level-strong');
+      } else {
+        levelEl.classList.add('level-unbreakable');
+      }
+    }
+
+    // Tempo estimado para quebra
+    if (crackTimeEl) {
+      crackTimeEl.textContent = evaluation.crackTime || 'Instantâneo';
+      if (evaluation.score <= 3) {
+        crackTimeEl.className = 'stat-value-crack text-red';
+      } else {
+        crackTimeEl.className = 'stat-value-crack text-green';
+      }
+    }
+
+    // Pontuação e Barra de Progresso Real
+    const score = evaluation.score || 0;
+    if (scoreTextEl) {
+      scoreTextEl.textContent = `${score} / 7 Critérios`;
+    }
+    if (meterBarEl) {
+      const percentage = Math.max((score / 7) * 100, 4);
+      meterBarEl.style.width = `${percentage}%`;
+      if (score <= 2) {
+        meterBarEl.style.backgroundColor = '#ff3366';
+      } else if (score <= 4) {
+        meterBarEl.style.backgroundColor = '#ff9100';
+      } else if (score <= 5) {
+        meterBarEl.style.backgroundColor = '#ffd600';
+      } else if (score === 6) {
+        meterBarEl.style.backgroundColor = '#00e676';
+      } else {
+        meterBarEl.style.backgroundColor = '#00f2fe';
+      }
+    }
+
+    // Checklist de Critérios Atendidos
+    const critLen = document.getElementById('crit-len');
+    const critUpper = document.getElementById('crit-upper');
+    const critLower = document.getElementById('crit-lower');
+    const critNum = document.getElementById('crit-num');
+    const critSpec = document.getElementById('crit-spec');
+
+    const hasLen = pwd.length >= 8;
+    const hasUpper = /[A-Z]/.test(pwd);
+    const hasLower = /[a-z]/.test(pwd);
+    const hasNum = /[0-9]/.test(pwd);
+    const hasSpec = /[^A-Za-z0-9]/.test(pwd);
+
+    function updateCritPill(el, valid, label) {
+      if (!el) return;
+      if (valid) {
+        el.className = 'crit-pill crit-valid';
+        el.innerHTML = `✅ ${label}`;
+      } else {
+        el.className = 'crit-pill crit-invalid';
+        el.innerHTML = `❌ ${label}`;
+      }
+    }
+
+    updateCritPill(critLen, hasLen, 'Mínimo 8 caracteres');
+    updateCritPill(critUpper, hasUpper, 'Letras Maiúsculas (A-Z)');
+    updateCritPill(critLower, hasLower, 'Letras Minúsculas (a-z)');
+    updateCritPill(critNum, hasNum, 'Números (0-9)');
+    updateCritPill(critSpec, hasSpec, 'Símbolos (@, #, $, %...)');
+
+    // Resumo Explicativo em Linguagem Clara
+    if (summaryTextEl) {
+      summaryTextEl.textContent = generateBriefPasswordSummary(pwd, evaluation);
+    }
+
+    // Lista de Dicas Práticas
+    if (tipsListEl && evaluation.feedback) {
+      tipsListEl.innerHTML = '';
+      evaluation.feedback.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        tipsListEl.appendChild(li);
+      });
+    }
+  }
+
   function handleUnlockRealDiagnosis() {
     const inputEl = document.getElementById('unlock-password-input');
     const errEl = document.getElementById('unlock-error-msg');
@@ -379,14 +533,17 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      // 4. Exibe a tela separada e limpa da FECART (sem códigos de fundo)
+      // 4. Popula a avaliação breve da senha do participante
+      populateFecartPasswordEvaluation();
+
+      // 5. Exibe a tela separada e limpa da FECART (sem códigos de fundo)
       const stepRealDiagSection = document.getElementById('step-real-diag-section');
       if (stepRealDiagSection) {
         stepRealDiagSection.classList.remove('hidden');
         stepRealDiagSection.classList.add('fade-in');
       }
 
-      // 5. Rola suavemente para o início da página
+      // 6. Rola suavemente para o início da página
       window.scrollTo({ top: 0, behavior: 'smooth' });
 
     } else {

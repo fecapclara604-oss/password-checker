@@ -453,6 +453,73 @@
             Obrigado pela sua participação na demonstração prática de cibersegurança!
           </p>
 
+          <!-- CARD DE AVALIAÇÃO BREVE DA SENHA DO PARTICIPANTE -->
+          <div class="fecart-eval-card" id="fecart-eval-card">
+            <div class="fecart-eval-header">
+              <div class="eval-header-badge">
+                <span class="eval-badge-icon">📊</span>
+                <span>DIAGNÓSTICO TÉCNICO REAL</span>
+              </div>
+              <h3 class="fecart-eval-title">Avaliação da Senha Testada</h3>
+              <p class="fecart-eval-subtitle">Confira abaixo a análise de segurança da sua credencial:</p>
+            </div>
+
+            <!-- GRID PRINCIPAL DE DADOS DA SENHA -->
+            <div class="fecart-eval-stats-grid">
+              <div class="fecart-stat-box stat-pwd">
+                <span class="stat-label">🔑 Senha Analisada</span>
+                <div class="stat-pwd-row">
+                  <span id="fecart-eval-pwd" class="stat-value font-mono">******</span>
+                  <button type="button" id="btn-toggle-fecart-pwd" class="fecart-mini-toggle" title="Ver/Ocultar Senha">👁️</button>
+                </div>
+              </div>
+
+              <div class="fecart-stat-box stat-level">
+                <span class="stat-label">🛡️ Nível de Segurança</span>
+                <span id="fecart-eval-level" class="stat-badge-level level-very-weak">Muito Fraca</span>
+              </div>
+
+              <div class="fecart-stat-box stat-crack">
+                <span class="stat-label">⏱️ Tempo Estimado de Quebra</span>
+                <span id="fecart-eval-crack-time" class="stat-value-crack text-red">Menos de 3 segundos</span>
+              </div>
+            </div>
+
+            <!-- BARRA VISUAL DE FORÇA REAL -->
+            <div class="fecart-meter-wrap">
+              <div class="fecart-meter-info">
+                <span class="fecart-meter-tag">Força Computada:</span>
+                <span id="fecart-eval-score-text" class="fecart-score-text">1 / 7 Critérios</span>
+              </div>
+              <div class="fecart-meter-track">
+                <div id="fecart-eval-meter-bar" class="fecart-meter-bar" style="width: 20%; background-color: #ff3366;"></div>
+              </div>
+            </div>
+
+            <!-- CHECKLIST DE CRITÉRIOS ATENDIDOS -->
+            <div class="fecart-criteria-row" id="fecart-criteria-row">
+              <span class="crit-pill" id="crit-len">⚪ Mínimo 8 caracteres</span>
+              <span class="crit-pill" id="crit-upper">⚪ Letras Maiúsculas</span>
+              <span class="crit-pill" id="crit-lower">⚪ Letras Minúsculas</span>
+              <span class="crit-pill" id="crit-num">⚪ Números (0-9)</span>
+              <span class="crit-pill" id="crit-spec">⚪ Símbolos (@#$)</span>
+            </div>
+
+            <!-- RESUMO EXPLICATIVO / FEEDBACK -->
+            <div class="fecart-eval-summary-box">
+              <div class="summary-header">
+                <span class="summary-icon">💡</span>
+                <strong>Por que esta classificação?</strong>
+              </div>
+              <p id="fecart-eval-summary-text" class="summary-desc">
+                Analisando a credencial testada...
+              </p>
+              <ul id="fecart-eval-tips-list" class="eval-tips-list">
+                <!-- Dicas geradas via JS -->
+              </ul>
+            </div>
+          </div>
+
           <div class="fecart-welcome-info">
             <div class="fecart-info-item fecart-reward-unlocked">
               <span class="info-icon">🎁</span>
