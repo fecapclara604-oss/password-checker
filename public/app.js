@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnTestAgain = document.getElementById('btn-test-again');
 
   // SENHA MESTRA PARA DESBLOQUEAR O DIAGNÓSTICO REAL
-  const MASTER_UNLOCK_PASSWORD = 'FecartCiber2026';
+  const MASTER_UNLOCK_PASSWORD = 'kfW51Y#)V3mP';
 
   // Dados da verificação atual em memória (sem salvar em banco nem localStorage)
   let currentCheckData = null;
