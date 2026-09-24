@@ -87,7 +87,7 @@ function evaluatePasswordStrength(password) {
   let level = 'Muito Fraca';
 
   if (isCommon) {
-    crackTime = 'Instantâneo (Lista de Senhas Conhecidas)';
+    crackTime = 'Instantâneo (Dicionário de Ataque)';
     level = 'Muito Fraca';
   } else if (score <= 2) {
     crackTime = 'Menos de 3 segundos';
