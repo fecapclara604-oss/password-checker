@@ -134,72 +134,166 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ========================================================
-  // SIMULAÇÃO DE ATAQUE (overlay antes da etapa 3)
+  // SIMULAÇÃO DE ATAQUE — TELA TREMENDO + POPUPS EM CASCATA
   // ========================================================
-  const attackOverlay = document.getElementById('attack-overlay');
-  const attackProgressBar = document.getElementById('attack-progress-bar');
-  const attackProgressPct = document.getElementById('attack-progress-pct');
-  const attackLogLine = document.getElementById('attack-log-line');
-  const attackFooterMsg = document.getElementById('attack-footer-msg');
 
-  const ATTACK_LOG_STEPS = [
-    'Iniciando varredura de vulnerabilidades...',
-    'Analisando configurações de rede...',
-    'Verificando credenciais expostas...',
-    'Detectando brechas no dispositivo...',
-    'Coletando dados do sistema...',
-    'Explorando vetores de ataque...',
-    'Acesso à credencial obtido.',
-    'Concluído. Relatório gerado.'
+  const ATTACK_POPUPS = [
+    {
+      title: '⚠️ ALERTA DE SEGURANÇA',
+      body: 'Seu dispositivo não passou no teste de segurança.\nVulnerabilidade crítica detectada!',
+      btn: 'Fechar',
+      color: '#ff3366'
+    },
+    {
+      title: '🔴 ACESSO NÃO AUTORIZADO',
+      body: 'Suas credenciais foram comprometidas.\nUm invasor está acessando seus dados agora.',
+      btn: 'OK',
+      color: '#ff6600'
+    },
+    {
+      title: '☠️ VÍRUS DETECTADO',
+      body: 'Trojan.PWS.Generic encontrado no sistema.\nRemovendo arquivos críticos...',
+      btn: 'Cancelar',
+      color: '#cc0000'
+    },
+    {
+      title: '🚨 FIREWALL DESATIVADO',
+      body: 'Seu firewall foi desligado remotamente.\nConexão externa ativa na porta 4444.',
+      btn: 'Ignorar',
+      color: '#ff3366'
+    },
+    {
+      title: '💀 DADOS EXPOSTOS',
+      body: 'Senha capturada com sucesso.\nEnviando para servidor remoto...',
+      btn: 'Fechar',
+      color: '#990000'
+    },
+    {
+      title: '🔓 CONTA INVADIDA',
+      body: 'Login realizado em outro dispositivo.\nLocalização: Desconhecida',
+      btn: 'OK',
+      color: '#ff3366'
+    },
+    {
+      title: '⚡ SISTEMA COMPROMETIDO',
+      body: 'Acesso root obtido.\nBackdoor instalado com sucesso.',
+      btn: 'Fechar',
+      color: '#cc2200'
+    }
   ];
 
+  let attackRunning = false;
+  let attackTimeouts = [];
+  let spawnedPopups = [];
+
+  function clearAllAttackEffects() {
+    attackRunning = false;
+    attackTimeouts.forEach(t => clearTimeout(t));
+    attackTimeouts = [];
+    spawnedPopups.forEach(p => p.remove());
+    spawnedPopups = [];
+    document.body.classList.remove('attack-shake', 'attack-red-flash');
+    const overlay = document.getElementById('attack-dimmer');
+    if (overlay) overlay.remove();
+  }
+
+  function spawnPopup(data, index) {
+    const popup = document.createElement('div');
+    popup.className = 'attack-popup';
+    popup.style.setProperty('--pop-color', data.color);
+
+    // Posição aleatória mas dentro da tela
+    const maxX = Math.max(window.innerWidth - 320, 10);
+    const maxY = Math.max(window.innerHeight - 180, 10);
+    const x = Math.floor(Math.random() * maxX);
+    const y = Math.floor(Math.random() * maxY);
+    popup.style.left = x + 'px';
+    popup.style.top = y + 'px';
+    popup.style.zIndex = 10000 + index;
+
+    popup.innerHTML = `
+      <div class="apop-titlebar">
+        <span class="apop-title">${data.title}</span>
+        <button class="apop-close" title="Fechar">✕</button>
+      </div>
+      <div class="apop-body">${data.body.replace(/\n/g, '<br>')}</div>
+      <div class="apop-footer">
+        <button class="apop-btn">${data.btn}</button>
+      </div>
+    `;
+
+    document.body.appendChild(popup);
+    spawnedPopups.push(popup);
+
+    // Fechar ao clicar nos botões (mas o ataque continua)
+    popup.querySelector('.apop-close').addEventListener('click', () => popup.remove());
+    popup.querySelector('.apop-btn').addEventListener('click', () => popup.remove());
+
+    return popup;
+  }
+
   function runAttackSimulation(onComplete) {
-    if (!attackOverlay) { onComplete(); return; }
+    if (attackRunning) return;
+    attackRunning = true;
 
-    // Resetar estado
-    if (attackProgressBar) attackProgressBar.style.width = '0%';
-    if (attackProgressPct) attackProgressPct.textContent = '0%';
-    if (attackLogLine) attackLogLine.textContent = ATTACK_LOG_STEPS[0];
-    if (attackFooterMsg) attackFooterMsg.classList.add('hidden');
+    // Escurece o fundo com overlay semi-transparente
+    const dimmer = document.createElement('div');
+    dimmer.id = 'attack-dimmer';
+    dimmer.className = 'attack-dimmer';
+    document.body.appendChild(dimmer);
 
-    attackOverlay.classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
+    // Começa a tremer a tela
+    document.body.classList.add('attack-shake');
 
-    let progress = 0;
-    let stepIndex = 0;
-    const totalDuration = 3200; // ms
-    const tickInterval = 40;
-    const totalTicks = totalDuration / tickInterval;
-    let tick = 0;
+    // Dispara os popups em cascata com delays
+    const delays = [100, 500, 950, 1350, 1700, 2050, 2350];
 
-    const interval = setInterval(() => {
-      tick++;
-      progress = Math.min(Math.round((tick / totalTicks) * 100), 100);
+    delays.forEach((delay, i) => {
+      const t = setTimeout(() => {
+        if (!attackRunning) return;
+        const popupData = ATTACK_POPUPS[i % ATTACK_POPUPS.length];
+        spawnPopup(popupData, i);
 
-      if (attackProgressBar) attackProgressBar.style.width = progress + '%';
-      if (attackProgressPct) attackProgressPct.textContent = progress + '%';
+        // Flash vermelho a cada popup
+        document.body.classList.add('attack-red-flash');
+        setTimeout(() => document.body.classList.remove('attack-red-flash'), 180);
+      }, delay);
+      attackTimeouts.push(t);
+    });
 
-      // Atualiza linha de log gradualmente
-      const nextStepIndex = Math.min(
-        Math.floor((tick / totalTicks) * ATTACK_LOG_STEPS.length),
-        ATTACK_LOG_STEPS.length - 1
-      );
-      if (nextStepIndex !== stepIndex) {
-        stepIndex = nextStepIndex;
-        if (attackLogLine) attackLogLine.textContent = ATTACK_LOG_STEPS[stepIndex];
-      }
+    // Após 3.2s — para tudo e mostra a revelação educativa
+    const endT = setTimeout(() => {
+      clearAllAttackEffects();
 
-      if (progress >= 100) {
-        clearInterval(interval);
-        // Exibe a mensagem educativa por 1.2s antes de fechar
-        if (attackFooterMsg) attackFooterMsg.classList.remove('hidden');
-        setTimeout(() => {
-          attackOverlay.classList.add('hidden');
-          document.body.style.overflow = '';
-          onComplete();
-        }, 1400);
-      }
-    }, tickInterval);
+      // Mostra banner educativo rápido
+      showAttackReveal(onComplete);
+    }, 3200);
+    attackTimeouts.push(endT);
+  }
+
+  function showAttackReveal(onComplete) {
+    const reveal = document.createElement('div');
+    reveal.id = 'attack-reveal';
+    reveal.className = 'attack-reveal';
+    reveal.innerHTML = `
+      <div class="attack-reveal-inner">
+        <div class="attack-reveal-icon">🛡️</div>
+        <div class="attack-reveal-tag">DEMONSTRAÇÃO EDUCATIVA</div>
+        <h2 class="attack-reveal-title">Isso foi uma simulação!</h2>
+        <p class="attack-reveal-text">
+          Na vida real, ao clicar em links desconhecidos, seu dispositivo pode ser
+          infectado com vírus, ter dados roubados e contas invadidas exatamente
+          assim. <strong>Nunca clique em links suspeitos!</strong>
+        </p>
+        <button id="attack-reveal-btn" class="attack-reveal-btn">Entendi, continuar →</button>
+      </div>
+    `;
+    document.body.appendChild(reveal);
+
+    document.getElementById('attack-reveal-btn').addEventListener('click', () => {
+      reveal.remove();
+      onComplete();
+    });
   }
 
   const handleProceedToUnlock = (e) => {

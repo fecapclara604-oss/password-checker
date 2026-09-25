@@ -4324,17 +4324,229 @@ body.system-crashing {
 
 
 /* ============================================================
-   ATTACK SIMULATION OVERLAY
+   ATTACK SIMULATION — SHAKE + POPUPS
    ============================================================ */
 
-@keyframes attackFlicker {
-  0%, 100% { opacity: 1; }
-  92% { opacity: 1; }
-  93% { opacity: 0.85; }
-  94% { opacity: 1; }
-  96% { opacity: 0.7; }
-  97% { opacity: 1; }
+/* --- Shake da tela --- */
+@keyframes attackShakeAnim {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  10%  { transform: translate(-6px, -4px) rotate(-0.5deg); }
+  20%  { transform: translate(6px, 4px) rotate(0.5deg); }
+  30%  { transform: translate(-8px, 2px) rotate(-0.3deg); }
+  40%  { transform: translate(5px, -5px) rotate(0.4deg); }
+  50%  { transform: translate(-5px, 5px) rotate(-0.5deg); }
+  60%  { transform: translate(7px, -3px) rotate(0.3deg); }
+  70%  { transform: translate(-4px, 4px) rotate(-0.4deg); }
+  80%  { transform: translate(5px, -2px) rotate(0.2deg); }
+  90%  { transform: translate(-3px, 3px) rotate(-0.2deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
 }
+
+body.attack-shake {
+  animation: attackShakeAnim 0.18s linear infinite;
+}
+
+/* --- Flash vermelho --- */
+body.attack-red-flash::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 20, 60, 0.22);
+  z-index: 9998;
+  pointer-events: none;
+  animation: none;
+}
+
+/* --- Dimmer de fundo --- */
+.attack-dimmer {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 9990;
+  pointer-events: none;
+}
+
+/* --- Popup de ataque --- */
+@keyframes popupBounceIn {
+  0%   { opacity: 0; transform: scale(0.6) translateY(-20px); }
+  60%  { opacity: 1; transform: scale(1.06) translateY(4px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.attack-popup {
+  position: fixed;
+  width: 300px;
+  background: #1a0a0a;
+  border: 2px solid var(--pop-color, #ff3366);
+  border-radius: 8px;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.8),
+    0 8px 32px rgba(0,0,0,0.9),
+    0 0 40px color-mix(in srgb, var(--pop-color, #ff3366) 40%, transparent);
+  overflow: hidden;
+  animation: popupBounceIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  user-select: none;
+}
+
+.apop-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--pop-color, #ff3366);
+  padding: 7px 10px;
+  gap: 8px;
+}
+
+.apop-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.2px;
+}
+
+.apop-close {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.apop-close:hover {
+  background: rgba(255,255,255,0.4);
+}
+
+.apop-body {
+  padding: 14px 14px 10px;
+  font-size: 0.82rem;
+  color: #f3f3f3;
+  line-height: 1.55;
+  font-family: var(--main-font);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.apop-footer {
+  padding: 10px 14px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.apop-btn {
+  background: var(--pop-color, #ff3366);
+  border: none;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 6px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+
+.apop-btn:hover {
+  filter: brightness(1.2);
+}
+
+/* --- Tela de revelação educativa --- */
+@keyframes revealFadeUp {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.attack-reveal {
+  position: fixed;
+  inset: 0;
+  z-index: 19999;
+  background: rgba(4, 8, 18, 0.96);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.attack-reveal-inner {
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  animation: revealFadeUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.attack-reveal-icon {
+  font-size: 3.5rem;
+  filter: drop-shadow(0 0 20px rgba(0, 230, 118, 0.7));
+}
+
+.attack-reveal-tag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: #00e676;
+  background: rgba(0, 230, 118, 0.1);
+  border: 1px solid rgba(0, 230, 118, 0.35);
+  padding: 5px 16px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+.attack-reveal-title {
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.attack-reveal-text {
+  font-size: 0.96rem;
+  color: #cbd5e1;
+  line-height: 1.65;
+  max-width: 440px;
+}
+
+.attack-reveal-text strong {
+  color: #fff;
+}
+
+.attack-reveal-btn {
+  background: linear-gradient(135deg, #00e676, #00b8d4);
+  border: none;
+  color: #050d1a;
+  font-size: 1rem;
+  font-weight: 800;
+  padding: 14px 32px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(0, 230, 118, 0.35);
+  margin-top: 6px;
+}
+
+.attack-reveal-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0, 230, 118, 0.5);
+}
+
+@media (max-width: 400px) {
+  .attack-popup {
+    width: calc(100vw - 24px);
+  }
+}
+
 
 @keyframes attackScan {
   0% { transform: translateY(-100%); }

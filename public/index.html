@@ -378,46 +378,6 @@
     </footer>
   </div>
 
-  <!-- OVERLAY: SIMULAÇÃO DE ATAQUE -->
-  <div id="attack-overlay" class="attack-overlay hidden" role="alertdialog" aria-modal="true" aria-label="Alerta de segurança">
-    <div class="attack-overlay-inner">
-      <!-- Scanlines de efeito hacker -->
-      <div class="attack-scanlines"></div>
-
-      <!-- Ícone de alerta pulsante -->
-      <div class="attack-icon-wrap">
-        <div class="attack-icon-ring"></div>
-        <div class="attack-icon-ring attack-ring-2"></div>
-        <span class="attack-icon">⚠️</span>
-      </div>
-
-      <!-- Texto principal da simulação -->
-      <div class="attack-header-tag">⛔ ALERTA DO SISTEMA</div>
-      <h2 class="attack-title">Seu dispositivo não passou<br>no teste de segurança</h2>
-
-      <!-- Barra de progresso de "análise" -->
-      <div class="attack-progress-wrap">
-        <div class="attack-progress-label">
-          <span>Verificando vulnerabilidades...</span>
-          <span id="attack-progress-pct">0%</span>
-        </div>
-        <div class="attack-progress-track">
-          <div id="attack-progress-bar" class="attack-progress-fill"></div>
-        </div>
-      </div>
-
-      <!-- Log de terminal falso -->
-      <div class="attack-terminal" id="attack-terminal">
-        <span class="attack-terminal-prompt">$ </span><span id="attack-log-line">Iniciando varredura...</span>
-      </div>
-
-      <!-- Mensagem de rodapé educativa (aparece no final) -->
-      <p id="attack-footer-msg" class="attack-footer-msg hidden">
-        ⚠️ Isso foi apenas uma simulação! Na vida real, mensagens assim são usadas para enganar você.
-      </p>
-    </div>
-  </div>
-
   <script src="app.js"></script>
 </body>
 </html>
