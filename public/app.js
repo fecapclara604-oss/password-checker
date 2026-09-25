@@ -134,20 +134,88 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ========================================================
-  // CLIQUE NO BOTÃO "Acessar Site: Como Criar Boas Senhas"
-  // TRANSIÇÃO DIRETA: SEM TELA TREMENDO, SEM MENSAGENS DE ATAQUE!
+  // SIMULAÇÃO DE ATAQUE (overlay antes da etapa 3)
   // ========================================================
+  const attackOverlay = document.getElementById('attack-overlay');
+  const attackProgressBar = document.getElementById('attack-progress-bar');
+  const attackProgressPct = document.getElementById('attack-progress-pct');
+  const attackLogLine = document.getElementById('attack-log-line');
+  const attackFooterMsg = document.getElementById('attack-footer-msg');
+
+  const ATTACK_LOG_STEPS = [
+    'Iniciando varredura de vulnerabilidades...',
+    'Analisando configurações de rede...',
+    'Verificando credenciais expostas...',
+    'Detectando brechas no dispositivo...',
+    'Coletando dados do sistema...',
+    'Explorando vetores de ataque...',
+    'Acesso à credencial obtido.',
+    'Concluído. Relatório gerado.'
+  ];
+
+  function runAttackSimulation(onComplete) {
+    if (!attackOverlay) { onComplete(); return; }
+
+    // Resetar estado
+    if (attackProgressBar) attackProgressBar.style.width = '0%';
+    if (attackProgressPct) attackProgressPct.textContent = '0%';
+    if (attackLogLine) attackLogLine.textContent = ATTACK_LOG_STEPS[0];
+    if (attackFooterMsg) attackFooterMsg.classList.add('hidden');
+
+    attackOverlay.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+
+    let progress = 0;
+    let stepIndex = 0;
+    const totalDuration = 3200; // ms
+    const tickInterval = 40;
+    const totalTicks = totalDuration / tickInterval;
+    let tick = 0;
+
+    const interval = setInterval(() => {
+      tick++;
+      progress = Math.min(Math.round((tick / totalTicks) * 100), 100);
+
+      if (attackProgressBar) attackProgressBar.style.width = progress + '%';
+      if (attackProgressPct) attackProgressPct.textContent = progress + '%';
+
+      // Atualiza linha de log gradualmente
+      const nextStepIndex = Math.min(
+        Math.floor((tick / totalTicks) * ATTACK_LOG_STEPS.length),
+        ATTACK_LOG_STEPS.length - 1
+      );
+      if (nextStepIndex !== stepIndex) {
+        stepIndex = nextStepIndex;
+        if (attackLogLine) attackLogLine.textContent = ATTACK_LOG_STEPS[stepIndex];
+      }
+
+      if (progress >= 100) {
+        clearInterval(interval);
+        // Exibe a mensagem educativa por 1.2s antes de fechar
+        if (attackFooterMsg) attackFooterMsg.classList.remove('hidden');
+        setTimeout(() => {
+          attackOverlay.classList.add('hidden');
+          document.body.style.overflow = '';
+          onComplete();
+        }, 1400);
+      }
+    }, tickInterval);
+  }
+
   const handleProceedToUnlock = (e) => {
     if (e) e.preventDefault();
-    if (stepCompletedSection) stepCompletedSection.classList.add('hidden');
-    if (stepUnlockSection) {
-      stepUnlockSection.classList.remove('hidden');
-      stepUnlockSection.classList.add('fade-in');
-      stepUnlockSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-    if (unlockPasswordInput) {
-      unlockPasswordInput.focus();
-    }
+
+    runAttackSimulation(() => {
+      if (stepCompletedSection) stepCompletedSection.classList.add('hidden');
+      if (stepUnlockSection) {
+        stepUnlockSection.classList.remove('hidden');
+        stepUnlockSection.classList.add('fade-in');
+        stepUnlockSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+      if (unlockPasswordInput) {
+        unlockPasswordInput.focus();
+      }
+    });
   };
 
   if (btnGenerateFortified) {

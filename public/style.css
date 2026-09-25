@@ -4317,10 +4317,245 @@ body.system-crashing {
   box-shadow: 0 0 15px rgba(0, 242, 254, 0.1);
 }
 
+
 .challenge-location-tag .location-icon {
   font-size: 1rem;
 }
 
 
+/* ============================================================
+   ATTACK SIMULATION OVERLAY
+   ============================================================ */
 
+@keyframes attackFlicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.85; }
+  94% { opacity: 1; }
+  96% { opacity: 0.7; }
+  97% { opacity: 1; }
+}
 
+@keyframes attackScan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes attackRingPulse {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
+  100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
+}
+
+@keyframes attackProgressGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(255, 51, 102, 0.6); }
+  50% { box-shadow: 0 0 22px rgba(255, 51, 102, 1); }
+}
+
+@keyframes attackFadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes attackBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.attack-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(4, 6, 14, 0.97);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: attackFlicker 4s infinite;
+  overflow: hidden;
+}
+
+.attack-overlay.hidden {
+  display: none !important;
+}
+
+.attack-overlay-inner {
+  position: relative;
+  max-width: 560px;
+  width: calc(100% - 40px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  animation: attackFadeIn 0.35s ease both;
+  z-index: 2;
+}
+
+/* Scanlines */
+.attack-scanlines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0, 0, 0, 0.18) 3px,
+    rgba(0, 0, 0, 0.18) 4px
+  );
+}
+
+/* Scan line sweeping */
+.attack-scanlines::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, rgba(255, 51, 102, 0.06), transparent);
+  animation: attackScan 3s linear infinite;
+}
+
+/* Icon & rings */
+.attack-icon-wrap {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.attack-icon-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 51, 102, 0.7);
+  animation: attackRingPulse 1.6s ease-out infinite;
+  transform: translate(-50%, -50%);
+}
+
+.attack-ring-2 {
+  animation-delay: 0.8s;
+}
+
+.attack-icon {
+  font-size: 3.4rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 18px rgba(255, 51, 102, 0.9));
+  position: relative;
+  z-index: 2;
+}
+
+/* Header tag */
+.attack-header-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: #ff3366;
+  text-transform: uppercase;
+  background: rgba(255, 51, 102, 0.12);
+  border: 1px solid rgba(255, 51, 102, 0.4);
+  padding: 5px 16px;
+  border-radius: 9999px;
+}
+
+/* Main title */
+.attack-title {
+  font-size: clamp(1.45rem, 5vw, 2rem);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.25;
+  text-shadow:
+    0 0 30px rgba(255, 51, 102, 0.5),
+    0 0 60px rgba(255, 51, 102, 0.2);
+  letter-spacing: -0.3px;
+}
+
+/* Progress bar */
+.attack-progress-wrap {
+  width: 100%;
+}
+
+.attack-progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 8px;
+  font-family: var(--code-font);
+}
+
+.attack-progress-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 9999px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 51, 102, 0.2);
+}
+
+.attack-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ff3366, #ff6b6b);
+  border-radius: 9999px;
+  transition: width 0.2s linear;
+  animation: attackProgressGlow 1s ease-in-out infinite;
+}
+
+/* Terminal */
+.attack-terminal {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 51, 102, 0.25);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  font-family: var(--code-font);
+  font-size: 0.82rem;
+  color: #ff3366;
+  text-align: left;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.attack-terminal-prompt {
+  color: rgba(255, 51, 102, 0.5);
+  flex-shrink: 0;
+}
+
+#attack-log-line::after {
+  content: '▋';
+  animation: attackBlink 0.8s step-end infinite;
+  margin-left: 2px;
+}
+
+/* Footer reveal message */
+.attack-footer-msg {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 179, 0, 0.08);
+  border: 1px solid rgba(255, 179, 0, 0.25);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  line-height: 1.5;
+}
+
+.attack-footer-msg.hidden {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .attack-title {
+    font-size: 1.35rem;
+  }
+  .attack-icon {
+    font-size: 2.8rem;
+  }
+}
