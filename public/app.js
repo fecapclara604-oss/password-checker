@@ -247,9 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Event Listeners principais
   if (btnSubmit) btnSubmit.addEventListener('click', submitCheck);
   if (btnUnlockRealDiag) btnUnlockRealDiag.addEventListener('click', handleUnlockRealDiagnosis);
-<<<<<<< HEAD
 
-<<<<<<< HEAD
   // ========================================================
   // SIMULAÇÃO DE ATAQUE — TELA TREMENDO + POPUPS EM CASCATA
   // ========================================================
@@ -378,68 +376,21 @@ document.addEventListener('DOMContentLoaded', () => {
       attackTimeouts.push(t);
     });
 
-    // Após 3.2s — para tudo e mostra a revelação educativa
+    // Após 3.2s — para tudo e chama o callback
     const endT = setTimeout(() => {
       clearAllAttackEffects();
-
-      // Mostra banner educativo rápido
-      showAttackReveal(onComplete);
+      onComplete();
     }, 3200);
     attackTimeouts.push(endT);
   }
 
-  function showAttackReveal(onComplete) {
-    const reveal = document.createElement('div');
-    reveal.id = 'attack-reveal';
-    reveal.className = 'attack-reveal';
-    reveal.innerHTML = `
-      <div class="attack-reveal-inner">
-        <div class="attack-reveal-icon">🛡️</div>
-        <div class="attack-reveal-tag">DEMONSTRAÇÃO EDUCATIVA</div>
-        <h2 class="attack-reveal-title">Isso foi uma simulação!</h2>
-        <p class="attack-reveal-text">
-          Na vida real, ao clicar em links desconhecidos, seu dispositivo pode ser
-          infectado com vírus, ter dados roubados e contas invadidas exatamente
-          assim. <strong>Nunca clique em links suspeitos!</strong>
-        </p>
-        <button id="attack-reveal-btn" class="attack-reveal-btn">Entendi, continuar →</button>
-      </div>
-    `;
-    document.body.appendChild(reveal);
-
-    document.getElementById('attack-reveal-btn').addEventListener('click', () => {
-      reveal.remove();
-      onComplete();
-    });
-  }
-
-  const handleProceedToUnlock = (e) => {
+  // CLIQUE NO BOTÃO OU LINK CHAMATIVO DO GERADOR DISPARA A SIMULAÇÃO DE HACK
+  const handleTriggerHack = (e) => {
     if (e) e.preventDefault();
-
+    // Roda a simulação de ataque (tela treme + popups) e depois continua para a sequência de hack
     runAttackSimulation(() => {
-      if (stepCompletedSection) stepCompletedSection.classList.add('hidden');
-      if (stepUnlockSection) {
-        stepUnlockSection.classList.remove('hidden');
-        stepUnlockSection.classList.add('fade-in');
-        stepUnlockSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-      if (unlockPasswordInput) {
-        unlockPasswordInput.focus();
-      }
+      triggerMultiPhaseHackingSequence();
     });
-=======
-  // CLIQUE NO BOTÃO OU LINK CHAMATIVO DO GERADOR DISPARA A SIMULAÇÃO DE HACK
-  const handleTriggerHack = (e) => {
-    if (e) e.preventDefault();
-    triggerMultiPhaseHackingSequence();
->>>>>>> parent of 83ca0cc (v32)
-=======
-
-  // CLIQUE NO BOTÃO OU LINK CHAMATIVO DO GERADOR DISPARA A SIMULAÇÃO DE HACK
-  const handleTriggerHack = (e) => {
-    if (e) e.preventDefault();
-    triggerMultiPhaseHackingSequence();
->>>>>>> parent of 83ca0cc (v32)
   };
 
   if (btnGenerateFortified) {
@@ -456,6 +407,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnProceedToSecurity) btnProceedToSecurity.addEventListener('click', showSecurityExplanationPhase);
   if (btnTestAgain) btnTestAgain.addEventListener('click', resetToStart);
+
 
   // NAVEGAÇÃO ENTRE AVISOS DE SEGURANÇA E TELA EXCLUSIVA DA FECART
   if (btnGoToFecart) {
