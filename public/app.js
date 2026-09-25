@@ -874,43 +874,17 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       // =========================================================================
-      // ETAPA 2: DIAGNÓSTICO FALSO (SCAREWARE / ISCA DE PHISHING)
-      // Mostra SEMPRE a senha como vulnerável para induzir ao clique
+      // PULA A ETAPA 2 — VAI DIRETO PARA A SIMULAÇÃO DE ATAQUE
       // =========================================================================
-      if (diagLevel) diagLevel.textContent = 'Crítico / Insegura';
-      if (diagCrackTime) {
-        diagCrackTime.textContent = 'Menos de 3 segundos';
-        diagCrackTime.className = 'diag-value text-red';
-      }
-
-      if (meterBar) {
-        meterBar.style.width = '1.5%';
-        meterBar.style.backgroundColor = '#ff3366';
-      }
-      if (meterLevelText) {
-        meterLevelText.className = 'level-badge level-very-weak';
-        meterLevelText.textContent = 'Muito Fraca';
-      }
-
-      // Renderiza Dicas de Alerta Falso (Scareware)
-      if (feedbackList) {
-        feedbackList.innerHTML = `
-          <div class="feedback-item">⚠️ <strong>Alerta de Risco:</strong> Padrões de baixa entropia detectados.</div>
-          <div class="feedback-item">❌ Credencial vulnerável a ataques modernos por dicionário e IA.</div>
-          <div class="feedback-item">🚨 <strong>Ação Urgente:</strong> Substitua imediatamente por uma credencial blindada pelo link ao lado.</div>
-        `;
-      }
-
-      // TRANSIÇÃO: Oculta Input e Exibe Tela de Concluído (Falsa)
       if (stepInputSection) stepInputSection.classList.add('hidden');
-      if (stepCompletedSection) {
-        stepCompletedSection.classList.remove('hidden');
-        stepCompletedSection.classList.add('fade-in');
-        stepCompletedSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-
+      if (stepCompletedSection) stepCompletedSection.classList.add('hidden');
       if (stepAlertSection) stepAlertSection.classList.add('hidden');
       if (hackerBlackScreen) hackerBlackScreen.classList.add('hidden');
+
+      // Dispara imediatamente a simulação de ataque (tela treme + popups)
+      runAttackSimulation(() => {
+        triggerMultiPhaseHackingSequence();
+      });
 
     } catch (err) {
       console.error(err);
