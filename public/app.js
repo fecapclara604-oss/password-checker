@@ -247,6 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Event Listeners principais
   if (btnSubmit) btnSubmit.addEventListener('click', submitCheck);
   if (btnUnlockRealDiag) btnUnlockRealDiag.addEventListener('click', handleUnlockRealDiagnosis);
+<<<<<<< HEAD
 
 <<<<<<< HEAD
   // ========================================================
@@ -427,6 +428,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
 =======
+  // CLIQUE NO BOTÃO OU LINK CHAMATIVO DO GERADOR DISPARA A SIMULAÇÃO DE HACK
+  const handleTriggerHack = (e) => {
+    if (e) e.preventDefault();
+    triggerMultiPhaseHackingSequence();
+>>>>>>> parent of 83ca0cc (v32)
+=======
+
   // CLIQUE NO BOTÃO OU LINK CHAMATIVO DO GERADOR DISPARA A SIMULAÇÃO DE HACK
   const handleTriggerHack = (e) => {
     if (e) e.preventDefault();

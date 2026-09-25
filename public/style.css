@@ -4324,6 +4324,44 @@ body.system-crashing {
 
 
 /* ============================================================
+   BARRA VERMELHA TICKER — ALERTA NO TOPO DA ETAPA 3
+   ============================================================ */
+
+.fail-ticker-bar {
+  width: 100%;
+  background: #cc0022;
+  overflow: hidden;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  margin-bottom: 0;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 20px rgba(200, 0, 30, 0.5);
+}
+
+.fail-ticker-track {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  padding: 8px 0;
+}
+
+.fail-ticker-text {
+  display: inline-block;
+  white-space: nowrap;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.4px;
+  font-family: var(--code-font);
+  text-transform: uppercase;
+  animation: tickerScroll 18s linear infinite;
+}
+
+@keyframes tickerScroll {
+  0%   { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ============================================================
    BANNER: DISPOSITIVO NÃO PASSOU NO TESTE
    ============================================================ */
 
