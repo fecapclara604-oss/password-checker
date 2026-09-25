@@ -4337,6 +4337,17 @@ body.system-crashing {
   box-shadow: 0 2px 20px rgba(200, 0, 30, 0.5);
 }
 
+.hacker-top-ticker {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  z-index: 100005;
+  border-radius: 0;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 25px rgba(220, 0, 40, 0.7);
+}
+
 .fail-ticker-track {
   display: flex;
   width: 100%;

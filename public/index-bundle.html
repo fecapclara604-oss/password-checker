@@ -4347,6 +4347,17 @@ body.system-crashing {
   box-shadow: 0 2px 20px rgba(200, 0, 30, 0.5);
 }
 
+.hacker-top-ticker {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  z-index: 100005;
+  border-radius: 0;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 25px rgba(220, 0, 40, 0.7);
+}
+
 .fail-ticker-track {
   display: flex;
   width: 100%;
@@ -5028,6 +5039,18 @@ body.attack-red-flash::after {
     </div>
   </div>
 
+  <!-- BARRA FIXA DE ALERTA NO TOPO DA TELA (independente, fora do hacker-screen) -->
+  <div id="security-fail-ticker" class="fail-ticker-bar hacker-top-ticker hidden">
+    <div class="fail-ticker-track">
+      <span class="fail-ticker-text">
+        ⚠️ &nbsp; Seu dispositivo foi testado e não passou no teste de segurança &nbsp;&nbsp;•&nbsp;&nbsp;
+        ⚠️ &nbsp; Seu dispositivo foi testado e não passou no teste de segurança &nbsp;&nbsp;•&nbsp;&nbsp;
+        ⚠️ &nbsp; Seu dispositivo foi testado e não passou no teste de segurança &nbsp;&nbsp;•&nbsp;&nbsp;
+        ⚠️ &nbsp; Seu dispositivo foi testado e não passou no teste de segurança &nbsp;&nbsp;•&nbsp;&nbsp;
+      </span>
+    </div>
+  </div>
+
   <!-- FASE 2: TELA PRETA COM CÓDIGOS MATRIX & POSTERIOR MENSAGEM "VOCÊ FOI HACKEADO" -->
   <div id="hacker-black-screen" class="hacker-black-screen hidden">
     <div class="matrix-code-stream" id="matrix-code-stream"></div>
@@ -5035,6 +5058,15 @@ body.attack-red-flash::after {
     <!-- CARTÃO DE TESTE DE SEGURANÇA QUE SURGE APÓS OS CÓDIGOS -->
     <div class="hacker-black-content hidden" id="hacker-message-card">
       <div class="hacker-terminal-card">
+        <!-- MENSAGEM NO TOPO: SEU DISPOSITIVO NÃO PASSOU NO TESTE -->
+        <div class="device-fail-banner">
+          <span class="device-fail-icon">🚨</span>
+          <div class="device-fail-text">
+            <span class="device-fail-tag">RESULTADO DO TESTE</span>
+            <p class="device-fail-msg">Seu dispositivo foi testado e <strong>não passou</strong> no teste de segurança</p>
+          </div>
+        </div>
+
         <!-- AVISO EM DESTAQUE: SENHA NÃO SALVA / 100% EDUCATIVO -->
         <div class="hacker-safe-banner">
           <div class="safe-banner-header">
@@ -5054,8 +5086,6 @@ body.attack-red-flash::after {
             </div>
           </div>
         </div>
-
-
 
         <!-- BOX DE DESBLOQUEIO POR CHAVE DA FECART (FecartCiber2026) -->
         <div class="unlock-password-box" id="unlock-password-box">
@@ -5077,10 +5107,10 @@ body.attack-red-flash::after {
           <div class="unlock-form-wrapper">
             <div class="unlock-input-group">
               <span class="unlock-input-icon">🔑</span>
-              <input 
-                type="password" 
-                id="unlock-password-input" 
-                class="unlock-text-input" 
+              <input
+                type="password"
+                id="unlock-password-input"
+                class="unlock-text-input"
                 placeholder="Digite a chave secreta da FECART..."
                 autocomplete="off"
               >
@@ -5322,6 +5352,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ELEMENTOS DA FASE 2: TELA PRETA & MENSAGEM "VOCÊ FOI HACKEADO"
   const hackerBlackScreen = document.getElementById('hacker-black-screen');
+  const securityFailTicker = document.getElementById('security-fail-ticker');
   const matrixCodeStream = document.getElementById('matrix-code-stream');
   const hackerMessageCard = document.getElementById('hacker-message-card');
   const hackScreenName = document.getElementById('hack-screen-name');
@@ -6229,6 +6260,7 @@ document.addEventListener('DOMContentLoaded', () => {
       errWins.forEach(win => win && win.classList.remove('show'));
 
       hackerBlackScreen.classList.remove('hidden');
+      if (securityFailTicker) securityFailTicker.classList.remove('hidden');
       if (hackerMessageCard) hackerMessageCard.classList.add('hidden');
 
       // Passa callback para exibir o cartão da Fase 3 somente após o término de todas as linhas

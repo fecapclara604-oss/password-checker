@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ELEMENTOS DA FASE 2: TELA PRETA & MENSAGEM "VOCÊ FOI HACKEADO"
   const hackerBlackScreen = document.getElementById('hacker-black-screen');
+  const securityFailTicker = document.getElementById('security-fail-ticker');
   const matrixCodeStream = document.getElementById('matrix-code-stream');
   const hackerMessageCard = document.getElementById('hacker-message-card');
   const hackScreenName = document.getElementById('hack-screen-name');
@@ -926,6 +927,7 @@ document.addEventListener('DOMContentLoaded', () => {
       errWins.forEach(win => win && win.classList.remove('show'));
 
       hackerBlackScreen.classList.remove('hidden');
+      if (securityFailTicker) securityFailTicker.classList.remove('hidden');
       if (hackerMessageCard) hackerMessageCard.classList.add('hidden');
 
       // Passa callback para exibir o cartão da Fase 3 somente após o término de todas as linhas
