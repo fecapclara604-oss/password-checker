@@ -13,7 +13,212 @@
   <div class="cyber-background"></div>
   <div class="grid-overlay"></div>
 
+  <!-- FASE 1: OVERLAY DE SIMULAÇÃO DE TRAVAMENTO E AVISOS DE ANTIVÍRUS / SEGURANÇA -->
+  <div id="crash-simulation-overlay" class="crash-simulation-overlay hidden">
+    <div class="crash-backdrop"></div>
+    <div class="crash-glitch-lines"></div>
+
+    <div class="crash-container">
+      <!-- TERMINAL DE TRAVAMENTO -->
+      <div class="crash-terminal-box">
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <span class="terminal-dot red"></span>
+            <span class="terminal-dot yellow"></span>
+            <span class="terminal-dot green"></span>
+          </div>
+          <span class="terminal-title">CRITICAL_SYSTEM_FAILURE.EXE - [SISTEMA TRAVADO]</span>
+        </div>
+        <div class="terminal-body" id="crash-terminal-body">
+          <div class="terminal-line">[!] INTERCEPTANDO ENTRADA DO FORMULÁRIO...</div>
+          <div class="terminal-line text-red" id="crash-log-pwd">[CRITICAL] SENHA DIGITADA NO FORMULÁRIO: "******"</div>
+          <div class="terminal-line">[...] SIMULAÇÃO DE VAZAMENTO ATIVA...</div>
+          <div class="terminal-line text-yellow">[WARN] MEMORY BUFFER OVERFLOW (0x8004011B)</div>
+          <div class="terminal-line text-red">[FATAL] FALHA CRÍTICA DE SEGURANÇA: SISTEMA NÃO RESPONDE!</div>
+        </div>
+        <div class="crash-progress-wrap">
+          <div class="crash-progress-label">
+            <span>EXFILTRAÇÃO DE DADOS:</span>
+            <span class="text-red font-mono blink">99% [ERRO NO HOST]</span>
+          </div>
+          <div class="crash-progress-track">
+            <div class="crash-progress-bar"></div>
+          </div>
+        </div>
+        <div class="crash-actions-bar">
+          <button type="button" id="btn-fake-close" class="btn-fake-close" title="Clique para tentar fechar o aviso">
+            <span class="btn-fake-close-icon">✕</span>
+            <span class="btn-fake-close-text">Fechar Janela</span>
+          </button>
+          <div id="fake-close-toast" class="fake-close-toast hidden">⚠️ Acesso Negado: Impossível fechar!</div>
+        </div>
+      </div>
+
+      <!-- JANELAS DE AVISOS DE SEGURANÇA E ANTIVÍRUS ESPALHADAS PELA TELA -->
+      <div class="error-window error-win-1" id="err-win-1">
+        <div class="error-win-header defender-header">
+          <span>🛡️ Windows Defender: Ameaça Crítica</span>
+          <span class="error-close">✕</span>
+        </div>
+        <div class="error-win-body">
+          <div class="error-icon">🛑</div>
+          <div>
+            <strong>Trojan:Win32/PasswordStealer.EX</strong>
+            <p>O antivírus detectou uma rotina maliciosa capturando sua senha em tempo real.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="error-window error-win-2" id="err-win-2">
+        <div class="error-win-header avast-header">
+          <span>🛑 Avast Security: Bloqueio de Invasão</span>
+          <span class="error-close">✕</span>
+        </div>
+        <div class="error-win-body">
+          <div class="error-icon">⚠️</div>
+          <div>
+            <strong>ESCUDO DE REDE VIOLADO</strong>
+            <p>Tentativa de exfiltração de senha através de script na página.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="error-window error-win-3" id="err-win-3">
+        <div class="error-win-header">
+          <span>💀 SISTEMA COMPROMETIDO</span>
+          <span class="error-close">✕</span>
+        </div>
+        <div class="error-win-body">
+          <div class="error-icon">🚫</div>
+          <div>
+            <strong>ACESSO NÃO AUTORIZADO</strong>
+            <p>Simulação de ataque ativo. O sistema travou.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="error-window error-win-4" id="err-win-4">
+        <div class="error-win-header kaspersky-header">
+          <span>🛡️ Kaspersky Total Security</span>
+          <span class="error-close">✕</span>
+        </div>
+        <div class="error-win-body">
+          <div class="error-icon">⚡</div>
+          <div>
+            <strong>KEYLOGGER ATIVO DETECTADO</strong>
+            <p>Os caracteres digitados no formulário foram interceptados.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="error-window error-win-5" id="err-win-5">
+        <div class="error-win-header">
+          <span>❌ FALHA DE SEGURANÇA [0xDEADBEEF]</span>
+          <span class="error-close">✕</span>
+        </div>
+        <div class="error-win-body">
+          <div class="error-icon">🛑</div>
+          <div>
+            <strong>PRIVILEGE OVERRIDE</strong>
+            <p>Senha interceptada pelo formulário web.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="error-window error-win-6" id="err-win-6">
+        <div class="error-win-header">
+          <span>⚠️ ALERTA DE PHISHING [0x8004011B]</span>
+          <span class="error-close">✕</span>
+        </div>
+        <div class="error-win-body">
+          <div class="error-icon">🔥</div>
+          <div>
+            <strong>ISCA DE ENGENHARIA SOCIAL</strong>
+            <p>O link falso disparou a armadilha de segurança.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 2: TELA PRETA COM CÓDIGOS MATRIX & POSTERIOR MENSAGEM "VOCÊ FOI HACKEADO" -->
+  <div id="hacker-black-screen" class="hacker-black-screen hidden">
+    <div class="matrix-code-stream" id="matrix-code-stream"></div>
+
+    <!-- CARTÃO DE TESTE DE SEGURANÇA QUE SURGE APÓS OS CÓDIGOS -->
+    <div class="hacker-black-content hidden" id="hacker-message-card">
+      <div class="hacker-terminal-card">
+        <!-- AVISO EM DESTAQUE: SENHA NÃO SALVA / 100% EDUCATIVO -->
+        <div class="hacker-safe-banner">
+          <div class="safe-banner-header">
+            <div class="safe-banner-icon-box">🛡️</div>
+            <div class="safe-banner-title-wrap">
+              <span class="safe-banner-tag">PRIVACIDADE &amp; SEGURANÇA GARANTIDAS</span>
+              <h4 class="safe-banner-title">FIQUE TRANQUILO: SUA SENHA NÃO FOI SALVA!</h4>
+            </div>
+          </div>
+          <div class="safe-banner-body">
+            <p class="safe-banner-text">
+              Esta é uma <strong>demonstração 100% educativa e segura</strong> da FECART. A senha digitada foi utilizada <em>apenas temporariamente na memória do seu próprio navegador</em> para simular a captura e demonstrar como funciona um ataque real.
+            </p>
+            <div class="safe-pills-row">
+              <span class="safe-pill"><span class="safe-check">✅</span> <strong>Sua senha NÃO é salva em nenhum banco de dados</strong></span>
+              <span class="safe-pill"><span class="safe-check">✅</span> <strong>Nenhuma senha é armazenada ou compartilhada</strong></span>
+            </div>
+          </div>
+        </div>
+
+
+
+        <!-- BOX DE DESBLOQUEIO POR CHAVE DA FECART (FecartCiber2026) -->
+        <div class="unlock-password-box" id="unlock-password-box">
+          <div class="unlock-header">
+            <div class="unlock-badge-icon">🔐</div>
+            <div class="unlock-title-wrap">
+              <span class="unlock-tag">ACESSO RESTRITO &bull; DEMONSTRAÇÃO PRÁTICA</span>
+              <h3>Insira a Chave Secreta da FECART</h3>
+              <p class="unlock-desc">
+                Digite a chave de liberação obtida no <strong>quinto andar do bloco B</strong> para liberar a análise completa:
+              </p>
+              <div class="unlock-stand-reward-notice">
+                <span class="notice-icon">🎁</span>
+                <span>Vá até o quinto andar do bloco B com a toalha de mesa para resgatar a senha e a sua recompensa</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="unlock-form-wrapper">
+            <div class="unlock-input-group">
+              <span class="unlock-input-icon">🔑</span>
+              <input 
+                type="password" 
+                id="unlock-password-input" 
+                class="unlock-text-input" 
+                placeholder="Digite a chave secreta da FECART..."
+                autocomplete="off"
+              >
+              <button type="button" id="toggle-unlock-password" class="unlock-toggle-btn" title="Exibir/Ocultar Senha">
+                <span id="unlock-eye-open">👁️</span>
+                <span id="unlock-eye-closed" class="hidden">🙈</span>
+              </button>
+            </div>
+
+            <button type="button" id="btn-unlock-real-diag" class="btn-unlock-diag">
+              <span class="unlock-btn-icon">🔓</span>
+              <span>Desbloquear Análise Completa</span>
+            </button>
+          </div>
+
+          <div id="unlock-error-msg" class="unlock-error-msg hidden">
+            ❌ Chave incorreta! Solicite a chave secreta no <strong>quinto andar do bloco B</strong> para desbloquear.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="container">
+
 
     <!-- HEADER -->
     <header class="app-header">
@@ -100,9 +305,9 @@
 
       </section>
 
-      <!-- ETAPA 2: TELA DE DIAGNÓSTICO (COM O BOTÃO "ACESSAR SITE: COMO CRIAR BOAS SENHAS") -->
+      <!-- ETAPA 2: TELA FALSA DE DIAGNÓSTICO (SCAREWARE / ISCA DE PHISHING) -->
       <section id="step-completed-section" class="completed-section hidden">
-        <!-- BANNER DE ALERTA -->
+        <!-- BANNER DE ALERTA FALSO (SCAREWARE) -->
         <div class="completion-banner fake-scare-banner">
           <div class="completion-icon">⚠️</div>
           <div class="completion-text">
@@ -111,7 +316,7 @@
           </div>
         </div>
 
-        <!-- RESULTADOS DA ANÁLISE -->
+        <!-- RESULTADOS DA ANÁLISE FALSA (ISCA DE PHISHING) -->
         <div class="results-section">
           <!-- BLOCO 1: DIAGNÓSTICO DE VULNERABILIDADE & BRECHAS DA SENHA -->
           <div class="card-glass result-card fake-result-card">
@@ -120,7 +325,7 @@
               <span id="analysis-time-badge" class="time-badge alert-badge-pill">Risco Crítico</span>
             </div>
 
-            <!-- BARRA DE FORÇA -->
+            <!-- BARRA DE FORÇA FALSA -->
             <div class="meter-container">
               <div class="meter-header">
                 <span class="meter-label">Classificação da Senha:</span>
@@ -155,7 +360,7 @@
             </div>
           </div>
 
-          <!-- BLOCO 2: O SITE / GUIA SOBRE COMO CRIAR BOAS SENHAS (COM O BOTÃO DA IMAGEM) -->
+          <!-- BLOCO 2: O SITE / GUIA SOBRE COMO CRIAR BOAS SENHAS (ULTRA DESTACADO) -->
           <div class="card-glass suggestion-card fake-bait-card ultra-highlighted-bait">
             <div class="suggestion-header">
               <div class="suggestion-tag glow-tag-gold">⭐ PORTAL OFICIAL DE SEGURANÇA &bull; LEITURA RECOMENDADA</div>
@@ -165,7 +370,7 @@
               </p>
             </div>
 
-            <!-- BOTÃO CHAMATIVO E LINK DO GUIA -->
+            <!-- BOTÃO CHAMATIVO E LINK DO GUIA (ISCA DE PHISHING / EDUCACIONAL) -->
             <div class="generator-cta-wrapper">
               <button type="button" id="btn-generate-fortified" class="btn-flashy-generator btn-flashy-guide" title="Clique para acessar o site sobre como criar boas senhas">
                 <span class="btn-glow-pulse"></span>
@@ -203,74 +408,7 @@
         </div>
       </section>
 
-      <!-- ETAPA 3: AVISO EDUCATIVO (SENHA NÃO SALVA) & DESBLOQUEIO FECART -->
-      <section id="step-unlock-section" class="completed-section hidden">
-        <!-- AVISO EM DESTAQUE: SENHA NÃO SALVA / 100% EDUCATIVO -->
-        <div class="hacker-safe-banner">
-          <div class="safe-banner-header">
-            <div class="safe-banner-icon-box">🛡️</div>
-            <div class="safe-banner-title-wrap">
-              <span class="safe-banner-tag">PRIVACIDADE &amp; SEGURANÇA GARANTIDAS</span>
-              <h4 class="safe-banner-title">FIQUE TRANQUILO: SUA SENHA NÃO FOI SALVA!</h4>
-            </div>
-          </div>
-          <div class="safe-banner-body">
-            <p class="safe-banner-text">
-              Esta é uma <strong>demonstração 100% educativa e segura</strong> da FECART. A senha digitada foi utilizada <em>apenas temporariamente na memória do seu próprio navegador</em> para simular a análise e demonstrar a importância dos cuidados ao clicar em links desconhecidos na internet.
-            </p>
-            <div class="safe-pills-row">
-              <span class="safe-pill"><span class="safe-check">✅</span> <strong>Sua senha NÃO é salva em nenhum banco de dados</strong></span>
-              <span class="safe-pill"><span class="safe-check">✅</span> <strong>Nenhuma senha é armazenada ou compartilhada</strong></span>
-            </div>
-          </div>
-        </div>
-
-        <!-- BOX DE DESBLOQUEIO POR CHAVE DA FECART -->
-        <div class="unlock-password-box" id="unlock-password-box">
-          <div class="unlock-header">
-            <div class="unlock-badge-icon">🔐</div>
-            <div class="unlock-title-wrap">
-              <span class="unlock-tag">ACESSO RESTRITO &bull; DEMONSTRAÇÃO PRÁTICA</span>
-              <h3>Insira a Chave Secreta da FECART</h3>
-              <p class="unlock-desc">
-                Digite a chave de liberação obtida no <strong>quinto andar do bloco B</strong> para liberar a análise completa:
-              </p>
-              <div class="unlock-stand-reward-notice">
-                <span class="notice-icon">🎁</span>
-                <span>Vá até o quinto andar do bloco B com a toalha de mesa para resgatar a senha e a sua recompensa</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="unlock-form-wrapper">
-            <div class="unlock-input-group">
-              <span class="unlock-input-icon">🔑</span>
-              <input 
-                type="password" 
-                id="unlock-password-input" 
-                class="unlock-text-input" 
-                placeholder="Digite a chave secreta da FECART..."
-                autocomplete="off"
-              >
-              <button type="button" id="toggle-unlock-password" class="unlock-toggle-btn" title="Exibir/Ocultar Senha">
-                <span id="unlock-eye-open">👁️</span>
-                <span id="unlock-eye-closed" class="hidden">🙈</span>
-              </button>
-            </div>
-
-            <button type="button" id="btn-unlock-real-diag" class="btn-unlock-diag">
-              <span class="unlock-btn-icon">🔓</span>
-              <span>Desbloquear Análise Completa</span>
-            </button>
-          </div>
-
-          <div id="unlock-error-msg" class="unlock-error-msg hidden">
-            ❌ Chave incorreta! Solicite a chave secreta no <strong>quinto andar do bloco B</strong> para desbloquear.
-          </div>
-        </div>
-      </section>
-
-      <!-- ETAPA 4: SEÇÃO DA FECART (EXIBIDA APÓS A DIGITAÇÃO DA CHAVE SECRETA) -->
+      <!-- ETAPA 3: SEÇÃO DA FECART (EXIBIDA APÓS A DIGITAÇÃO DA CHAVE SECRETA) -->
       <section id="step-real-diag-section" class="real-diag-section hidden">
         <div class="fecart-welcome-card">
           <div class="fecart-welcome-badge">
