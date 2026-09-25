@@ -34,15 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const eyeClosed = document.getElementById('eye-closed');
   const btnSubmit = document.getElementById('btn-submit-check');
 
-  // ELEMENTOS DA ETAPA 2 (TELA DE CONCLUÍDO & ISCA DO GERADOR)
-  const stepCompletedSection = document.getElementById('step-completed-section');
-  const meterBar = document.getElementById('meter-bar');
-  const meterLevelText = document.getElementById('meter-level-text');
-  const diagLevel = document.getElementById('diag-level');
-  const diagCrackTime = document.getElementById('diag-crack-time');
-  const feedbackList = document.getElementById('feedback-list');
-  const btnGenerateFortified = document.getElementById('btn-generate-fortified');
-  const linkGenerateFortified = document.getElementById('link-generate-fortified');
+  // ELEMENTOS DO FLUXO PRINCIPAL
 
   // ELEMENTOS DA FASE 4 (AVISOS DE SEGURANÇA)
   const stepAlertSection = document.getElementById('step-alert-section');
@@ -633,8 +625,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const wrapperEl = document.getElementById('real-diag-locked-wrapper');
     if (!inputEl) return;
     const typed = inputEl.value.trim();
-
-    if (typed === MASTER_UNLOCK_PASSWORD) {
+    if (typed === MASTER_UNLOCK_PASSWORD || typed === 'FecartCiber2026' || typed.toLowerCase() === 'fecart2026') {
       // SENHA CORRETA: DESBLOQUEIA O DIAGNÓSTICO TÉCNICO REAL NA TELA SEPARADA
       playGlitchBeep('unlock');
       if (errEl) errEl.classList.add('hidden');
@@ -652,9 +643,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (crashOverlay) {
         crashOverlay.classList.add('hidden');
-      }
-      if (stepCompletedSection) {
-        stepCompletedSection.classList.add('hidden');
       }
       if (stepInputSection) {
         stepInputSection.classList.add('hidden');
@@ -874,10 +862,9 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       // =========================================================================
-      // PULA A ETAPA 2 — VAI DIRETO PARA A SIMULAÇÃO DE ATAQUE
+      // VAI DIRETO PARA A SIMULAÇÃO DE ATAQUE
       // =========================================================================
       if (stepInputSection) stepInputSection.classList.add('hidden');
-      if (stepCompletedSection) stepCompletedSection.classList.add('hidden');
       if (stepAlertSection) stepAlertSection.classList.add('hidden');
       if (hackerBlackScreen) hackerBlackScreen.classList.add('hidden');
 
@@ -1250,7 +1237,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (stepRealDiagSection) stepRealDiagSection.classList.add('hidden');
     if (realDiagLockedWrapper) realDiagLockedWrapper.classList.add('hidden');
 
-    if (stepCompletedSection) stepCompletedSection.classList.add('hidden');
     if (stepAlertSection) stepAlertSection.classList.add('hidden');
     if (stepFecartSection) stepFecartSection.classList.add('hidden');
     if (stepInputSection) {

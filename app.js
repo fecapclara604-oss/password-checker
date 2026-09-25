@@ -34,15 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const eyeClosed = document.getElementById('eye-closed');
   const btnSubmit = document.getElementById('btn-submit-check');
 
-  // ELEMENTOS DA ETAPA 2 (TELA DE CONCLUÍDO & ISCA DO GERADOR)
-  const stepCompletedSection = document.getElementById('step-completed-section');
-  const meterBar = document.getElementById('meter-bar');
-  const meterLevelText = document.getElementById('meter-level-text');
-  const diagLevel = document.getElementById('diag-level');
-  const diagCrackTime = document.getElementById('diag-crack-time');
-  const feedbackList = document.getElementById('feedback-list');
-  const btnGenerateFortified = document.getElementById('btn-generate-fortified');
-  const linkGenerateFortified = document.getElementById('link-generate-fortified');
+  // ELEMENTOS DO FLUXO PRINCIPAL
 
   // ELEMENTOS DA FASE 4 (AVISOS DE SEGURANÇA)
   const stepAlertSection = document.getElementById('step-alert-section');
@@ -248,10 +240,149 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnSubmit) btnSubmit.addEventListener('click', submitCheck);
   if (btnUnlockRealDiag) btnUnlockRealDiag.addEventListener('click', handleUnlockRealDiagnosis);
 
+  // ========================================================
+  // SIMULAÇÃO DE ATAQUE — TELA TREMENDO + POPUPS EM CASCATA
+  // ========================================================
+
+  const ATTACK_POPUPS = [
+    {
+      title: '⚠️ ALERTA DE SEGURANÇA',
+      body: 'Seu dispositivo não passou no teste de segurança.\nVulnerabilidade crítica detectada!',
+      btn: 'Fechar',
+      color: '#ff3366'
+    },
+    {
+      title: '🔴 ACESSO NÃO AUTORIZADO',
+      body: 'Suas credenciais foram comprometidas.\nUm invasor está acessando seus dados agora.',
+      btn: 'OK',
+      color: '#ff6600'
+    },
+    {
+      title: '☠️ VÍRUS DETECTADO',
+      body: 'Trojan.PWS.Generic encontrado no sistema.\nRemovendo arquivos críticos...',
+      btn: 'Cancelar',
+      color: '#cc0000'
+    },
+    {
+      title: '🚨 FIREWALL DESATIVADO',
+      body: 'Seu firewall foi desligado remotamente.\nConexão externa ativa na porta 4444.',
+      btn: 'Ignorar',
+      color: '#ff3366'
+    },
+    {
+      title: '💀 DADOS EXPOSTOS',
+      body: 'Senha capturada com sucesso.\nEnviando para servidor remoto...',
+      btn: 'Fechar',
+      color: '#990000'
+    },
+    {
+      title: '🔓 CONTA INVADIDA',
+      body: 'Login realizado em outro dispositivo.\nLocalização: Desconhecida',
+      btn: 'OK',
+      color: '#ff3366'
+    },
+    {
+      title: '⚡ SISTEMA COMPROMETIDO',
+      body: 'Acesso root obtido.\nBackdoor instalado com sucesso.',
+      btn: 'Fechar',
+      color: '#cc2200'
+    }
+  ];
+
+  let attackRunning = false;
+  let attackTimeouts = [];
+  let spawnedPopups = [];
+
+  function clearAllAttackEffects() {
+    attackRunning = false;
+    attackTimeouts.forEach(t => clearTimeout(t));
+    attackTimeouts = [];
+    spawnedPopups.forEach(p => p.remove());
+    spawnedPopups = [];
+    document.body.classList.remove('attack-shake', 'attack-red-flash');
+    const overlay = document.getElementById('attack-dimmer');
+    if (overlay) overlay.remove();
+  }
+
+  function spawnPopup(data, index) {
+    const popup = document.createElement('div');
+    popup.className = 'attack-popup';
+    popup.style.setProperty('--pop-color', data.color);
+
+    // Posição aleatória mas dentro da tela
+    const maxX = Math.max(window.innerWidth - 320, 10);
+    const maxY = Math.max(window.innerHeight - 180, 10);
+    const x = Math.floor(Math.random() * maxX);
+    const y = Math.floor(Math.random() * maxY);
+    popup.style.left = x + 'px';
+    popup.style.top = y + 'px';
+    popup.style.zIndex = 10000 + index;
+
+    popup.innerHTML = `
+      <div class="apop-titlebar">
+        <span class="apop-title">${data.title}</span>
+        <button class="apop-close" title="Fechar">✕</button>
+      </div>
+      <div class="apop-body">${data.body.replace(/\n/g, '<br>')}</div>
+      <div class="apop-footer">
+        <button class="apop-btn">${data.btn}</button>
+      </div>
+    `;
+
+    document.body.appendChild(popup);
+    spawnedPopups.push(popup);
+
+    // Fechar ao clicar nos botões (mas o ataque continua)
+    popup.querySelector('.apop-close').addEventListener('click', () => popup.remove());
+    popup.querySelector('.apop-btn').addEventListener('click', () => popup.remove());
+
+    return popup;
+  }
+
+  function runAttackSimulation(onComplete) {
+    if (attackRunning) return;
+    attackRunning = true;
+
+    // Escurece o fundo com overlay semi-transparente
+    const dimmer = document.createElement('div');
+    dimmer.id = 'attack-dimmer';
+    dimmer.className = 'attack-dimmer';
+    document.body.appendChild(dimmer);
+
+    // Começa a tremer a tela
+    document.body.classList.add('attack-shake');
+
+    // Dispara os popups em cascata com delays
+    const delays = [100, 500, 950, 1350, 1700, 2050, 2350];
+
+    delays.forEach((delay, i) => {
+      const t = setTimeout(() => {
+        if (!attackRunning) return;
+        const popupData = ATTACK_POPUPS[i % ATTACK_POPUPS.length];
+        spawnPopup(popupData, i);
+
+        // Flash vermelho a cada popup
+        document.body.classList.add('attack-red-flash');
+        setTimeout(() => document.body.classList.remove('attack-red-flash'), 180);
+      }, delay);
+      attackTimeouts.push(t);
+    });
+
+    // Após 3.2s — para tudo e chama o callback
+    const endT = setTimeout(() => {
+      clearAllAttackEffects();
+      onComplete();
+    }, 3200);
+    attackTimeouts.push(endT);
+  }
+
   // CLIQUE NO BOTÃO OU LINK CHAMATIVO DO GERADOR DISPARA A SIMULAÇÃO DE HACK
   const handleTriggerHack = (e) => {
     if (e) e.preventDefault();
-    triggerMultiPhaseHackingSequence();
+    // Roda a simulação de ataque (tela treme + popups) e depois continua para a sequência de hack
+    runAttackSimulation(() => {
+      triggerMultiPhaseHackingSequence();
+    });
   };
 
   if (btnGenerateFortified) {
@@ -268,6 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (btnProceedToSecurity) btnProceedToSecurity.addEventListener('click', showSecurityExplanationPhase);
   if (btnTestAgain) btnTestAgain.addEventListener('click', resetToStart);
+
 
   // NAVEGAÇÃO ENTRE AVISOS DE SEGURANÇA E TELA EXCLUSIVA DA FECART
   if (btnGoToFecart) {
@@ -493,8 +625,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const wrapperEl = document.getElementById('real-diag-locked-wrapper');
     if (!inputEl) return;
     const typed = inputEl.value.trim();
-
-    if (typed === MASTER_UNLOCK_PASSWORD) {
+    if (typed === MASTER_UNLOCK_PASSWORD || typed === 'FecartCiber2026' || typed.toLowerCase() === 'fecart2026') {
       // SENHA CORRETA: DESBLOQUEIA O DIAGNÓSTICO TÉCNICO REAL NA TELA SEPARADA
       playGlitchBeep('unlock');
       if (errEl) errEl.classList.add('hidden');
@@ -512,9 +643,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (crashOverlay) {
         crashOverlay.classList.add('hidden');
-      }
-      if (stepCompletedSection) {
-        stepCompletedSection.classList.add('hidden');
       }
       if (stepInputSection) {
         stepInputSection.classList.add('hidden');
@@ -734,43 +862,16 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       // =========================================================================
-      // ETAPA 2: DIAGNÓSTICO FALSO (SCAREWARE / ISCA DE PHISHING)
-      // Mostra SEMPRE a senha como vulnerável para induzir ao clique
+      // VAI DIRETO PARA A SIMULAÇÃO DE ATAQUE
       // =========================================================================
-      if (diagLevel) diagLevel.textContent = 'Crítico / Insegura';
-      if (diagCrackTime) {
-        diagCrackTime.textContent = 'Menos de 3 segundos';
-        diagCrackTime.className = 'diag-value text-red';
-      }
-
-      if (meterBar) {
-        meterBar.style.width = '1.5%';
-        meterBar.style.backgroundColor = '#ff3366';
-      }
-      if (meterLevelText) {
-        meterLevelText.className = 'level-badge level-very-weak';
-        meterLevelText.textContent = 'Muito Fraca';
-      }
-
-      // Renderiza Dicas de Alerta Falso (Scareware)
-      if (feedbackList) {
-        feedbackList.innerHTML = `
-          <div class="feedback-item">⚠️ <strong>Alerta de Risco:</strong> Padrões de baixa entropia detectados.</div>
-          <div class="feedback-item">❌ Credencial vulnerável a ataques modernos por dicionário e IA.</div>
-          <div class="feedback-item">🚨 <strong>Ação Urgente:</strong> Substitua imediatamente por uma credencial blindada pelo link ao lado.</div>
-        `;
-      }
-
-      // TRANSIÇÃO: Oculta Input e Exibe Tela de Concluído (Falsa)
       if (stepInputSection) stepInputSection.classList.add('hidden');
-      if (stepCompletedSection) {
-        stepCompletedSection.classList.remove('hidden');
-        stepCompletedSection.classList.add('fade-in');
-        stepCompletedSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-
       if (stepAlertSection) stepAlertSection.classList.add('hidden');
       if (hackerBlackScreen) hackerBlackScreen.classList.add('hidden');
+
+      // Dispara imediatamente a simulação de ataque (tela treme + popups)
+      runAttackSimulation(() => {
+        triggerMultiPhaseHackingSequence();
+      });
 
     } catch (err) {
       console.error(err);
@@ -1136,7 +1237,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (stepRealDiagSection) stepRealDiagSection.classList.add('hidden');
     if (realDiagLockedWrapper) realDiagLockedWrapper.classList.add('hidden');
 
-    if (stepCompletedSection) stepCompletedSection.classList.add('hidden');
     if (stepAlertSection) stepAlertSection.classList.add('hidden');
     if (stepFecartSection) stepFecartSection.classList.add('hidden');
     if (stepInputSection) {

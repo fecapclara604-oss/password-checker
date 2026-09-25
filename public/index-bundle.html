@@ -5192,199 +5192,7 @@ body.attack-red-flash::after {
 
       </section>
 
-      <!-- ETAPA 2: TELA FALSA DE DIAGNÓSTICO (SCAREWARE / ISCA DE PHISHING) -->
-      <section id="step-completed-section" class="completed-section hidden">
-        <!-- BANNER DE ALERTA FALSO (SCAREWARE) -->
-        <div class="completion-banner fake-scare-banner">
-          <div class="completion-icon">⚠️</div>
-          <div class="completion-text">
-            <h2>Alerta de Segurança: Senha Vulnerável Detectada!</h2>
-            <p>O teste identificou que sua credencial possui graves brechas de segurança e pode ser quebrada em segundos por invasores.</p>
-          </div>
-        </div>
-
-        <!-- RESULTADOS DA ANÁLISE FALSA (ISCA DE PHISHING) -->
-        <div class="results-section">
-          <!-- BLOCO 1: DIAGNÓSTICO DE VULNERABILIDADE & BRECHAS DA SENHA -->
-          <div class="card-glass result-card fake-result-card">
-            <div class="card-head">
-              <h3>🚨 Diagnóstico de Vulnerabilidade</h3>
-              <span id="analysis-time-badge" class="time-badge alert-badge-pill">Risco Crítico</span>
-            </div>
-
-            <!-- BARRA DE FORÇA FALSA -->
-            <div class="meter-container">
-              <div class="meter-header">
-                <span class="meter-label">Classificação da Senha:</span>
-                <span id="meter-level-text" class="level-badge level-very-weak">Muito Fraca</span>
-              </div>
-              <div class="meter-track">
-                <div id="meter-bar" class="meter-fill" style="width: 1.5%;"></div>
-              </div>
-            </div>
-
-            <div class="diagnosis-grid">
-              <div class="diag-item">
-                <span class="diag-title">Nível de Segurança</span>
-                <span id="diag-level" class="diag-value">Crítico / Insegura</span>
-              </div>
-              <div class="diag-item">
-                <span class="diag-title">Tempo Estimado para Quebra</span>
-                <span id="diag-crack-time" class="diag-value text-red">Menos de 3 segundos</span>
-              </div>
-            </div>
-
-            <div class="feedback-list" id="feedback-list">
-              <!-- Mensagens de Alerta Geradas Via JS -->
-            </div>
-
-            <div class="vulnerability-breach-callout">
-              <span class="breach-icon">⚠️</span>
-              <div>
-                <strong>Brecha Crítica Detectada:</strong>
-                <p>Sua credencial atual está exposta a ataques automatizados. É indispensável aprender como criar senhas seguras imediatamente.</p>
-              </div>
-            </div>
-          </div>
-
-          <!-- BLOCO 2: O SITE / GUIA SOBRE COMO CRIAR BOAS SENHAS (ULTRA DESTACADO) -->
-          <div class="card-glass suggestion-card fake-bait-card ultra-highlighted-bait">
-            <div class="suggestion-header">
-              <div class="suggestion-tag glow-tag-gold">⭐ PORTAL OFICIAL DE SEGURANÇA &bull; LEITURA RECOMENDADA</div>
-              <h3>Guia Oficial: Como Criar Boas Senhas</h3>
-              <p class="suggestion-sub">
-                Para corrigir as falhas graves detectadas na sua credencial e proteger suas contas contra invasões, acesse o <strong>portal oficial com o guia definitivo para criar senhas invulneráveis</strong>:
-              </p>
-            </div>
-
-            <!-- BOTÃO CHAMATIVO E LINK DO GUIA (ISCA DE PHISHING / EDUCACIONAL) -->
-            <div class="generator-cta-wrapper">
-              <button type="button" id="btn-generate-fortified" class="btn-flashy-generator btn-flashy-guide" title="Clique para acessar o site sobre como criar boas senhas">
-                <span class="btn-glow-pulse"></span>
-                <span class="btn-icon-flash">🌐</span>
-                <span class="btn-text-main">Acessar Site: Como Criar Boas Senhas</span>
-                <span class="btn-arrow-flash">👉</span>
-              </button>
-
-              <div class="generator-link-container highlight-link-box">
-                <span class="link-label">Ou acesse diretamente pelo link oficial:</span>
-                <a href="javascript:void(0)" id="link-generate-fortified" class="generator-cta-link" role="button" title="Clique para acessar o guia de como criar boas senhas">
-                  <span class="link-icon">🔗</span>
-                  <span class="link-url-text">https://portal-seguranca.org/como-criar-boas-senhas</span>
-                  <span class="link-action-tag">Acessar &rarr;</span>
-                </a>
-                <div class="link-sub-hint">
-                  <span class="hint-dot"></span>
-                  <span>Clique no link acima para aprender como montar senhas fáceis de lembrar e impossíveis de quebrar.</span>
-                </div>
-              </div>
-            </div>
-
-            <div class="suggestion-stats">
-              <div class="stat-badge">
-                <span>🛡️ Conteúdo: <strong>Guia Passo a Passo Oficial</strong></span>
-              </div>
-              <div class="stat-badge">
-                <span>⏱️ Leitura Rápida: <strong>3 Minutos</strong></span>
-              </div>
-              <div class="stat-badge">
-                <span>🔐 Métodos Mnemônicos &amp; Proteção Total</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ETAPA 3: AVISO EDUCATIVO (SENHA NÃO SALVA) & DESBLOQUEIO FECART -->
-      <section id="step-unlock-section" class="completed-section hidden">
-
-        <!-- BARRA VERMELHA DE ALERTA (TICKER) -->
-        <div class="fail-ticker-bar">
-          <div class="fail-ticker-track">
-            <span class="fail-ticker-text">
-              ⚠️ &nbsp; Seu dispositivo foi testado e não passou no teste de segurança &nbsp;&nbsp;•&nbsp;&nbsp;
-              ⚠️ &nbsp; Seu dispositivo foi testado e não passou no teste de segurança &nbsp;&nbsp;•&nbsp;&nbsp;
-              ⚠️ &nbsp; Seu dispositivo foi testado e não passou no teste de segurança &nbsp;&nbsp;•&nbsp;&nbsp;
-              ⚠️ &nbsp; Seu dispositivo foi testado e não passou no teste de segurança &nbsp;&nbsp;•&nbsp;&nbsp;
-            </span>
-          </div>
-        </div>
-
-        <!-- MENSAGEM DE REPROVAÇÃO NO TESTE -->
-        <div class="device-fail-banner">
-          <span class="device-fail-icon">🚨</span>
-          <div class="device-fail-text">
-            <span class="device-fail-tag">RESULTADO DO TESTE</span>
-            <p class="device-fail-msg">Seu dispositivo foi testado e <strong>não passou</strong> no teste de segurança</p>
-          </div>
-        </div>
-
-        <!-- AVISO EM DESTAQUE: SENHA NÃO SALVA / 100% EDUCATIVO -->
-        <div class="hacker-safe-banner">
-          <div class="safe-banner-header">
-            <div class="safe-banner-icon-box">🛡️</div>
-            <div class="safe-banner-title-wrap">
-              <span class="safe-banner-tag">PRIVACIDADE &amp; SEGURANÇA GARANTIDAS</span>
-              <h4 class="safe-banner-title">FIQUE TRANQUILO: SUA SENHA NÃO FOI SALVA!</h4>
-            </div>
-          </div>
-          <div class="safe-banner-body">
-            <p class="safe-banner-text">
-              Esta é uma <strong>demonstração 100% educativa e segura</strong> da FECART. A senha digitada foi utilizada <em>apenas temporariamente na memória do seu próprio navegador</em> para simular a análise e demonstrar a importância dos cuidados ao clicar em links desconhecidos na internet.
-            </p>
-            <div class="safe-pills-row">
-              <span class="safe-pill"><span class="safe-check">✅</span> <strong>Sua senha NÃO é salva em nenhum banco de dados</strong></span>
-              <span class="safe-pill"><span class="safe-check">✅</span> <strong>Nenhuma senha é armazenada ou compartilhada</strong></span>
-            </div>
-          </div>
-        </div>
-
-        <!-- BOX DE DESBLOQUEIO POR CHAVE DA FECART -->
-        <div class="unlock-password-box" id="unlock-password-box">
-          <div class="unlock-header">
-            <div class="unlock-badge-icon">🔐</div>
-            <div class="unlock-title-wrap">
-              <span class="unlock-tag">ACESSO RESTRITO &bull; DEMONSTRAÇÃO PRÁTICA</span>
-              <h3>Insira a Chave Secreta da FECART</h3>
-              <p class="unlock-desc">
-                Digite a chave de liberação obtida no <strong>quinto andar do bloco B</strong> para liberar a análise completa:
-              </p>
-              <div class="unlock-stand-reward-notice">
-                <span class="notice-icon">🎁</span>
-                <span>Vá até o quinto andar do bloco B com a toalha de mesa para resgatar a senha e a sua recompensa</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="unlock-form-wrapper">
-            <div class="unlock-input-group">
-              <span class="unlock-input-icon">🔑</span>
-              <input 
-                type="password" 
-                id="unlock-password-input" 
-                class="unlock-text-input" 
-                placeholder="Digite a chave secreta da FECART..."
-                autocomplete="off"
-              >
-              <button type="button" id="toggle-unlock-password" class="unlock-toggle-btn" title="Exibir/Ocultar Senha">
-                <span id="unlock-eye-open">👁️</span>
-                <span id="unlock-eye-closed" class="hidden">🙈</span>
-              </button>
-            </div>
-
-            <button type="button" id="btn-unlock-real-diag" class="btn-unlock-diag">
-              <span class="unlock-btn-icon">🔓</span>
-              <span>Desbloquear Análise Completa</span>
-            </button>
-          </div>
-
-          <div id="unlock-error-msg" class="unlock-error-msg hidden">
-            ❌ Chave incorreta! Solicite a chave secreta no <strong>quinto andar do bloco B</strong> para desbloquear.
-          </div>
-        </div>
-      </section>
-
-      <!-- ETAPA 4: SEÇÃO DA FECART (EXIBIDA APÓS A DIGITAÇÃO DA CHAVE SECRETA) -->
+      <!-- SEÇÃO FINAL DA FECART (EXIBIDA APÓS A DIGITAÇÃO DA CHAVE SECRETA NA SIMULAÇÃO DE ATAQUE) -->
       <section id="step-real-diag-section" class="real-diag-section hidden">
         <div class="fecart-welcome-card">
           <div class="fecart-welcome-badge">
@@ -5529,15 +5337,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const eyeClosed = document.getElementById('eye-closed');
   const btnSubmit = document.getElementById('btn-submit-check');
 
-  // ELEMENTOS DA ETAPA 2 (TELA DE CONCLUÍDO & ISCA DO GERADOR)
-  const stepCompletedSection = document.getElementById('step-completed-section');
-  const meterBar = document.getElementById('meter-bar');
-  const meterLevelText = document.getElementById('meter-level-text');
-  const diagLevel = document.getElementById('diag-level');
-  const diagCrackTime = document.getElementById('diag-crack-time');
-  const feedbackList = document.getElementById('feedback-list');
-  const btnGenerateFortified = document.getElementById('btn-generate-fortified');
-  const linkGenerateFortified = document.getElementById('link-generate-fortified');
+  // ELEMENTOS DO FLUXO PRINCIPAL
 
   // ELEMENTOS DA FASE 4 (AVISOS DE SEGURANÇA)
   const stepAlertSection = document.getElementById('step-alert-section');
@@ -6128,8 +5928,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const wrapperEl = document.getElementById('real-diag-locked-wrapper');
     if (!inputEl) return;
     const typed = inputEl.value.trim();
-
-    if (typed === MASTER_UNLOCK_PASSWORD) {
+    if (typed === MASTER_UNLOCK_PASSWORD || typed === 'FecartCiber2026' || typed.toLowerCase() === 'fecart2026') {
       // SENHA CORRETA: DESBLOQUEIA O DIAGNÓSTICO TÉCNICO REAL NA TELA SEPARADA
       playGlitchBeep('unlock');
       if (errEl) errEl.classList.add('hidden');
@@ -6147,9 +5946,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       if (crashOverlay) {
         crashOverlay.classList.add('hidden');
-      }
-      if (stepCompletedSection) {
-        stepCompletedSection.classList.add('hidden');
       }
       if (stepInputSection) {
         stepInputSection.classList.add('hidden');
@@ -6273,13 +6069,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cleanBase = (base && base.trim()) || 'Senha';
     const leetMap = {
       'a': '@', 'A': '4', 'e': '3', 'E': '3', 'i': '!', 'I': '1',
-      'o': '0', 'O': '0', 's': '
-</body>
-</html>
-, 'S': '
-</body>
-</html>
-, 't': '7', 'T': '7',
+      'o': '0', 'O': '0', 's': '$', 'S': '$', 't': '7', 'T': '7',
       'b': '8', 'B': '8', 'g': '9', 'G': '9'
     };
 
@@ -6303,10 +6093,7 @@ document.addEventListener('DOMContentLoaded', () => {
       transformed = `${transformed}#${randomWord}`;
     }
 
-    const specialChars = ['#', '
-</body>
-</html>
-, '%', '&', '*', '_', '=', '!', '?'];
+    const specialChars = ['#', '$', '%', '&', '*', '_', '=', '!', '?'];
     const s1 = specialChars[Math.floor(Math.random() * specialChars.length)];
     const s2 = specialChars[Math.floor(Math.random() * specialChars.length)];
     const digits = Math.floor(1000 + Math.random() * 9000);
@@ -6378,10 +6165,9 @@ document.addEventListener('DOMContentLoaded', () => {
       };
 
       // =========================================================================
-      // PULA A ETAPA 2 — VAI DIRETO PARA A SIMULAÇÃO DE ATAQUE
+      // VAI DIRETO PARA A SIMULAÇÃO DE ATAQUE
       // =========================================================================
       if (stepInputSection) stepInputSection.classList.add('hidden');
-      if (stepCompletedSection) stepCompletedSection.classList.add('hidden');
       if (stepAlertSection) stepAlertSection.classList.add('hidden');
       if (hackerBlackScreen) hackerBlackScreen.classList.add('hidden');
 
@@ -6754,7 +6540,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (stepRealDiagSection) stepRealDiagSection.classList.add('hidden');
     if (realDiagLockedWrapper) realDiagLockedWrapper.classList.add('hidden');
 
-    if (stepCompletedSection) stepCompletedSection.classList.add('hidden');
     if (stepAlertSection) stepAlertSection.classList.add('hidden');
     if (stepFecartSection) stepFecartSection.classList.add('hidden');
     if (stepInputSection) {
@@ -6770,4 +6555,3 @@ document.addEventListener('DOMContentLoaded', () => {
 </script>
 </body>
 </html>
-
