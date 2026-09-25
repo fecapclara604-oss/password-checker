@@ -1,0 +1,6773 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Verificador de Segurança de Senhas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+:root {
+  --bg-dark: #090d16;
+  --card-bg: rgba(17, 24, 39, 0.85);
+  --card-border: rgba(255, 255, 255, 0.08);
+  --glass-glow: rgba(0, 242, 254, 0.1);
+  --primary: #00f2fe;
+  --primary-gradient: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+  --danger: #ff3366;
+  --danger-bg: rgba(255, 51, 102, 0.15);
+  --danger-border: rgba(255, 51, 102, 0.4);
+  --warning: #ffb300;
+  --success: #00e676;
+  --text-main: #f3f4f6;
+  --text-muted: #9ca3af;
+  --code-font: 'Fira Code', monospace;
+  --main-font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--main-font);
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  overflow-x: hidden;
+  line-height: 1.6;
+  transition: filter 0.2s ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* BACKGROUND EFFECTS */
+.cyber-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: radial-gradient(circle at 50% 10%, rgba(0, 242, 254, 0.12) 0%, transparent 50%),
+              radial-gradient(circle at 90% 80%, rgba(79, 172, 254, 0.08) 0%, transparent 40%),
+              radial-gradient(circle at 10% 90%, rgba(255, 51, 102, 0.08) 0%, transparent 40%);
+  z-index: -2;
+}
+
+.grid-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 32px 32px;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.container {
+  max-width: 980px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 20px 60px 20px;
+  padding-bottom: max(60px, calc(40px + env(safe-area-inset-bottom, 0px)));
+}
+
+/* ========================================================
+   FASE 1: CRASH / FREEZE & AVISOS DE ANTIVÍRUS / SEGURANÇA
+   ======================================================== */
+body.system-crashing {
+  animation: bodyGlitchShake 0.1s infinite alternate;
+  overflow: hidden;
+}
+
+@keyframes bodyGlitchShake {
+  0% { transform: translate(2px, 1px) skewX(0.8deg); filter: contrast(1.5) hue-rotate(-20deg); }
+  33% { transform: translate(-3px, -2px) skewX(-0.8deg); filter: invert(0.2) contrast(1.8); }
+  66% { transform: translate(3px, 2px) skewX(1.2deg); filter: contrast(1.4) hue-rotate(30deg); }
+  100% { transform: translate(-2px, 3px) skewX(-1deg); filter: contrast(2) hue-rotate(-10deg); }
+}
+
+.crash-simulation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: all;
+  cursor: wait;
+  overflow: hidden;
+  padding: 12px;
+}
+
+.crash-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(5, 7, 15, 0.88);
+  backdrop-filter: blur(12px);
+  animation: redFlicker 0.2s infinite;
+}
+
+@keyframes redFlicker {
+  0%, 100% { background: rgba(5, 7, 15, 0.88); }
+  50% { background: rgba(45, 5, 15, 0.94); }
+}
+
+.crash-glitch-lines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 51, 102, 0.2) 0px,
+    rgba(255, 51, 102, 0.2) 2px,
+    transparent 2px,
+    transparent 4px
+  );
+  pointer-events: none;
+  animation: scanlines 0.4s linear infinite;
+}
+
+@keyframes scanlines {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(8px); }
+}
+
+.crash-container {
+  position: relative;
+  width: 90%;
+  max-width: 680px;
+  z-index: 2;
+}
+
+.crash-terminal-box {
+  background: #070a12;
+  border: 2px solid #ff3366;
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 50px rgba(255, 51, 102, 0.7), inset 0 0 25px rgba(255, 51, 102, 0.3);
+  overflow: hidden;
+  animation: terminalJitter 0.15s infinite alternate;
+}
+
+@keyframes terminalJitter {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-3px) translateX(2px); }
+}
+
+.terminal-header {
+  background: #111827;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255, 51, 102, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.terminal-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.terminal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.terminal-dot.red { background: #ff3366; box-shadow: 0 0 6px #ff3366; }
+.terminal-dot.yellow { background: #ffb300; }
+.terminal-dot.green { background: #00e676; }
+
+.terminal-title {
+  font-family: var(--code-font);
+  font-size: 0.75rem;
+  color: #ff3366;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.terminal-body {
+  padding: 18px;
+  font-family: var(--code-font);
+  font-size: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  line-height: 1.5;
+}
+
+.terminal-line {
+  color: #e2e8f0;
+}
+
+.text-cyan { color: #00f2fe; }
+.text-green { color: #00e676; }
+.font-mono { font-family: var(--code-font); }
+.font-bold { font-weight: 800; }
+.blink { animation: blinkText 0.35s infinite; }
+
+@keyframes blinkText {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.crash-progress-wrap {
+  padding: 12px 18px 18px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.crash-progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  font-family: var(--code-font);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.crash-progress-track {
+  width: 100%;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.crash-progress-bar {
+  width: 99%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    #ff3366,
+    #ff3366 10px,
+    #ff6b8b 10px,
+    #ff6b8b 20px
+  );
+  animation: progressStripes 0.4s linear infinite;
+}
+
+@keyframes progressStripes {
+  0% { background-position: 0 0; }
+  100% { background-position: 28px 0; }
+}
+
+.crash-actions-bar {
+  padding: 12px 18px 16px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+  min-height: 56px;
+}
+
+.btn-fake-close {
+  background: rgba(255, 51, 102, 0.2);
+  border: 1px solid #ff3366;
+  color: #fff;
+  font-family: var(--code-font);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 8px 18px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 0 15px rgba(255, 51, 102, 0.4);
+  transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275), background-color 0.15s ease;
+  user-select: none;
+  z-index: 5;
+}
+
+.btn-fake-close:hover {
+  background: rgba(255, 51, 102, 0.4);
+  box-shadow: 0 0 25px rgba(255, 51, 102, 0.7);
+}
+
+.fake-close-toast {
+  font-family: var(--code-font);
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #ff3366;
+  background: rgba(10, 15, 26, 0.95);
+  border: 1px solid rgba(255, 51, 102, 0.5);
+  padding: 4px 12px;
+  border-radius: 4px;
+  box-shadow: 0 0 15px rgba(255, 51, 102, 0.3);
+  animation: toastPop 0.2s ease-out;
+}
+
+@keyframes toastPop {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.error-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.25);
+  font-size: 0.75rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  user-select: none;
+}
+
+.error-close:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* ERROR & ANTIVIRUS WINDOWS (6 JANELAS EM CASCATA) */
+.error-window {
+  position: absolute;
+  width: 320px;
+  background: #181d2d;
+  border: 2px solid #ff3366;
+  border-radius: 8px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.9), 0 0 25px rgba(255, 51, 102, 0.5);
+  opacity: 0;
+  transform: scale(0.6) rotate(-4deg);
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 10;
+}
+
+.error-window.show {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+.error-win-header {
+  background: #ff3366;
+  color: #fff;
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.defender-header {
+  background: #0078d4;
+  border-bottom: 2px solid #005a9e;
+}
+
+.avast-header {
+  background: #ff7800;
+  border-bottom: 2px solid #e06a00;
+}
+
+.kaspersky-header {
+  background: #006d5b;
+  border-bottom: 2px solid #004d40;
+}
+
+.error-close {
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.error-win-body {
+  padding: 12px 14px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.error-icon {
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
+.error-win-body strong {
+  display: block;
+  font-size: 0.82rem;
+  color: #fff;
+  margin-bottom: 2px;
+}
+
+.error-win-body p {
+  font-size: 0.74rem;
+  color: #ffc2d1;
+  line-height: 1.35;
+}
+
+.error-win-1 { top: -50px; right: -50px; transform: scale(0.6) rotate(3deg); }
+.error-win-2 { bottom: -70px; left: -40px; transform: scale(0.6) rotate(-4deg); }
+.error-win-3 { bottom: 20px; right: -70px; transform: scale(0.6) rotate(5deg); }
+.error-win-4 { top: -70px; left: -50px; transform: scale(0.6) rotate(-6deg); }
+.error-win-5 { top: 38%; left: -90px; transform: scale(0.6) rotate(2deg); }
+.error-win-6 { top: 42%; right: -90px; transform: scale(0.6) rotate(-3deg); }
+
+@media (max-width: 768px) {
+  .error-window {
+    max-width: calc(100vw - 28px);
+  }
+  .error-win-1 { top: -16px; right: 4px; width: 270px; }
+  .error-win-2 { bottom: -16px; left: 4px; width: 270px; }
+  .error-win-3 { display: none; }
+  .error-win-4 { top: 12px; left: 4px; width: 260px; }
+  .error-win-5, .error-win-6 { display: none; }
+}
+
+@media (max-width: 480px) {
+  .error-window {
+    width: auto;
+    max-width: 92%;
+  }
+  .error-win-1 { top: -10px; right: 2px; }
+  .error-win-2 { bottom: -10px; left: 2px; }
+  .error-win-4 { top: 20px; left: 2px; }
+}
+
+/* ========================================================
+   FASE 2: FULL-SCREEN BLACK HACKER SCREEN (TELA PRETA)
+   ======================================================== */
+.hacker-black-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: #020408;
+  z-index: 100000;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 40px 16px 100px 16px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.matrix-code-stream {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  padding: 24px;
+  font-family: var(--code-font);
+  font-size: 0.85rem;
+  color: rgba(0, 242, 254, 0.35);
+  line-height: 1.55;
+  white-space: pre-wrap;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hacker-black-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 880px;
+  margin: 0 auto;
+  animation: hackerCardPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes hackerCardPop {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.hacker-terminal-card {
+  background: rgba(10, 15, 26, 0.96);
+  border: 2px solid #ff3366;
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  box-shadow: 0 0 60px rgba(255, 51, 102, 0.5), inset 0 0 30px rgba(255, 51, 102, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.hacker-terminal-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.skull-badge-glitch {
+  font-size: 3.2rem;
+  line-height: 1;
+  background: rgba(255, 51, 102, 0.15);
+  border: 2px solid #ff3366;
+  padding: 10px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 25px rgba(255, 51, 102, 0.4);
+  animation: skullPulse 1.2s infinite;
+}
+
+@keyframes skullPulse {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px #ff3366); }
+  50% { transform: scale(1.1); filter: drop-shadow(0 0 20px #ff3366); }
+}
+
+.hacker-alert-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hacker-sub-tag {
+  font-family: var(--code-font);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #ff3366;
+  text-transform: uppercase;
+}
+
+.hacker-glitch-title {
+  font-size: 1.55rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -0.2px;
+  line-height: 1.25;
+  text-shadow: 0 0 15px rgba(255, 51, 102, 0.8);
+}
+
+.hacker-terminal-subtitle {
+  font-size: 0.95rem;
+  color: #cbd5e1;
+}
+
+.hacker-creds-box {
+  background: #05070d;
+  border: 1px solid rgba(255, 51, 102, 0.4);
+  border-radius: var(--radius-md);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: var(--code-font);
+}
+
+.hacker-cred-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.hacker-cred-row:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.hacker-cred-row.highlight-row {
+  background: rgba(255, 51, 102, 0.1);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 51, 102, 0.4);
+}
+
+.cred-tag {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.cred-data {
+  color: #fff;
+  font-size: 1rem;
+  word-break: break-all;
+}
+
+.hacker-safe-banner {
+  background: linear-gradient(135deg, rgba(0, 255, 157, 0.12) 0%, rgba(0, 242, 254, 0.08) 100%);
+  border: 2px solid rgba(0, 255, 157, 0.6);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 0 25px rgba(0, 255, 157, 0.2), inset 0 0 15px rgba(0, 255, 157, 0.05);
+  animation: safePulseGlow 3.5s infinite ease-in-out;
+  text-align: left;
+}
+
+@keyframes safePulseGlow {
+  0%, 100% {
+    border-color: rgba(0, 255, 157, 0.6);
+    box-shadow: 0 0 25px rgba(0, 255, 157, 0.2), inset 0 0 15px rgba(0, 255, 157, 0.05);
+  }
+  50% {
+    border-color: rgba(0, 255, 157, 0.95);
+    box-shadow: 0 0 35px rgba(0, 255, 157, 0.4), inset 0 0 20px rgba(0, 255, 157, 0.1);
+  }
+}
+
+.safe-banner-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.safe-banner-icon-box {
+  font-size: 2rem;
+  background: rgba(0, 255, 157, 0.2);
+  border: 1px solid rgba(0, 255, 157, 0.5);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 0 15px rgba(0, 255, 157, 0.35);
+}
+
+.safe-banner-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.safe-banner-tag {
+  font-family: var(--code-font);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #00ff9d;
+  text-transform: uppercase;
+}
+
+.safe-banner-title {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: -0.2px;
+  margin: 0;
+  text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
+}
+
+.safe-banner-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.safe-banner-text {
+  font-size: 0.92rem;
+  color: #e2e8f0;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.safe-banner-text strong {
+  color: #00ff9d;
+}
+
+.safe-pills-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.safe-pill {
+  background: rgba(0, 255, 157, 0.15);
+  border: 1px solid rgba(0, 255, 157, 0.45);
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.84rem;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.safe-check {
+  font-size: 0.9rem;
+}
+
+.hacker-impact-msg {
+  background: rgba(255, 179, 0, 0.1);
+  border: 1px solid rgba(255, 179, 0, 0.3);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.86rem;
+  color: #ffe082;
+}
+
+.danger-symbol {
+  font-size: 1.4rem;
+}
+
+.hacker-actions-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.btn-proceed-security {
+  background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+  color: #090d16;
+  border: none;
+  font-family: var(--main-font);
+  font-size: 1.05rem;
+  font-weight: 800;
+  padding: 16px 32px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 0 25px rgba(0, 242, 254, 0.4);
+}
+
+.btn-proceed-security:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 35px rgba(0, 242, 254, 0.6);
+}
+
+/* ========================================================
+   HEADER
+   ======================================================== */
+.app-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.header-badges-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.shield-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0, 242, 254, 0.1);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--primary);
+}
+
+.share-badge-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 230, 118, 0.12);
+  border: 1px solid rgba(0, 230, 118, 0.35);
+  color: #00e676;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  transition: all 0.2s;
+}
+
+.share-badge-link:hover {
+  background: rgba(0, 230, 118, 0.22);
+  border-color: #00e676;
+  transform: translateY(-1px);
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  background-color: var(--primary);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--primary);
+  animation: pulse 1.8s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.3); opacity: 1; box-shadow: 0 0 15px var(--primary); }
+  100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+.pulse-dot-red {
+  width: 8px;
+  height: 8px;
+  background-color: #ff3366;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #ff3366;
+  animation: pulseRed 1.2s infinite;
+}
+
+@keyframes pulseRed {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  50% { transform: scale(1.4); opacity: 1; box-shadow: 0 0 15px #ff3366; }
+  100% { transform: scale(0.9); opacity: 0.7; }
+}
+
+.app-header h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 12px;
+}
+
+.subtitle {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  max-width: 650px;
+  margin: 0 auto;
+}
+
+/* MAIN CARD */
+.main-card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ETAPA 1: INPUT SECTION */
+.input-section {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(16px);
+  padding: 32px;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.form-header-group {
+  margin-bottom: 20px;
+}
+
+.input-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.badge-tag {
+  font-size: 0.75rem;
+  color: var(--primary);
+  background: rgba(0, 242, 254, 0.08);
+  border: 1px solid rgba(0, 242, 254, 0.2);
+  padding: 3px 10px;
+  border-radius: 4px;
+}
+
+.form-grid-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+@media (max-width: 700px) {
+  .form-grid-inputs {
+    grid-template-columns: 1fr;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.margin-top-md {
+  margin-top: 6px;
+  margin-bottom: 24px;
+}
+
+.field-label {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.field-icon {
+  font-size: 1rem;
+}
+
+.cyber-select, .cyber-text-input {
+  width: 100%;
+  background: rgba(10, 15, 26, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  color: #fff;
+  font-family: var(--main-font);
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+}
+
+.cyber-select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2300f2fe' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 16px;
+  cursor: pointer;
+}
+
+.cyber-select option {
+  background: #0d1322;
+  color: #fff;
+}
+
+.cyber-select:focus, .cyber-text-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 242, 254, 0.2);
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-wrapper input {
+  width: 100%;
+  background: rgba(10, 15, 26, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-md);
+  padding: 16px 52px 16px 18px;
+  color: #fff;
+  font-family: var(--code-font);
+  font-size: 1.15rem;
+  transition: all 0.25s ease;
+}
+
+.input-wrapper input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 242, 254, 0.2);
+}
+
+.icon-btn {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: var(--radius-sm);
+  transition: color 0.2s;
+}
+
+.icon-btn:hover {
+  color: #fff;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* BUTTONS */
+.btn-primary {
+  width: 100%;
+  background: var(--primary-gradient);
+  color: #090d16;
+  border: none;
+  font-family: var(--main-font);
+  font-size: 1.05rem;
+  font-weight: 700;
+  padding: 16px 24px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(0, 242, 254, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(0, 242, 254, 0.45);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* ETAPA 2: COMPLETED SECTION */
+.completed-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.completion-banner {
+  background: rgba(0, 230, 118, 0.08);
+  border: 1px solid rgba(0, 230, 118, 0.35);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 0 25px rgba(0, 230, 118, 0.12);
+}
+
+.fake-scare-banner {
+  background: rgba(255, 51, 102, 0.08);
+  border: 1px solid rgba(255, 51, 102, 0.4);
+  box-shadow: 0 0 25px rgba(255, 51, 102, 0.15);
+}
+
+.fake-scare-banner h2 {
+  color: #ff3366 !important;
+}
+
+.fake-result-card {
+  border-color: rgba(255, 51, 102, 0.35);
+}
+
+.alert-badge-pill {
+  background: rgba(255, 51, 102, 0.15) !important;
+  color: #ff3366 !important;
+  border: 1px solid rgba(255, 51, 102, 0.4) !important;
+  font-weight: 800;
+}
+
+.completion-icon {
+  font-size: 2.2rem;
+  line-height: 1;
+}
+
+.completion-text h2 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #00e676;
+  margin-bottom: 4px;
+}
+
+.completion-text p {
+  font-size: 0.92rem;
+  color: var(--text-muted);
+}
+
+/* RESULTS & SUGGESTION */
+.results-section {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 20px;
+}
+
+@media (max-width: 768px) {
+  .results-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card-glass {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  backdrop-filter: blur(16px);
+}
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.card-head h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.time-badge {
+  font-size: 0.75rem;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 2px 8px;
+  border-radius: 4px;
+  color: var(--text-muted);
+}
+
+/* METER */
+.meter-container {
+  margin-bottom: 20px;
+}
+
+.meter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 0.88rem;
+}
+
+.level-badge {
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  transition: all 0.3s;
+}
+
+.level-empty {
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.level-very-weak {
+  color: #ff3366;
+  background: rgba(255, 51, 102, 0.15);
+}
+
+.level-weak {
+  color: #ff9100;
+  background: rgba(255, 145, 0, 0.15);
+}
+
+.level-medium {
+  color: #ffd600;
+  background: rgba(255, 214, 0, 0.15);
+}
+
+.level-strong {
+  color: #00e676;
+  background: rgba(0, 230, 118, 0.15);
+}
+
+.level-unbreakable {
+  color: #00f2fe;
+  background: rgba(0, 242, 254, 0.18);
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+}
+
+.meter-track {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.meter-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.35s ease;
+}
+
+/* DIAGNOSIS */
+.diagnosis-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.diag-item {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.diag-title {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.diag-value {
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.text-red { color: #ff3366; }
+.text-yellow { color: #ffb300; }
+
+/* RULES CHECKLIST */
+.rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.rule-item {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  transition: all 0.2s;
+}
+
+.rule-item.valid {
+  color: #00e676;
+  border-color: rgba(0, 230, 118, 0.3);
+  background: rgba(0, 230, 118, 0.05);
+}
+
+.feedback-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.feedback-item {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-sm);
+}
+
+.vulnerability-breach-callout {
+  background: rgba(255, 51, 102, 0.08);
+  border: 1px solid rgba(255, 51, 102, 0.35);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.breach-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.vulnerability-breach-callout strong {
+  display: block;
+  font-size: 0.85rem;
+  color: #ff3366;
+  margin-bottom: 2px;
+}
+
+.vulnerability-breach-callout p {
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* SUGGESTION & PASSWORD INTERACTIVE TRIGGER (BLOCO 2 - ISCA DESTACADA) */
+.suggestion-card {
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  background: linear-gradient(180deg, rgba(17, 24, 39, 0.95) 0%, rgba(13, 20, 34, 0.9) 100%);
+  position: relative;
+}
+
+.fake-bait-card {
+  border: 2px solid rgba(0, 242, 254, 0.45) !important;
+  background: linear-gradient(180deg, rgba(8, 24, 48, 0.95) 0%, rgba(5, 15, 30, 0.98) 100%) !important;
+  box-shadow: 0 0 35px rgba(0, 242, 254, 0.25), inset 0 0 20px rgba(0, 242, 254, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.ultra-highlighted-bait {
+  border: 2px solid #00f2fe !important;
+  background: linear-gradient(180deg, rgba(8, 30, 60, 0.98) 0%, rgba(4, 18, 38, 0.98) 100%) !important;
+  box-shadow: 0 0 45px rgba(0, 242, 254, 0.4), inset 0 0 25px rgba(0, 242, 254, 0.12) !important;
+  position: relative;
+  animation: ultraBaitPulse 3s infinite alternate ease-in-out;
+}
+
+@keyframes ultraBaitPulse {
+  0% {
+    border-color: #00f2fe;
+    box-shadow: 0 0 35px rgba(0, 242, 254, 0.35), inset 0 0 20px rgba(0, 242, 254, 0.1);
+  }
+  100% {
+    border-color: #00ff9d;
+    box-shadow: 0 0 60px rgba(0, 255, 157, 0.55), inset 0 0 35px rgba(0, 242, 254, 0.2);
+  }
+}
+
+.glow-tag-gold {
+  background: rgba(255, 215, 0, 0.18) !important;
+  color: #ffd700 !important;
+  border: 1px solid rgba(255, 215, 0, 0.6) !important;
+  box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+  font-weight: 800;
+  letter-spacing: 0.8px;
+}
+
+.btn-flashy-guide {
+  background: linear-gradient(135deg, #00f2fe 0%, #00e676 50%, #4facfe 100%) !important;
+  box-shadow: 0 0 35px rgba(0, 242, 254, 0.5), 0 0 70px rgba(0, 230, 118, 0.3) !important;
+  font-size: 1.12rem !important;
+  padding: 20px 26px !important;
+}
+
+.btn-flashy-guide:hover {
+  transform: translateY(-4px) scale(1.035) !important;
+  box-shadow: 0 0 50px rgba(0, 242, 254, 0.85), 0 0 95px rgba(0, 230, 118, 0.6) !important;
+}
+
+.suggestion-tag {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: rgba(0, 242, 254, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.glow-tag {
+  background: rgba(0, 242, 254, 0.2) !important;
+  color: #00f2fe !important;
+  border: 1px solid rgba(0, 242, 254, 0.5) !important;
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.3);
+  letter-spacing: 0.8px;
+}
+
+.suggestion-header h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.suggestion-sub {
+  font-size: 0.86rem;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+  line-height: 1.45;
+}
+
+.suggestion-sub strong {
+  color: #00f2fe;
+}
+
+/* ========================================================
+   ISCA DO GERADOR DE SENHAS (BOTÃO CHAMATIVO & LINK)
+   ======================================================== */
+.generator-cta-wrapper {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.btn-flashy-generator {
+  position: relative;
+  width: 100%;
+  background: linear-gradient(135deg, #00f2fe 0%, #00d2ff 30%, #00e676 100%);
+  color: #060911;
+  border: none;
+  font-family: var(--main-font);
+  font-size: 1.08rem;
+  font-weight: 800;
+  padding: 18px 24px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  box-shadow: 0 0 30px rgba(0, 242, 254, 0.4), 0 0 60px rgba(0, 230, 118, 0.2);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  overflow: hidden;
+  letter-spacing: 0.3px;
+  animation: flashyButtonPulse 2.2s infinite alternate;
+}
+
+@keyframes flashyButtonPulse {
+  0% {
+    box-shadow: 0 0 20px rgba(0, 242, 254, 0.35), 0 0 40px rgba(0, 230, 118, 0.15);
+    transform: scale(1);
+  }
+  100% {
+    box-shadow: 0 0 35px rgba(0, 242, 254, 0.65), 0 0 70px rgba(0, 230, 118, 0.4);
+    transform: scale(1.015);
+  }
+}
+
+.btn-flashy-generator:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 0 45px rgba(0, 242, 254, 0.8), 0 0 85px rgba(0, 230, 118, 0.5);
+  background: linear-gradient(135deg, #26f7ff 0%, #00e676 100%);
+}
+
+.btn-flashy-generator:active {
+  transform: translateY(0) scale(0.99);
+}
+
+.btn-icon-flash {
+  font-size: 1.35rem;
+  line-height: 1;
+  animation: flashIconBounce 0.9s infinite alternate;
+}
+
+@keyframes flashIconBounce {
+  0% { transform: translateY(-1px) scale(0.95); }
+  100% { transform: translateY(2px) scale(1.15); }
+}
+
+.btn-text-main {
+  font-weight: 900;
+  letter-spacing: 0.4px;
+}
+
+.btn-arrow-flash {
+  font-size: 1.3rem;
+  transition: transform 0.2s;
+}
+
+.btn-flashy-generator:hover .btn-arrow-flash {
+  transform: translateX(4px);
+}
+
+/* LINK ABAIXO DO BOTÃO */
+.generator-link-container {
+  background: rgba(6, 9, 17, 0.85);
+  border: 1px solid rgba(0, 242, 254, 0.25);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.link-label {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.generator-cta-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(0, 242, 254, 0.06);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  text-decoration: none;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  flex-wrap: wrap;
+}
+
+.generator-cta-link:hover {
+  background: rgba(0, 242, 254, 0.15);
+  border-color: #00f2fe;
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+  transform: translateY(-1px);
+}
+
+.link-icon {
+  font-size: 1.1rem;
+}
+
+.link-url-text {
+  font-family: var(--code-font);
+  font-size: 0.86rem;
+  color: #00f2fe;
+  font-weight: 700;
+  word-break: break-all;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.link-action-tag {
+  font-size: 0.76rem;
+  font-weight: 800;
+  background: #00f2fe;
+  color: #060911;
+  padding: 4px 10px;
+  border-radius: 4px;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+
+.link-sub-hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+.hint-dot {
+  width: 6px;
+  height: 6px;
+  background: #00f2fe;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 6px #00f2fe;
+  animation: pulseDot 1.5s infinite;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 0.5; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.3); }
+}
+
+.suggestion-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.stat-badge {
+  font-size: 0.82rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 3px solid var(--primary);
+  padding: 6px 10px;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--text-muted);
+}
+
+.stat-badge strong {
+  color: #fff;
+}
+
+/* ========================================================
+   FASE 4: DIAGNÓSTICO REAL (PÁGINA SEPARADA DE SEGURANÇA)
+   ======================================================== */
+
+/* BANNER DE DESTAQUE: SENHA NÃO SALVA EM BANCO DE DADOS */
+.no-storage-highlight-banner {
+  background: linear-gradient(135deg, rgba(0, 230, 118, 0.12) 0%, rgba(0, 242, 254, 0.08) 100%);
+  border: 2px solid rgba(0, 230, 118, 0.45);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 0 25px rgba(0, 230, 118, 0.15);
+  margin-bottom: 6px;
+}
+
+.no-storage-icon-wrap {
+  position: relative;
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-storage-check {
+  position: absolute;
+  bottom: -4px;
+  right: -6px;
+  font-size: 1rem;
+}
+
+.no-storage-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-grow: 1;
+}
+
+.no-storage-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.no-storage-title-row h4 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #00e676;
+  letter-spacing: -0.2px;
+}
+
+.no-storage-tag {
+  font-size: 0.68rem;
+  font-weight: 800;
+  background: rgba(0, 230, 118, 0.2);
+  color: #00e676;
+  border: 1px solid rgba(0, 230, 118, 0.4);
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+}
+
+.no-storage-content p {
+  font-size: 0.85rem;
+  color: #e2e8f0;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.no-storage-content p strong {
+  color: #00f2fe;
+}
+
+.real-diagnosis-card {
+  border: 2px solid rgba(0, 242, 254, 0.4);
+  background: linear-gradient(180deg, rgba(10, 18, 34, 0.95) 0%, rgba(6, 12, 24, 0.98) 100%);
+  box-shadow: 0 0 40px rgba(0, 242, 254, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.real-diag-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 16px;
+}
+
+.real-diag-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+  background: rgba(0, 242, 254, 0.12);
+  border: 1px solid rgba(0, 242, 254, 0.35);
+  padding: 10px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.2);
+  flex-shrink: 0;
+}
+
+.real-diag-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.real-badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #00f2fe;
+  background: rgba(0, 242, 254, 0.12);
+  border: 1px solid rgba(0, 242, 254, 0.35);
+  padding: 2px 8px;
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.real-diag-titles h3 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.real-diag-sub {
+  font-size: 0.92rem;
+  color: #cbd5e1;
+  line-height: 1.45;
+}
+
+.real-diag-sub strong {
+  color: #ff6b8b;
+}
+
+.real-diag-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ========================================================
+   FASE 4: EXEMPLOS REAIS DE PHISHING NO FINAL DA PÁGINA (MINI BLOCOS)
+   ======================================================== */
+.real-phishing-section {
+  background: rgba(13, 19, 34, 0.7);
+  border: 1px solid rgba(255, 179, 0, 0.3);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 0 0 30px rgba(255, 179, 0, 0.08);
+}
+
+.real-phishing-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 14px;
+}
+
+.real-phishing-icon {
+  font-size: 2rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.real-phishing-header h4 {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #ffb300;
+  margin-bottom: 2px;
+}
+
+.real-phishing-sub {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.mini-phishing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+@media (max-width: 900px) {
+  .mini-phishing-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .mini-phishing-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mini-phishing-card {
+  background: rgba(8, 12, 22, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: all 0.25s ease;
+}
+
+.mini-phishing-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 179, 0, 0.4);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.mini-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mini-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.mini-badge {
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 4px;
+  letter-spacing: 0.3px;
+}
+
+.tag-sms {
+  background: rgba(0, 242, 254, 0.12);
+  color: #00f2fe;
+  border: 1px solid rgba(0, 242, 254, 0.3);
+}
+
+.tag-bank {
+  background: rgba(255, 179, 0, 0.12);
+  color: #ffb300;
+  border: 1px solid rgba(255, 179, 0, 0.3);
+}
+
+.tag-social {
+  background: rgba(255, 51, 102, 0.12);
+  color: #ff3366;
+  border: 1px solid rgba(255, 51, 102, 0.3);
+}
+
+.tag-job {
+  background: rgba(0, 230, 118, 0.12);
+  color: #00e676;
+  border: 1px solid rgba(0, 230, 118, 0.3);
+}
+
+.tag-corp {
+  background: rgba(168, 85, 247, 0.12);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.tag-scare {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.mini-phishing-card h5 {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.mini-example-bubble {
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px dashed rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-sm);
+  padding: 8px 10px;
+  font-size: 0.78rem;
+  color: #ffe082;
+  line-height: 1.4;
+}
+
+.mini-example-bubble em {
+  font-style: italic;
+}
+
+.mini-phishing-card p {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  line-height: 1.4;
+  margin: 0;
+  flex-grow: 1;
+}
+
+/* BLOCO DE SENHA BLINDADA SEGURA */
+.safe-suggestion-box {
+  background: #060911;
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.safe-box-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #00f2fe;
+}
+
+.safe-code-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: rgba(0, 242, 254, 0.05);
+  border: 1px solid rgba(0, 242, 254, 0.25);
+  padding: 12px 18px;
+  border-radius: var(--radius-sm);
+  flex-wrap: wrap;
+}
+
+.safe-code-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow-x: auto;
+}
+
+.safe-lock-glow {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.safe-password-code {
+  font-family: var(--code-font);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #00f2fe;
+  letter-spacing: 1px;
+}
+
+.safe-actions-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-copy-pwd {
+  background: rgba(0, 242, 254, 0.12);
+  border: 1px solid rgba(0, 242, 254, 0.4);
+  color: #00f2fe;
+  font-family: var(--main-font);
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.btn-copy-pwd:hover {
+  background: rgba(0, 242, 254, 0.22);
+  border-color: #00f2fe;
+  box-shadow: 0 0 16px rgba(0, 242, 254, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-copy-pwd:active {
+  transform: translateY(0);
+}
+
+.btn-copy-pwd.copied {
+  background: rgba(0, 230, 118, 0.2);
+  border-color: #00e676;
+  color: #00e676;
+  box-shadow: 0 0 16px rgba(0, 230, 118, 0.4);
+}
+
+.safe-badge {
+  font-size: 0.74rem;
+  font-weight: 800;
+  background: rgba(0, 230, 118, 0.15);
+  color: #00e676;
+  border: 1px solid rgba(0, 230, 118, 0.4);
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+
+.safe-tips-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.safe-tip-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.82rem;
+  color: #cbd5e1;
+  line-height: 1.45;
+}
+
+.safe-tip-icon {
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+.safe-tip-item strong {
+  color: #fff;
+}
+
+/* ========================================================
+   FASE 4: AVISOS DE SEGURANÇA (CONSCIENTIZAÇÃO EDUCATIVA)
+   ======================================================== */
+.alert-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.educational-alert-box {
+  background: linear-gradient(180deg, rgba(20, 28, 48, 0.95) 0%, rgba(13, 18, 32, 0.98) 100%);
+  border: 2px solid #00f2fe;
+  border-radius: var(--radius-lg);
+  padding: 34px 30px;
+  box-shadow: 0 0 50px rgba(0, 242, 254, 0.2), 0 20px 40px rgba(0, 0, 0, 0.6);
+  position: relative;
+}
+
+.edu-alert-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 20px;
+}
+
+.edu-icon-badge {
+  font-size: 3.5rem;
+  line-height: 1;
+  background: rgba(0, 242, 254, 0.1);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  padding: 12px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 25px rgba(0, 242, 254, 0.2);
+  flex-shrink: 0;
+}
+
+.edu-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.edu-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #00f2fe;
+  background: rgba(0, 242, 254, 0.12);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  padding: 3px 10px;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.edu-main-title {
+  color: #fff;
+  font-size: 1.85rem;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.edu-subtitle {
+  color: #cbd5e1;
+  font-size: 1.02rem;
+}
+
+.edu-subtitle strong {
+  color: #ff3366;
+}
+
+.alert-body {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+/* STOLEN CREDENTIALS SHOWCASE CARD */
+.stolen-credentials-card {
+  background: #070a14;
+  border: 2px solid #ff3366;
+  border-radius: var(--radius-md);
+  padding: 24px;
+  box-shadow: 0 0 35px rgba(255, 51, 102, 0.25), inset 0 0 20px rgba(255, 51, 102, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.stolen-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 51, 102, 0.3);
+  padding-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.stolen-badge-pulse {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--code-font);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #ff6b8b;
+  letter-spacing: 0.5px;
+}
+
+.stolen-status-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  background: rgba(255, 51, 102, 0.2);
+  color: #ff3366;
+  border: 1px solid rgba(255, 51, 102, 0.5);
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-family: var(--code-font);
+}
+
+.stolen-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.stolen-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stolen-item.highlight-pwd {
+  background: rgba(255, 51, 102, 0.12);
+  border: 1px solid rgba(255, 51, 102, 0.5);
+  box-shadow: 0 0 15px rgba(255, 51, 102, 0.2);
+  grid-column: 1 / -1;
+}
+
+.stolen-label {
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.stolen-val {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  word-break: break-all;
+}
+
+.stolen-login-val {
+  color: #00f2fe;
+  font-family: var(--code-font);
+}
+
+.stolen-pwd-val {
+  color: #ff3366;
+  font-family: var(--code-font);
+  font-size: 1.35rem;
+  letter-spacing: 1px;
+}
+
+.stolen-warning-footer {
+  background: rgba(255, 179, 0, 0.1);
+  border: 1px solid rgba(255, 179, 0, 0.3);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.stolen-warning-footer .danger-icon {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.stolen-warning-footer p {
+  font-size: 0.88rem;
+  color: #ffe082;
+  line-height: 1.45;
+}
+
+.stolen-warning-footer strong {
+  color: #fff;
+}
+
+/* DANGERS CONTAINER */
+.dangers-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.dangers-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.warning-triangle {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.dangers-title {
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+
+.dangers-sub {
+  color: var(--text-muted);
+  font-size: 0.92rem;
+}
+
+.awareness-blocks-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+@media (max-width: 768px) {
+  .awareness-blocks-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.awareness-block {
+  background: rgba(10, 15, 26, 0.85);
+  border-radius: var(--radius-md);
+  padding: 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.block-people {
+  border-top: 4px solid #ff9100;
+}
+
+.block-web {
+  border-top: 4px solid #ff3366;
+}
+
+.block-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.block-icon {
+  font-size: 1.8rem;
+}
+
+.block-header h4 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.block-tag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.block-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.point-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.point-bullet {
+  font-size: 1.15rem;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.point-item strong {
+  display: block;
+  color: #f1f5f9;
+  font-size: 0.9rem;
+  margin-bottom: 2px;
+}
+
+.point-item p {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.point-item em {
+  color: #cbd5e1;
+  font-style: italic;
+}
+
+/* GOLDEN RULES BOX */
+.golden-rules-box {
+  background: rgba(0, 230, 118, 0.06);
+  border: 1px solid rgba(0, 230, 118, 0.3);
+  border-radius: var(--radius-md);
+  padding: 24px;
+}
+
+.rules-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.rules-icon {
+  font-size: 1.5rem;
+}
+
+.rules-head h4 {
+  color: #00e676;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.rules-grid-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.rule-card {
+  display: flex;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0, 230, 118, 0.15);
+}
+
+.rule-num {
+  width: 28px;
+  height: 28px;
+  background: rgba(0, 230, 118, 0.2);
+  color: #00e676;
+  font-weight: 800;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 0.85rem;
+}
+
+.rule-card strong {
+  display: block;
+  color: #fff;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+
+.rule-card p {
+  color: #94a3b8;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+/* DATABASE VIEWER SECTION */
+.database-section {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  backdrop-filter: blur(16px);
+}
+
+.db-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.db-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.db-icon {
+  font-size: 1.8rem;
+}
+
+.db-section-header h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.db-subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.db-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--text-main);
+  padding: 8px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.btn-danger {
+  background: rgba(255, 51, 102, 0.15);
+  border: 1px solid rgba(255, 51, 102, 0.3);
+  color: #ff6b8b;
+  padding: 8px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-danger:hover {
+  background: rgba(255, 51, 102, 0.25);
+  color: #fff;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.db-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.db-table th {
+  text-align: left;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text-muted);
+  font-weight: 600;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.db-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  color: var(--text-main);
+}
+
+.db-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.cell-id {
+  font-family: var(--code-font);
+  color: #00f2fe;
+  font-size: 0.92rem;
+}
+
+.text-center { text-align: center; }
+.text-muted { color: var(--text-muted); }
+
+/* RESET WRAPPER */
+.reset-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.btn-secondary-large {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  font-family: var(--main-font);
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 14px 32px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s;
+}
+
+.btn-secondary-large:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+/* FADE IN ANIMATION */
+.fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* FOOTER */
+.app-footer {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+/* ========================================================
+   RESPONSIVIDADE & OTIMIZAÇÕES MOBILE (TABLETS & SMARTPHONES)
+   ======================================================== */
+
+/* --- TABLETS E DISPOSITIVOS MÉDIOS (<= 768px) --- */
+@media (max-width: 768px) {
+  .container {
+    padding: 24px 16px 48px 16px;
+  }
+
+  .app-header {
+    margin-bottom: 28px;
+  }
+
+  .app-header h1 {
+    font-size: 1.85rem;
+    line-height: 1.25;
+  }
+
+  .subtitle {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .input-section {
+    padding: 24px 20px;
+    border-radius: var(--radius-md);
+  }
+
+  .form-header-group {
+    margin-bottom: 16px;
+  }
+
+  .card-glass {
+    padding: 20px 18px;
+    border-radius: var(--radius-md);
+  }
+
+  .educational-alert-box {
+    padding: 26px 20px;
+  }
+
+  .edu-main-title {
+    font-size: 1.5rem;
+  }
+
+  .hacker-terminal-card {
+    padding: 24px 20px;
+  }
+
+  .hacker-glitch-title {
+    font-size: 1.35rem;
+  }
+}
+
+/* --- SMARTPHONES E TELAS MENORES (<= 600px) --- */
+@media (max-width: 600px) {
+  .container {
+    padding: 16px 12px 36px 12px;
+  }
+
+  /* Header */
+  .app-header {
+    margin-bottom: 20px;
+  }
+
+  .shield-badge {
+    font-size: 0.68rem;
+    padding: 5px 10px;
+    letter-spacing: 0.5px;
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+  }
+
+  .app-header h1 {
+    font-size: 1.55rem;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    font-size: 0.88rem;
+  }
+
+  /* Etapa 1: Input Section */
+  .input-section {
+    padding: 18px 14px;
+    border-radius: 12px;
+  }
+
+  .input-label {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 0.95rem;
+  }
+
+  .badge-tag {
+    align-self: flex-start;
+  }
+
+  .margin-top-md {
+    margin-top: 4px;
+    margin-bottom: 18px;
+  }
+
+  .field-label {
+    font-size: 0.84rem;
+  }
+
+  /* Evita zoom indesejado no iOS garantindo font-size >= 16px */
+  .cyber-text-input,
+  .input-wrapper input {
+    font-size: 16px !important;
+    min-height: 48px;
+  }
+
+  .cyber-text-input {
+    padding: 12px 14px;
+  }
+
+  .input-wrapper input {
+    padding: 12px 48px 12px 14px;
+  }
+
+  .icon-btn {
+    width: 44px;
+    height: 44px;
+    right: 4px;
+  }
+
+  .btn-primary {
+    min-height: 48px;
+    padding: 14px 18px;
+    font-size: 0.98rem;
+  }
+
+  /* Fase 1: Travamento e Antivírus */
+  .crash-container {
+    width: 96%;
+    max-width: 100%;
+  }
+
+  .terminal-header {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .terminal-title {
+    font-size: 0.68rem;
+    max-width: calc(100vw - 110px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .terminal-body {
+    padding: 12px;
+    font-size: 0.76rem;
+    gap: 6px;
+    word-break: break-word;
+    overflow-wrap: break-word;
+  }
+
+  .crash-progress-wrap {
+    padding: 10px 12px 14px 12px;
+  }
+
+  .crash-progress-label {
+    font-size: 0.72rem;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+
+  .error-win-header {
+    padding: 6px 10px;
+    font-size: 0.7rem;
+  }
+
+  .error-win-body {
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .error-icon {
+    font-size: 1.4rem;
+  }
+
+  .error-win-body strong {
+    font-size: 0.76rem;
+  }
+
+  .error-win-body p {
+    font-size: 0.7rem;
+  }
+
+  /* Fase 2 / 3: Hacker Black Screen */
+  .hacker-black-screen {
+    padding: 12px;
+  }
+
+  .matrix-code-stream {
+    font-size: 0.72rem;
+    padding: 10px;
+    line-height: 1.35;
+  }
+
+  .hacker-terminal-card {
+    padding: 18px 14px;
+    gap: 14px;
+    max-height: 92dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .hacker-terminal-top {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 10px;
+  }
+
+  .skull-badge-glitch {
+    font-size: 2rem;
+    padding: 8px;
+  }
+
+  .hacker-alert-text {
+    align-items: center;
+    text-align: center;
+  }
+
+  .hacker-sub-tag {
+    font-size: 0.68rem;
+    letter-spacing: 1px;
+  }
+
+  .hacker-glitch-title {
+    font-size: 1.15rem;
+    line-height: 1.3;
+    text-align: center;
+  }
+
+  .hacker-terminal-subtitle {
+    font-size: 0.85rem;
+    text-align: center;
+  }
+
+  .hacker-creds-box {
+    padding: 12px 14px;
+    gap: 8px;
+  }
+
+  .hacker-cred-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .cred-tag {
+    font-size: 0.72rem;
+  }
+
+  .cred-data {
+    font-size: 0.95rem;
+    word-break: break-all;
+  }
+
+  .hacker-impact-msg {
+    padding: 10px 12px;
+    font-size: 0.78rem;
+    gap: 8px;
+  }
+
+  .danger-symbol {
+    font-size: 1.2rem;
+  }
+
+  .btn-proceed-security {
+    width: 100%;
+    justify-content: center;
+    padding: 14px 18px;
+    font-size: 0.95rem;
+    min-height: 48px;
+  }
+
+  /* Etapa 2: Resultados da Isca / Scareware */
+  .completion-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .completion-icon {
+    font-size: 1.8rem;
+  }
+
+  .completion-text h2 {
+    font-size: 1.15rem;
+    line-height: 1.3;
+  }
+
+  .completion-text p {
+    font-size: 0.84rem;
+  }
+
+  .card-glass {
+    padding: 16px 14px;
+    border-radius: 12px;
+  }
+
+  .card-head h3 {
+    font-size: 1.05rem;
+  }
+
+  .meter-header {
+    font-size: 0.82rem;
+  }
+
+  .level-badge {
+    font-size: 0.74rem;
+    padding: 2px 8px;
+  }
+
+  .diag-item {
+    padding: 10px 12px;
+  }
+
+  .diag-value {
+    font-size: 0.95rem;
+  }
+
+  .rules-grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .rule-item {
+    font-size: 0.78rem;
+    padding: 7px 10px;
+  }
+
+  .feedback-list {
+    gap: 6px;
+  }
+
+  .feedback-item {
+    font-size: 0.8rem;
+    padding: 6px 8px;
+  }
+
+  .vulnerability-breach-callout {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+
+  .vulnerability-breach-callout strong {
+    font-size: 0.8rem;
+  }
+
+  .vulnerability-breach-callout p {
+    font-size: 0.75rem;
+  }
+
+  .btn-flashy-generator {
+    padding: 14px 14px;
+    font-size: 0.92rem;
+    gap: 8px;
+    text-align: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    min-height: 52px;
+  }
+
+  .btn-text-main {
+    font-size: 0.88rem;
+    line-height: 1.3;
+    display: block;
+    width: 100%;
+  }
+
+  .btn-icon-flash,
+  .btn-arrow-flash {
+    font-size: 1.15rem;
+  }
+
+  .generator-link-container {
+    padding: 12px;
+  }
+
+  .generator-cta-link {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 12px;
+  }
+
+  .link-url-text {
+    font-size: 0.76rem;
+    word-break: break-all;
+  }
+
+  .link-action-tag {
+    align-self: flex-start;
+    font-size: 0.72rem;
+    padding: 3px 8px;
+  }
+
+  /* Etapa 4: Avisos de Segurança & Diagnóstico Real */
+  .educational-alert-box {
+    padding: 18px 14px;
+    border-radius: 12px;
+  }
+
+  .edu-alert-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+  }
+
+  .edu-icon-badge {
+    font-size: 2.2rem;
+    padding: 8px;
+    border-radius: 8px;
+  }
+
+  .edu-badge {
+    font-size: 0.65rem;
+    letter-spacing: 0.8px;
+  }
+
+  .edu-main-title {
+    font-size: 1.25rem;
+    line-height: 1.25;
+  }
+
+  .edu-subtitle {
+    font-size: 0.86rem;
+  }
+
+  .no-storage-highlight-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+  }
+
+  .no-storage-icon-wrap {
+    font-size: 1.6rem;
+  }
+
+  .no-storage-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .no-storage-title-row h4 {
+    font-size: 0.92rem;
+    line-height: 1.3;
+  }
+
+  .no-storage-tag {
+    font-size: 0.62rem;
+  }
+
+  .no-storage-content p {
+    font-size: 0.8rem;
+  }
+
+  .real-diagnosis-card {
+    padding: 16px 14px;
+    gap: 14px;
+    border-radius: 12px;
+  }
+
+  .real-diag-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding-bottom: 12px;
+  }
+
+  .real-diag-icon {
+    font-size: 1.8rem;
+    padding: 8px;
+  }
+
+  .real-diag-titles h3 {
+    font-size: 1.15rem;
+  }
+
+  .real-diag-sub {
+    font-size: 0.84rem;
+  }
+
+  .safe-suggestion-box {
+    padding: 14px 12px;
+    border-radius: 10px;
+  }
+
+  .safe-box-title {
+    font-size: 0.8rem;
+  }
+
+  .safe-code-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .safe-code-content {
+    width: 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+  }
+
+  .safe-password-code {
+    font-size: 1.05rem;
+    word-break: break-all;
+    white-space: normal;
+  }
+
+  .safe-actions-group {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .btn-copy-pwd {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 14px;
+    font-size: 0.88rem;
+    min-height: 44px;
+  }
+
+  .safe-badge {
+    text-align: center;
+    width: 100%;
+    font-size: 0.72rem;
+  }
+
+  .golden-rules-box {
+    padding: 16px 12px;
+    border-radius: 10px;
+  }
+
+  .rules-head h4 {
+    font-size: 0.98rem;
+  }
+
+  .rules-grid-items {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .rule-card {
+    padding: 12px 10px;
+    gap: 10px;
+  }
+
+  .real-phishing-section {
+    padding: 16px 12px;
+    border-radius: 12px;
+  }
+
+  .real-phishing-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .real-phishing-header h4 {
+    font-size: 1.05rem;
+  }
+
+  .mini-phishing-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .mini-phishing-card {
+    padding: 12px 14px;
+  }
+
+  .mini-example-bubble {
+    font-size: 0.75rem;
+    padding: 6px 8px;
+  }
+
+  .reset-wrapper {
+    width: 100%;
+  }
+
+  .btn-secondary-large {
+    width: 100%;
+    justify-content: center;
+    padding: 14px 18px;
+    font-size: 0.95rem;
+    min-height: 48px;
+  }
+
+  .app-footer {
+    margin-top: 24px;
+    font-size: 0.75rem;
+  }
+}
+
+/* --- TELAS EXTRA PEQUENAS (<= 360px) --- */
+@media (max-width: 360px) {
+  .app-header h1 {
+    font-size: 1.35rem;
+  }
+
+  .btn-primary,
+  .btn-proceed-security,
+  .btn-secondary-large {
+    font-size: 0.88rem;
+    padding: 12px 14px;
+  }
+
+  .edu-main-title {
+    font-size: 1.1rem;
+  }
+
+  .hacker-glitch-title {
+    font-size: 1.05rem;
+  }
+
+  .safe-password-code {
+    font-size: 0.92rem;
+  }
+}
+
+/* ========================================================
+   BOX DE DESBLOQUEIO POR SENHA (FecartCiber2026)
+   ======================================================== */
+.unlock-password-box {
+  background: linear-gradient(135deg, rgba(16, 24, 40, 0.95) 0%, rgba(10, 15, 26, 0.98) 100%);
+  border: 2px solid #00f2fe;
+  border-radius: var(--radius-lg);
+  padding: 28px 24px;
+  box-shadow: 0 0 35px rgba(0, 242, 254, 0.25), inset 0 0 20px rgba(0, 242, 254, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.unlock-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.unlock-badge-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+  background: rgba(0, 242, 254, 0.12);
+  border: 1px solid rgba(0, 242, 254, 0.4);
+  padding: 10px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+  flex-shrink: 0;
+}
+
+.unlock-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.unlock-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #00f2fe;
+  text-transform: uppercase;
+}
+
+.unlock-title-wrap h3 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.unlock-desc {
+  font-size: 0.92rem;
+  color: #cbd5e1;
+  line-height: 1.5;
+}
+
+.unlock-stand-reward-notice {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, rgba(255, 179, 0, 0.15) 0%, rgba(0, 242, 254, 0.1) 100%);
+  border: 1px solid rgba(255, 179, 0, 0.55);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #ffca28;
+  margin-top: 6px;
+  box-shadow: 0 0 15px rgba(255, 179, 0, 0.15);
+  line-height: 1.4;
+}
+
+.unlock-stand-reward-notice .notice-icon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 6px rgba(255, 179, 0, 0.5));
+}
+
+.unlock-desc strong code {
+  color: #00f2fe;
+  background: rgba(0, 242, 254, 0.15);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: var(--code-font);
+  font-size: 0.95rem;
+}
+
+.unlock-form-wrapper {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.unlock-input-group {
+  position: relative;
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  align-items: center;
+}
+
+.unlock-input-icon {
+  position: absolute;
+  left: 14px;
+  font-size: 1.1rem;
+  pointer-events: none;
+}
+
+.unlock-text-input {
+  width: 100%;
+  background: rgba(5, 8, 16, 0.9);
+  border: 2px solid rgba(0, 242, 254, 0.35);
+  border-radius: var(--radius-md);
+  padding: 14px 46px 14px 44px;
+  color: #fff;
+  font-family: var(--code-font);
+  font-size: 1rem;
+  transition: all 0.25s ease;
+}
+
+.unlock-text-input:focus {
+  outline: none;
+  border-color: #00f2fe;
+  box-shadow: 0 0 0 3px rgba(0, 242, 254, 0.25), 0 0 20px rgba(0, 242, 254, 0.3);
+}
+
+.unlock-text-input.shake-error {
+  border-color: #ff3366 !important;
+  box-shadow: 0 0 0 3px rgba(255, 51, 102, 0.3), 0 0 20px rgba(255, 51, 102, 0.4) !important;
+  animation: inputShake 0.4s ease;
+}
+
+@keyframes inputShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+.unlock-toggle-btn {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.btn-unlock-diag {
+  background: linear-gradient(135deg, #00f2fe 0%, #00e676 100%);
+  color: #090d16;
+  border: none;
+  font-family: var(--main-font);
+  font-size: 0.98rem;
+  font-weight: 800;
+  padding: 14px 24px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(0, 242, 254, 0.35);
+  flex-shrink: 0;
+}
+
+.btn-unlock-diag:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 25px rgba(0, 230, 118, 0.5);
+}
+
+.unlock-error-msg {
+  background: rgba(255, 51, 102, 0.15);
+  border: 1px solid rgba(255, 51, 102, 0.5);
+  color: #ff6b8b;
+  font-size: 0.88rem;
+  font-weight: 700;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: toastPop 0.25s ease-out;
+}
+
+.unlock-error-msg strong {
+  color: #fff;
+  background: rgba(255, 51, 102, 0.3);
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-family: var(--code-font);
+}
+
+.unlock-success-banner {
+  background: rgba(0, 230, 118, 0.12);
+  border: 1px solid rgba(0, 230, 118, 0.4);
+  color: #00e676;
+  font-size: 0.92rem;
+  font-weight: 800;
+  padding: 14px 20px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 0 20px rgba(0, 230, 118, 0.2);
+  animation: toastPop 0.3s ease-out;
+  margin-bottom: 20px;
+}
+
+/* ========================================================
+   FASE 4 & 5: FECART CIBERSEGURANÇA (CTA & TELA EXCLUSIVA)
+   ======================================================== */
+
+/* CARD CTA NA TELA DE AVISOS */
+.fecart-cta-card {
+  background: linear-gradient(135deg, rgba(255, 0, 127, 0.12) 0%, rgba(121, 40, 202, 0.15) 50%, rgba(0, 242, 254, 0.12) 100%);
+  border: 2px solid rgba(0, 242, 254, 0.5);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 0 35px rgba(0, 242, 254, 0.2), inset 0 0 20px rgba(121, 40, 202, 0.15);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.fecart-cta-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+  animation: shineSweep 4s infinite;
+}
+
+@keyframes shineSweep {
+  0% { left: -100%; }
+  50%, 100% { left: 100%; }
+}
+
+.fecart-cta-icon-wrap {
+  position: relative;
+  font-size: 2.8rem;
+  line-height: 1;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 242, 254, 0.1);
+  border: 1px solid rgba(0, 242, 254, 0.35);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.25);
+}
+
+.fecart-cta-spark {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  font-size: 1.2rem;
+  animation: pulseDot 1.2s infinite;
+}
+
+.fecart-cta-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-grow: 1;
+}
+
+.fecart-cta-badge {
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  color: #00f2fe;
+  background: rgba(0, 242, 254, 0.15);
+  border: 1px solid rgba(0, 242, 254, 0.4);
+  padding: 3px 10px;
+  border-radius: 4px;
+  width: fit-content;
+  text-transform: uppercase;
+}
+
+.fecart-cta-content h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.35;
+}
+
+.fecart-invitation-text {
+  font-size: 0.98rem;
+  color: #ffd600;
+  line-height: 1.5;
+  background: rgba(255, 214, 0, 0.08);
+  border-left: 3px solid #ffd600;
+  padding: 8px 12px;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.fecart-invitation-text strong {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255, 214, 0, 0.5);
+}
+
+.fecart-cta-action {
+  margin-top: 6px;
+}
+
+.btn-fecart-cta {
+  background: linear-gradient(135deg, #ff007f 0%, #7928ca 50%, #00f2fe 100%);
+  color: #ffffff;
+  border: none;
+  font-family: var(--main-font);
+  font-size: 1rem;
+  font-weight: 800;
+  padding: 14px 26px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 25px rgba(255, 0, 127, 0.4), 0 0 15px rgba(0, 242, 254, 0.3);
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-fecart-cta:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 35px rgba(255, 0, 127, 0.6), 0 0 25px rgba(0, 242, 254, 0.5);
+}
+
+.fecart-btn-icon {
+  font-size: 1.2rem;
+}
+
+.fecart-btn-arrow {
+  font-size: 1.2rem;
+  transition: transform 0.2s ease;
+}
+
+.btn-fecart-cta:hover .fecart-btn-arrow {
+  transform: translateX(5px);
+}
+
+/* ========================================================
+   FASE 5: TELA EXCLUSIVA FECART CIBERSEGURANÇA
+   ======================================================== */
+.fecart-section {
+  width: 100%;
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.fecart-hero-box {
+  background: rgba(10, 16, 32, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 2px solid rgba(0, 242, 254, 0.35);
+  border-radius: var(--radius-xl);
+  padding: 36px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  box-shadow: 0 0 60px rgba(0, 242, 254, 0.15), 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+.fecart-hero-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 24px;
+}
+
+.fecart-badge-lg {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: #00f2fe;
+  background: rgba(0, 242, 254, 0.12);
+  border: 1.5px solid rgba(0, 242, 254, 0.45);
+  padding: 6px 16px;
+  border-radius: 50px;
+  box-shadow: 0 0 20px rgba(0, 242, 254, 0.2);
+  text-transform: uppercase;
+}
+
+.fecart-main-title {
+  font-size: 2.2rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #ffffff 0%, #00f2fe 50%, #00e676 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+}
+
+.fecart-banner-highlight {
+  background: linear-gradient(135deg, rgba(255, 179, 0, 0.15) 0%, rgba(255, 0, 127, 0.12) 100%);
+  border: 2px solid rgba(255, 179, 0, 0.5);
+  border-radius: var(--radius-md);
+  padding: 14px 22px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 0 30px rgba(255, 179, 0, 0.2);
+  max-width: 800px;
+}
+
+.fecart-megaphone {
+  font-size: 1.8rem;
+  line-height: 1;
+  flex-shrink: 0;
+  animation: pulseDot 1.5s infinite;
+}
+
+.fecart-banner-highlight p {
+  font-size: 1.05rem;
+  color: #ffd600;
+  line-height: 1.4;
+  margin: 0;
+  text-align: left;
+}
+
+.fecart-banner-highlight p strong {
+  color: #fff;
+  text-shadow: 0 0 12px rgba(255, 214, 0, 0.6);
+}
+
+.fecart-sub {
+  font-size: 0.95rem;
+  color: #cbd5e1;
+  max-width: 720px;
+  line-height: 1.5;
+}
+
+/* CARDS DE ANÁLISE FORENSE DO ATAQUE */
+.attack-breakdown-card {
+  background: rgba(13, 19, 34, 0.75);
+  border: 1.5px solid rgba(255, 51, 102, 0.35);
+  border-radius: var(--radius-lg);
+  padding: 26px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 0 35px rgba(255, 51, 102, 0.12);
+}
+
+.attack-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: 16px;
+}
+
+.attack-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+  background: rgba(255, 51, 102, 0.12);
+  border: 1px solid rgba(255, 51, 102, 0.35);
+  padding: 10px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 20px rgba(255, 51, 102, 0.2);
+  flex-shrink: 0;
+}
+
+.attack-tag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #ff6b8b;
+  background: rgba(255, 51, 102, 0.12);
+  border: 1px solid rgba(255, 51, 102, 0.35);
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
+  margin-bottom: 4px;
+}
+
+.attack-header h3 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #fff;
+}
+
+.attack-sub {
+  font-size: 0.9rem;
+  color: #cbd5e1;
+  line-height: 1.45;
+}
+
+.attack-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .attack-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.attack-step-card {
+  background: rgba(18, 25, 45, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  transition: all 0.25s ease;
+}
+
+.attack-step-card:hover {
+  background: rgba(24, 34, 60, 0.85);
+  border-color: rgba(0, 242, 254, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.attack-step-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #00f2fe 0%, #7928ca 100%);
+  color: #fff;
+  font-weight: 900;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
+}
+
+.attack-step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.attack-step-body strong {
+  font-size: 0.92rem;
+  color: #fff;
+  line-height: 1.35;
+}
+
+.attack-step-body strong em {
+  color: #00f2fe;
+  font-style: normal;
+}
+
+.attack-step-body p {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* NAVEGAÇÃO DA TELA FECART */
+.fecart-nav-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 640px) {
+  .fecart-hero-box {
+    padding: 24px 16px;
+  }
+  .fecart-main-title {
+    font-size: 1.6rem;
+  }
+  .fecart-cta-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  .fecart-cta-badge {
+    margin: 0 auto;
+  }
+  .fecart-invitation-text {
+    border-left: none;
+    border-top: 3px solid #ffd600;
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  }
+  .btn-fecart-cta {
+    width: 100%;
+    justify-content: center;
+  }
+  .fecart-nav-actions {
+    flex-direction: column;
+  }
+  .fecart-nav-actions button {
+    width: 100%;
+  }
+}
+
+/* ========================================================
+   ESTRUTURA HIERÁRQUICA E ALINHAMENTO DO RELATÓRIO FECART
+   ======================================================== */
+.real-diag-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+}
+
+.real-diag-top-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 20px;
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .real-diag-top-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.attack-grid-3col {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 16px;
+}
+
+@media (max-width: 900px) {
+  .attack-grid-3col {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* =========================================================================
+   CARTÃO DE BOAS-VINDAS DA FECART (EXIBIDO APÓS DESBLOQUEIO COM CHAVE SECRETA)
+   ========================================================================= */
+.fecart-welcome-card {
+  background: var(--card-bg);
+  border: 1px solid rgba(0, 242, 254, 0.35);
+  border-radius: var(--radius-lg);
+  padding: 48px 32px;
+  backdrop-filter: blur(20px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  box-shadow: 0 0 50px rgba(0, 242, 254, 0.15), inset 0 0 20px rgba(0, 242, 254, 0.05);
+  animation: fecartFadeInScale 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fecartFadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.fecart-welcome-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: rgba(0, 242, 254, 0.12);
+  border: 1px solid rgba(0, 242, 254, 0.4);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 0.5px;
+}
+
+.fecart-welcome-icon {
+  font-size: 4.2rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 25px rgba(0, 242, 254, 0.7));
+  animation: fecartPulseIcon 2s ease-in-out infinite alternate;
+}
+
+@keyframes fecartPulseIcon {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+
+.fecart-welcome-title {
+  font-size: 1.9rem;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.3;
+  color: #ffffff;
+  background: linear-gradient(135deg, #ffffff 0%, #00f2fe 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.fecart-welcome-desc {
+  font-size: 1.05rem;
+  color: var(--text-muted);
+  max-width: 540px;
+  line-height: 1.6;
+}
+
+/* =========================================================================
+   CARD DE AVALIAÇÃO BREVE DA SENHA NA TELA DA FECART
+   ========================================================================= */
+.fecart-eval-card {
+  width: 100%;
+  max-width: 620px;
+  background: rgba(8, 14, 28, 0.85);
+  border: 1px solid rgba(0, 242, 254, 0.35);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0, 242, 254, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  text-align: left;
+  backdrop-filter: blur(16px);
+  margin: 6px 0;
+}
+
+.fecart-eval-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-bottom: 1px solid rgba(0, 242, 254, 0.15);
+  padding-bottom: 14px;
+}
+
+.eval-header-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(0, 242, 254, 0.12);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 0.5px;
+  width: fit-content;
+}
+
+.eval-badge-icon {
+  font-size: 0.85rem;
+}
+
+.fecart-eval-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.fecart-eval-subtitle {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* GRID DE ESTATÍSTICAS */
+.fecart-eval-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 650px) {
+  .fecart-eval-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.fecart-stat-box {
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  justify-content: center;
+}
+
+.fecart-stat-box .stat-label {
+  font-size: 0.76rem;
+  color: #94a3b8;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.stat-pwd-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.stat-value {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #00f2fe;
+  word-break: break-all;
+}
+
+.fecart-mini-toggle {
+  background: rgba(0, 242, 254, 0.12);
+  border: 1px solid rgba(0, 242, 254, 0.3);
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  padding: 2px 6px;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.fecart-mini-toggle:hover {
+  background: rgba(0, 242, 254, 0.25);
+}
+
+.stat-badge-level {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 0.86rem;
+  font-weight: 800;
+  text-align: center;
+  width: fit-content;
+}
+
+.stat-value-crack {
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* BARRA DE MEDIÇÃO */
+.fecart-meter-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fecart-meter-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+}
+
+.fecart-meter-tag {
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.fecart-score-text {
+  color: #fff;
+  font-weight: 700;
+}
+
+.fecart-meter-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.fecart-meter-bar {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.4s ease;
+}
+
+/* CRITÉRIOS */
+.fecart-criteria-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.crit-pill {
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  transition: all 0.3s;
+}
+
+.crit-pill.crit-valid {
+  background: rgba(0, 230, 118, 0.12);
+  border-color: rgba(0, 230, 118, 0.4);
+  color: #00e676;
+}
+
+.crit-pill.crit-invalid {
+  background: rgba(255, 51, 102, 0.1);
+  border-color: rgba(255, 51, 102, 0.3);
+  color: #ff3366;
+}
+
+/* SUMMARY BOX */
+.fecart-eval-summary-box {
+  background: rgba(0, 242, 254, 0.05);
+  border: 1px solid rgba(0, 242, 254, 0.2);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.summary-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #00f2fe;
+  font-size: 0.92rem;
+}
+
+.summary-icon {
+  font-size: 1.1rem;
+}
+
+.summary-desc {
+  font-size: 0.9rem;
+  color: var(--text-main);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.eval-tips-list {
+  margin: 4px 0 0 0;
+  padding-left: 20px;
+  font-size: 0.84rem;
+  color: #cbd5e1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.fecart-welcome-info {
+  width: 100%;
+  max-width: 520px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(0, 242, 254, 0.2);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+
+.fecart-info-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  line-height: 1.5;
+}
+
+.fecart-info-item .info-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.fecart-welcome-actions {
+  margin-top: 8px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.btn-restart {
+  background: var(--primary-gradient);
+  color: #090d16;
+  font-weight: 700;
+}
+
+/* =========================================================================
+   BANNER DE RECOMPENSA DO DESAFIO NO CABEÇALHO
+   ========================================================================= */
+.challenge-banners-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+  width: 100%;
+}
+
+.challenge-reward-banner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 24px;
+  background: linear-gradient(135deg, rgba(255, 179, 0, 0.12) 0%, rgba(0, 242, 254, 0.12) 100%);
+  border: 1px solid rgba(255, 179, 0, 0.5);
+  border-radius: 9999px;
+  box-shadow: 0 0 25px rgba(255, 179, 0, 0.18), inset 0 0 15px rgba(255, 179, 0, 0.06);
+  animation: rewardPulse 2.4s ease-in-out infinite alternate;
+  max-width: 90%;
+}
+
+@keyframes rewardPulse {
+  0% {
+    box-shadow: 0 0 15px rgba(255, 179, 0, 0.15);
+    border-color: rgba(255, 179, 0, 0.4);
+    transform: translateY(0);
+  }
+  100% {
+    box-shadow: 0 0 30px rgba(255, 179, 0, 0.35), 0 0 15px rgba(0, 242, 254, 0.2);
+    border-color: rgba(255, 179, 0, 0.75);
+    transform: translateY(-2px);
+  }
+}
+
+.challenge-reward-banner .reward-icon {
+  font-size: 1.35rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 8px rgba(255, 179, 0, 0.6));
+}
+
+.challenge-reward-banner .reward-text {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #ffca28;
+  letter-spacing: 0.2px;
+}
+
+.fecart-reward-unlocked {
+  background: rgba(255, 179, 0, 0.12) !important;
+  border: 1px solid rgba(255, 179, 0, 0.45) !important;
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  color: #ffd54f !important;
+}
+
+@media (max-width: 600px) {
+  .challenge-reward-banner {
+    padding: 8px 16px;
+    border-radius: 12px;
+  }
+  .challenge-reward-banner .reward-text {
+    font-size: 0.86rem;
+  }
+}
+
+.challenge-location-tag {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 6px 18px;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #00f2fe;
+  background: rgba(0, 242, 254, 0.08);
+  border: 1px solid rgba(0, 242, 254, 0.28);
+  border-radius: 9999px;
+  letter-spacing: 0.3px;
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.1);
+}
+
+
+.challenge-location-tag .location-icon {
+  font-size: 1rem;
+}
+
+
+/* ============================================================
+   BARRA VERMELHA TICKER — ALERTA NO TOPO DA ETAPA 3
+   ============================================================ */
+
+.fail-ticker-bar {
+  width: 100%;
+  background: #cc0022;
+  overflow: hidden;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  margin-bottom: 0;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 20px rgba(200, 0, 30, 0.5);
+}
+
+.fail-ticker-track {
+  display: flex;
+  width: 100%;
+  overflow: hidden;
+  padding: 8px 0;
+}
+
+.fail-ticker-text {
+  display: inline-block;
+  white-space: nowrap;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.4px;
+  font-family: var(--code-font);
+  text-transform: uppercase;
+  animation: tickerScroll 18s linear infinite;
+}
+
+@keyframes tickerScroll {
+  0%   { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ============================================================
+   BANNER: DISPOSITIVO NÃO PASSOU NO TESTE
+   ============================================================ */
+
+.device-fail-banner {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: linear-gradient(135deg, rgba(255, 30, 60, 0.18) 0%, rgba(180, 0, 40, 0.12) 100%);
+  border: 2px solid rgba(255, 30, 60, 0.55);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 30px rgba(255, 30, 60, 0.15), inset 0 0 20px rgba(255, 30, 60, 0.05);
+  animation: deviceFailPulse 2s ease-in-out infinite;
+}
+
+@keyframes deviceFailPulse {
+  0%, 100% { border-color: rgba(255, 30, 60, 0.55); box-shadow: 0 0 30px rgba(255, 30, 60, 0.15); }
+  50%       { border-color: rgba(255, 30, 60, 0.9);  box-shadow: 0 0 45px rgba(255, 30, 60, 0.35); }
+}
+
+.device-fail-icon {
+  font-size: 2.4rem;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 10px rgba(255, 30, 60, 0.8));
+  animation: deviceFailIconPulse 1s ease-in-out infinite;
+}
+
+@keyframes deviceFailIconPulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.12); }
+}
+
+.device-fail-text {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.device-fail-tag {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #ff3366;
+  opacity: 0.85;
+}
+
+.device-fail-msg {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.35;
+}
+
+.device-fail-msg strong {
+  color: #ff3366;
+  font-weight: 900;
+}
+
+@media (max-width: 480px) {
+  .device-fail-banner {
+    padding: 16px 18px;
+    gap: 14px;
+  }
+  .device-fail-icon {
+    font-size: 2rem;
+  }
+  .device-fail-msg {
+    font-size: 0.95rem;
+  }
+}
+
+/* ============================================================
+   ATTACK SIMULATION — SHAKE + POPUPS
+   ============================================================ */
+
+/* --- Shake da tela --- */
+@keyframes attackShakeAnim {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  10%  { transform: translate(-6px, -4px) rotate(-0.5deg); }
+  20%  { transform: translate(6px, 4px) rotate(0.5deg); }
+  30%  { transform: translate(-8px, 2px) rotate(-0.3deg); }
+  40%  { transform: translate(5px, -5px) rotate(0.4deg); }
+  50%  { transform: translate(-5px, 5px) rotate(-0.5deg); }
+  60%  { transform: translate(7px, -3px) rotate(0.3deg); }
+  70%  { transform: translate(-4px, 4px) rotate(-0.4deg); }
+  80%  { transform: translate(5px, -2px) rotate(0.2deg); }
+  90%  { transform: translate(-3px, 3px) rotate(-0.2deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+body.attack-shake {
+  animation: attackShakeAnim 0.18s linear infinite;
+}
+
+/* --- Flash vermelho --- */
+body.attack-red-flash::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 20, 60, 0.22);
+  z-index: 9998;
+  pointer-events: none;
+  animation: none;
+}
+
+/* --- Dimmer de fundo --- */
+.attack-dimmer {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 9990;
+  pointer-events: none;
+}
+
+/* --- Popup de ataque --- */
+@keyframes popupBounceIn {
+  0%   { opacity: 0; transform: scale(0.6) translateY(-20px); }
+  60%  { opacity: 1; transform: scale(1.06) translateY(4px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.attack-popup {
+  position: fixed;
+  width: 300px;
+  background: #1a0a0a;
+  border: 2px solid var(--pop-color, #ff3366);
+  border-radius: 8px;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.8),
+    0 8px 32px rgba(0,0,0,0.9),
+    0 0 40px color-mix(in srgb, var(--pop-color, #ff3366) 40%, transparent);
+  overflow: hidden;
+  animation: popupBounceIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  user-select: none;
+}
+
+.apop-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--pop-color, #ff3366);
+  padding: 7px 10px;
+  gap: 8px;
+}
+
+.apop-title {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.2px;
+}
+
+.apop-close {
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.apop-close:hover {
+  background: rgba(255,255,255,0.4);
+}
+
+.apop-body {
+  padding: 14px 14px 10px;
+  font-size: 0.82rem;
+  color: #f3f3f3;
+  line-height: 1.55;
+  font-family: var(--main-font);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.apop-footer {
+  padding: 10px 14px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.apop-btn {
+  background: var(--pop-color, #ff3366);
+  border: none;
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 6px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+
+.apop-btn:hover {
+  filter: brightness(1.2);
+}
+
+/* --- Tela de revelação educativa --- */
+@keyframes revealFadeUp {
+  from { opacity: 0; transform: translateY(30px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.attack-reveal {
+  position: fixed;
+  inset: 0;
+  z-index: 19999;
+  background: rgba(4, 8, 18, 0.96);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.attack-reveal-inner {
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  animation: revealFadeUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.attack-reveal-icon {
+  font-size: 3.5rem;
+  filter: drop-shadow(0 0 20px rgba(0, 230, 118, 0.7));
+}
+
+.attack-reveal-tag {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: #00e676;
+  background: rgba(0, 230, 118, 0.1);
+  border: 1px solid rgba(0, 230, 118, 0.35);
+  padding: 5px 16px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+.attack-reveal-title {
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.attack-reveal-text {
+  font-size: 0.96rem;
+  color: #cbd5e1;
+  line-height: 1.65;
+  max-width: 440px;
+}
+
+.attack-reveal-text strong {
+  color: #fff;
+}
+
+.attack-reveal-btn {
+  background: linear-gradient(135deg, #00e676, #00b8d4);
+  border: none;
+  color: #050d1a;
+  font-size: 1rem;
+  font-weight: 800;
+  padding: 14px 32px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(0, 230, 118, 0.35);
+  margin-top: 6px;
+}
+
+.attack-reveal-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(0, 230, 118, 0.5);
+}
+
+@media (max-width: 400px) {
+  .attack-popup {
+    width: calc(100vw - 24px);
+  }
+}
+
+
+@keyframes attackScan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes attackRingPulse {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.7; }
+  100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
+}
+
+@keyframes attackProgressGlow {
+  0%, 100% { box-shadow: 0 0 8px rgba(255, 51, 102, 0.6); }
+  50% { box-shadow: 0 0 22px rgba(255, 51, 102, 1); }
+}
+
+@keyframes attackFadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes attackBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.attack-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(4, 6, 14, 0.97);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: attackFlicker 4s infinite;
+  overflow: hidden;
+}
+
+.attack-overlay.hidden {
+  display: none !important;
+}
+
+.attack-overlay-inner {
+  position: relative;
+  max-width: 560px;
+  width: calc(100% - 40px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  animation: attackFadeIn 0.35s ease both;
+  z-index: 2;
+}
+
+/* Scanlines */
+.attack-scanlines {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0, 0, 0, 0.18) 3px,
+    rgba(0, 0, 0, 0.18) 4px
+  );
+}
+
+/* Scan line sweeping */
+.attack-scanlines::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  background: linear-gradient(to bottom, transparent, rgba(255, 51, 102, 0.06), transparent);
+  animation: attackScan 3s linear infinite;
+}
+
+/* Icon & rings */
+.attack-icon-wrap {
+  position: relative;
+  width: 88px;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.attack-icon-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 51, 102, 0.7);
+  animation: attackRingPulse 1.6s ease-out infinite;
+  transform: translate(-50%, -50%);
+}
+
+.attack-ring-2 {
+  animation-delay: 0.8s;
+}
+
+.attack-icon {
+  font-size: 3.4rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 18px rgba(255, 51, 102, 0.9));
+  position: relative;
+  z-index: 2;
+}
+
+/* Header tag */
+.attack-header-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 3px;
+  color: #ff3366;
+  text-transform: uppercase;
+  background: rgba(255, 51, 102, 0.12);
+  border: 1px solid rgba(255, 51, 102, 0.4);
+  padding: 5px 16px;
+  border-radius: 9999px;
+}
+
+/* Main title */
+.attack-title {
+  font-size: clamp(1.45rem, 5vw, 2rem);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.25;
+  text-shadow:
+    0 0 30px rgba(255, 51, 102, 0.5),
+    0 0 60px rgba(255, 51, 102, 0.2);
+  letter-spacing: -0.3px;
+}
+
+/* Progress bar */
+.attack-progress-wrap {
+  width: 100%;
+}
+
+.attack-progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 8px;
+  font-family: var(--code-font);
+}
+
+.attack-progress-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 9999px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 51, 102, 0.2);
+}
+
+.attack-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #ff3366, #ff6b6b);
+  border-radius: 9999px;
+  transition: width 0.2s linear;
+  animation: attackProgressGlow 1s ease-in-out infinite;
+}
+
+/* Terminal */
+.attack-terminal {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 51, 102, 0.25);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  font-family: var(--code-font);
+  font-size: 0.82rem;
+  color: #ff3366;
+  text-align: left;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.attack-terminal-prompt {
+  color: rgba(255, 51, 102, 0.5);
+  flex-shrink: 0;
+}
+
+#attack-log-line::after {
+  content: '▋';
+  animation: attackBlink 0.8s step-end infinite;
+  margin-left: 2px;
+}
+
+/* Footer reveal message */
+.attack-footer-msg {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 179, 0, 0.08);
+  border: 1px solid rgba(255, 179, 0, 0.25);
+  border-radius: var(--radius-md);
+  padding: 10px 16px;
+  line-height: 1.5;
+}
+
+.attack-footer-msg.hidden {
+  display: none;
+}
+
+@media (max-width: 480px) {
+  .attack-title {
+    font-size: 1.35rem;
+  }
+  .attack-icon {
+    font-size: 2.8rem;
+  }
+}
+
+</style>
+</head>
+<body>
+  <div class="cyber-background"></div>
+  <div class="grid-overlay"></div>
+
+  <!-- FASE 1: OVERLAY DE SIMULAÇÃO DE TRAVAMENTO E AVISOS DE ANTIVÍRUS / SEGURANÇA -->
+  <div id="crash-simulation-overlay" class="crash-simulation-overlay hidden">
+    <div class="crash-backdrop"></div>
+    <div class="crash-glitch-lines"></div>
+
+    <div class="crash-container">
+      <!-- TERMINAL DE TRAVAMENTO -->
+      <div class="crash-terminal-box">
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <span class="terminal-dot red"></span>
+            <span class="terminal-dot yellow"></span>
+            <span class="terminal-dot green"></span>
+          </div>
+          <span class="terminal-title">CRITICAL_SYSTEM_FAILURE.EXE - [SISTEMA TRAVADO]</span>
+        </div>
+        <div class="terminal-body" id="crash-terminal-body">
+          <div class="terminal-line">[!] INTERCEPTANDO ENTRADA DO FORMULÁRIO...</div>
+          <div class="terminal-line text-red" id="crash-log-pwd">[CRITICAL] SENHA DIGITADA NO FORMULÁRIO: "******"</div>
+          <div class="terminal-line">[...] SIMULAÇÃO DE VAZAMENTO ATIVA...</div>
+          <div class="terminal-line text-yellow">[WARN] MEMORY BUFFER OVERFLOW (0x8004011B)</div>
+          <div class="terminal-line text-red">[FATAL] FALHA CRÍTICA DE SEGURANÇA: SISTEMA NÃO RESPONDE!</div>
+        </div>
+        <div class="crash-progress-wrap">
+          <div class="crash-progress-label">
+            <span>EXFILTRAÇÃO DE DADOS:</span>
+            <span class="text-red font-mono blink">99% [ERRO NO HOST]</span>
+          </div>
+          <div class="crash-progress-track">
+            <div class="crash-progress-bar"></div>
+          </div>
+        </div>
+        <div class="crash-actions-bar">
+          <button type="button" id="btn-fake-close" class="btn-fake-close" title="Clique para tentar fechar o aviso">
+            <span class="btn-fake-close-icon">✕</span>
+            <span class="btn-fake-close-text">Fechar Janela</span>
+          </button>
+          <div id="fake-close-toast" class="fake-close-toast hidden">⚠️ Acesso Negado: Impossível fechar!</div>
+        </div>
+      </div>
+
+      <!-- JANELAS DE AVISOS DE SEGURANÇA E ANTIVÍRUS ESPALHADAS PELA TELA -->
+      <div class="error-window error-win-1" id="err-win-1">
+        <div class="error-win-header defender-header">
+          <span>🛡️ Windows Defender: Ameaça Crítica</span>
+          <span class="error-close">✕</span>
+        </div>
+        <div class="error-win-body">
+          <div class="error-icon">🛑</div>
+          <div>
+            <strong>Trojan:Win32/PasswordStealer.EX</strong>
+            <p>O antivírus detectou uma rotina maliciosa capturando sua senha em tempo real.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="error-window error-win-2" id="err-win-2">
+        <div class="error-win-header avast-header">
+          <span>🛑 Avast Security: Bloqueio de Invasão</span>
+          <span class="error-close">✕</span>
+        </div>
+        <div class="error-win-body">
+          <div class="error-icon">⚠️</div>
+          <div>
+            <strong>ESCUDO DE REDE VIOLADO</strong>
+            <p>Tentativa de exfiltração de senha através de script na página.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="error-window error-win-3" id="err-win-3">
+        <div class="error-win-header">
+          <span>💀 SISTEMA COMPROMETIDO</span>
+          <span class="error-close">✕</span>
+        </div>
+        <div class="error-win-body">
+          <div class="error-icon">🚫</div>
+          <div>
+            <strong>ACESSO NÃO AUTORIZADO</strong>
+            <p>Simulação de ataque ativo. O sistema travou.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="error-window error-win-4" id="err-win-4">
+        <div class="error-win-header kaspersky-header">
+          <span>🛡️ Kaspersky Total Security</span>
+          <span class="error-close">✕</span>
+        </div>
+        <div class="error-win-body">
+          <div class="error-icon">⚡</div>
+          <div>
+            <strong>KEYLOGGER ATIVO DETECTADO</strong>
+            <p>Os caracteres digitados no formulário foram interceptados.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="error-window error-win-5" id="err-win-5">
+        <div class="error-win-header">
+          <span>❌ FALHA DE SEGURANÇA [0xDEADBEEF]</span>
+          <span class="error-close">✕</span>
+        </div>
+        <div class="error-win-body">
+          <div class="error-icon">🛑</div>
+          <div>
+            <strong>PRIVILEGE OVERRIDE</strong>
+            <p>Senha interceptada pelo formulário web.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="error-window error-win-6" id="err-win-6">
+        <div class="error-win-header">
+          <span>⚠️ ALERTA DE PHISHING [0x8004011B]</span>
+          <span class="error-close">✕</span>
+        </div>
+        <div class="error-win-body">
+          <div class="error-icon">🔥</div>
+          <div>
+            <strong>ISCA DE ENGENHARIA SOCIAL</strong>
+            <p>O link falso disparou a armadilha de segurança.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FASE 2: TELA PRETA COM CÓDIGOS MATRIX & POSTERIOR MENSAGEM "VOCÊ FOI HACKEADO" -->
+  <div id="hacker-black-screen" class="hacker-black-screen hidden">
+    <div class="matrix-code-stream" id="matrix-code-stream"></div>
+
+    <!-- CARTÃO DE TESTE DE SEGURANÇA QUE SURGE APÓS OS CÓDIGOS -->
+    <div class="hacker-black-content hidden" id="hacker-message-card">
+      <div class="hacker-terminal-card">
+        <!-- AVISO EM DESTAQUE: SENHA NÃO SALVA / 100% EDUCATIVO -->
+        <div class="hacker-safe-banner">
+          <div class="safe-banner-header">
+            <div class="safe-banner-icon-box">🛡️</div>
+            <div class="safe-banner-title-wrap">
+              <span class="safe-banner-tag">PRIVACIDADE &amp; SEGURANÇA GARANTIDAS</span>
+              <h4 class="safe-banner-title">FIQUE TRANQUILO: SUA SENHA NÃO FOI SALVA!</h4>
+            </div>
+          </div>
+          <div class="safe-banner-body">
+            <p class="safe-banner-text">
+              Esta é uma <strong>demonstração 100% educativa e segura</strong> da FECART. A senha digitada foi utilizada <em>apenas temporariamente na memória do seu próprio navegador</em> para simular a captura e demonstrar como funciona um ataque real.
+            </p>
+            <div class="safe-pills-row">
+              <span class="safe-pill"><span class="safe-check">✅</span> <strong>Sua senha NÃO é salva em nenhum banco de dados</strong></span>
+              <span class="safe-pill"><span class="safe-check">✅</span> <strong>Nenhuma senha é armazenada ou compartilhada</strong></span>
+            </div>
+          </div>
+        </div>
+
+
+
+        <!-- BOX DE DESBLOQUEIO POR CHAVE DA FECART (FecartCiber2026) -->
+        <div class="unlock-password-box" id="unlock-password-box">
+          <div class="unlock-header">
+            <div class="unlock-badge-icon">🔐</div>
+            <div class="unlock-title-wrap">
+              <span class="unlock-tag">ACESSO RESTRITO &bull; DEMONSTRAÇÃO PRÁTICA</span>
+              <h3>Insira a Chave Secreta da FECART</h3>
+              <p class="unlock-desc">
+                Digite a chave de liberação obtida no <strong>quinto andar do bloco B</strong> para liberar a análise completa:
+              </p>
+              <div class="unlock-stand-reward-notice">
+                <span class="notice-icon">🎁</span>
+                <span>Vá até o quinto andar do bloco B com a toalha de mesa para resgatar a senha e a sua recompensa</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="unlock-form-wrapper">
+            <div class="unlock-input-group">
+              <span class="unlock-input-icon">🔑</span>
+              <input 
+                type="password" 
+                id="unlock-password-input" 
+                class="unlock-text-input" 
+                placeholder="Digite a chave secreta da FECART..."
+                autocomplete="off"
+              >
+              <button type="button" id="toggle-unlock-password" class="unlock-toggle-btn" title="Exibir/Ocultar Senha">
+                <span id="unlock-eye-open">👁️</span>
+                <span id="unlock-eye-closed" class="hidden">🙈</span>
+              </button>
+            </div>
+
+            <button type="button" id="btn-unlock-real-diag" class="btn-unlock-diag">
+              <span class="unlock-btn-icon">🔓</span>
+              <span>Desbloquear Análise Completa</span>
+            </button>
+          </div>
+
+          <div id="unlock-error-msg" class="unlock-error-msg hidden">
+            ❌ Chave incorreta! Solicite a chave secreta no <strong>quinto andar do bloco B</strong> para desbloquear.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+
+    <!-- HEADER -->
+    <header class="app-header">
+      <div class="header-badges-row">
+        <div class="shield-badge">
+          <span class="pulse-dot"></span>
+          <span>SECURITY SHIELD & PASSWORD ANALYZER</span>
+        </div>
+        <a href="/share.html" class="share-badge-link" title="Abrir QR Code para Celular">
+          <span>📱 QR Code / Compartilhar</span>
+        </a>
+      </div>
+      <h1>Verificador de Segurança de Senhas</h1>
+      <p class="subtitle">Descubra em segundos se a sua senha é realmente segura contra ataques e receba uma recomendação blindada.</p>
+      <div class="challenge-banners-wrap">
+        <div class="challenge-reward-banner">
+          <span class="reward-icon">🎁</span>
+          <span class="reward-text">Complete todo o desafio e ganhe uma recompensa no quinto andar do bloco B!</span>
+        </div>
+        <div class="challenge-location-tag">
+          <span class="location-icon">📍</span>
+          <span>Ficamos na sala 501B!</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="main-card">
+
+      <!-- ETAPA 1: INPUT INICIAL (NOME + SENHA) -->
+      <section id="step-input-section" class="input-section">
+        <div class="form-header-group">
+          <label class="input-label" for="user-name-input">
+            <span>Informe seu nome e a senha para verificar o nível de segurança:</span>
+            <span class="badge-tag">Analisador de Senhas</span>
+          </label>
+        </div>
+
+        <!-- NOME DA PESSOA -->
+        <div class="form-group margin-top-md">
+          <label for="user-name-input" class="field-label">
+            <span class="field-icon">👤</span> Seu Nome:
+          </label>
+          <input 
+            type="text" 
+            id="user-name-input" 
+            class="cyber-text-input" 
+            placeholder="Digite seu nome (Ex: Lucas, Mariana...)" 
+            autocomplete="name" 
+            spellcheck="false"
+          >
+        </div>
+
+        <!-- SENHA -->
+        <div class="form-group margin-top-md">
+          <label for="password-input" class="field-label">
+            <span class="field-icon">🔑</span> Crie uma senha:
+          </label>
+          <div class="input-wrapper">
+            <input 
+              type="password" 
+              id="password-input" 
+              placeholder="Crie uma senha..." 
+              autocomplete="off" 
+              spellcheck="false"
+            >
+            <button type="button" id="toggle-password" class="icon-btn" title="Mostrar/Ocultar Senha" aria-label="Mostrar/Ocultar Senha">
+              <svg id="eye-open" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <svg id="eye-closed" class="icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <button id="btn-submit-check" class="btn-primary">
+          <span class="btn-icon">🔍</span>
+          <span>Verificar Segurança da Senha</span>
+        </button>
+
+      </section>
+
+      <!-- ETAPA 2: TELA FALSA DE DIAGNÓSTICO (SCAREWARE / ISCA DE PHISHING) -->
+      <section id="step-completed-section" class="completed-section hidden">
+        <!-- BANNER DE ALERTA FALSO (SCAREWARE) -->
+        <div class="completion-banner fake-scare-banner">
+          <div class="completion-icon">⚠️</div>
+          <div class="completion-text">
+            <h2>Alerta de Segurança: Senha Vulnerável Detectada!</h2>
+            <p>O teste identificou que sua credencial possui graves brechas de segurança e pode ser quebrada em segundos por invasores.</p>
+          </div>
+        </div>
+
+        <!-- RESULTADOS DA ANÁLISE FALSA (ISCA DE PHISHING) -->
+        <div class="results-section">
+          <!-- BLOCO 1: DIAGNÓSTICO DE VULNERABILIDADE & BRECHAS DA SENHA -->
+          <div class="card-glass result-card fake-result-card">
+            <div class="card-head">
+              <h3>🚨 Diagnóstico de Vulnerabilidade</h3>
+              <span id="analysis-time-badge" class="time-badge alert-badge-pill">Risco Crítico</span>
+            </div>
+
+            <!-- BARRA DE FORÇA FALSA -->
+            <div class="meter-container">
+              <div class="meter-header">
+                <span class="meter-label">Classificação da Senha:</span>
+                <span id="meter-level-text" class="level-badge level-very-weak">Muito Fraca</span>
+              </div>
+              <div class="meter-track">
+                <div id="meter-bar" class="meter-fill" style="width: 1.5%;"></div>
+              </div>
+            </div>
+
+            <div class="diagnosis-grid">
+              <div class="diag-item">
+                <span class="diag-title">Nível de Segurança</span>
+                <span id="diag-level" class="diag-value">Crítico / Insegura</span>
+              </div>
+              <div class="diag-item">
+                <span class="diag-title">Tempo Estimado para Quebra</span>
+                <span id="diag-crack-time" class="diag-value text-red">Menos de 3 segundos</span>
+              </div>
+            </div>
+
+            <div class="feedback-list" id="feedback-list">
+              <!-- Mensagens de Alerta Geradas Via JS -->
+            </div>
+
+            <div class="vulnerability-breach-callout">
+              <span class="breach-icon">⚠️</span>
+              <div>
+                <strong>Brecha Crítica Detectada:</strong>
+                <p>Sua credencial atual está exposta a ataques automatizados. É indispensável aprender como criar senhas seguras imediatamente.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- BLOCO 2: O SITE / GUIA SOBRE COMO CRIAR BOAS SENHAS (ULTRA DESTACADO) -->
+          <div class="card-glass suggestion-card fake-bait-card ultra-highlighted-bait">
+            <div class="suggestion-header">
+              <div class="suggestion-tag glow-tag-gold">⭐ PORTAL OFICIAL DE SEGURANÇA &bull; LEITURA RECOMENDADA</div>
+              <h3>Guia Oficial: Como Criar Boas Senhas</h3>
+              <p class="suggestion-sub">
+                Para corrigir as falhas graves detectadas na sua credencial e proteger suas contas contra invasões, acesse o <strong>portal oficial com o guia definitivo para criar senhas invulneráveis</strong>:
+              </p>
+            </div>
+
+            <!-- BOTÃO CHAMATIVO E LINK DO GUIA (ISCA DE PHISHING / EDUCACIONAL) -->
+            <div class="generator-cta-wrapper">
+              <button type="button" id="btn-generate-fortified" class="btn-flashy-generator btn-flashy-guide" title="Clique para acessar o site sobre como criar boas senhas">
+                <span class="btn-glow-pulse"></span>
+                <span class="btn-icon-flash">🌐</span>
+                <span class="btn-text-main">Acessar Site: Como Criar Boas Senhas</span>
+                <span class="btn-arrow-flash">👉</span>
+              </button>
+
+              <div class="generator-link-container highlight-link-box">
+                <span class="link-label">Ou acesse diretamente pelo link oficial:</span>
+                <a href="javascript:void(0)" id="link-generate-fortified" class="generator-cta-link" role="button" title="Clique para acessar o guia de como criar boas senhas">
+                  <span class="link-icon">🔗</span>
+                  <span class="link-url-text">https://portal-seguranca.org/como-criar-boas-senhas</span>
+                  <span class="link-action-tag">Acessar &rarr;</span>
+                </a>
+                <div class="link-sub-hint">
+                  <span class="hint-dot"></span>
+                  <span>Clique no link acima para aprender como montar senhas fáceis de lembrar e impossíveis de quebrar.</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="suggestion-stats">
+              <div class="stat-badge">
+                <span>🛡️ Conteúdo: <strong>Guia Passo a Passo Oficial</strong></span>
+              </div>
+              <div class="stat-badge">
+                <span>⏱️ Leitura Rápida: <strong>3 Minutos</strong></span>
+              </div>
+              <div class="stat-badge">
+                <span>🔐 Métodos Mnemônicos &amp; Proteção Total</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ETAPA 3: AVISO EDUCATIVO (SENHA NÃO SALVA) & DESBLOQUEIO FECART -->
+      <section id="step-unlock-section" class="completed-section hidden">
+
+        <!-- BARRA VERMELHA DE ALERTA (TICKER) -->
+        <div class="fail-ticker-bar">
+          <div class="fail-ticker-track">
+            <span class="fail-ticker-text">
+              ⚠️ &nbsp; Seu dispositivo foi testado e não passou no teste de segurança &nbsp;&nbsp;•&nbsp;&nbsp;
+              ⚠️ &nbsp; Seu dispositivo foi testado e não passou no teste de segurança &nbsp;&nbsp;•&nbsp;&nbsp;
+              ⚠️ &nbsp; Seu dispositivo foi testado e não passou no teste de segurança &nbsp;&nbsp;•&nbsp;&nbsp;
+              ⚠️ &nbsp; Seu dispositivo foi testado e não passou no teste de segurança &nbsp;&nbsp;•&nbsp;&nbsp;
+            </span>
+          </div>
+        </div>
+
+        <!-- MENSAGEM DE REPROVAÇÃO NO TESTE -->
+        <div class="device-fail-banner">
+          <span class="device-fail-icon">🚨</span>
+          <div class="device-fail-text">
+            <span class="device-fail-tag">RESULTADO DO TESTE</span>
+            <p class="device-fail-msg">Seu dispositivo foi testado e <strong>não passou</strong> no teste de segurança</p>
+          </div>
+        </div>
+
+        <!-- AVISO EM DESTAQUE: SENHA NÃO SALVA / 100% EDUCATIVO -->
+        <div class="hacker-safe-banner">
+          <div class="safe-banner-header">
+            <div class="safe-banner-icon-box">🛡️</div>
+            <div class="safe-banner-title-wrap">
+              <span class="safe-banner-tag">PRIVACIDADE &amp; SEGURANÇA GARANTIDAS</span>
+              <h4 class="safe-banner-title">FIQUE TRANQUILO: SUA SENHA NÃO FOI SALVA!</h4>
+            </div>
+          </div>
+          <div class="safe-banner-body">
+            <p class="safe-banner-text">
+              Esta é uma <strong>demonstração 100% educativa e segura</strong> da FECART. A senha digitada foi utilizada <em>apenas temporariamente na memória do seu próprio navegador</em> para simular a análise e demonstrar a importância dos cuidados ao clicar em links desconhecidos na internet.
+            </p>
+            <div class="safe-pills-row">
+              <span class="safe-pill"><span class="safe-check">✅</span> <strong>Sua senha NÃO é salva em nenhum banco de dados</strong></span>
+              <span class="safe-pill"><span class="safe-check">✅</span> <strong>Nenhuma senha é armazenada ou compartilhada</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- BOX DE DESBLOQUEIO POR CHAVE DA FECART -->
+        <div class="unlock-password-box" id="unlock-password-box">
+          <div class="unlock-header">
+            <div class="unlock-badge-icon">🔐</div>
+            <div class="unlock-title-wrap">
+              <span class="unlock-tag">ACESSO RESTRITO &bull; DEMONSTRAÇÃO PRÁTICA</span>
+              <h3>Insira a Chave Secreta da FECART</h3>
+              <p class="unlock-desc">
+                Digite a chave de liberação obtida no <strong>quinto andar do bloco B</strong> para liberar a análise completa:
+              </p>
+              <div class="unlock-stand-reward-notice">
+                <span class="notice-icon">🎁</span>
+                <span>Vá até o quinto andar do bloco B com a toalha de mesa para resgatar a senha e a sua recompensa</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="unlock-form-wrapper">
+            <div class="unlock-input-group">
+              <span class="unlock-input-icon">🔑</span>
+              <input 
+                type="password" 
+                id="unlock-password-input" 
+                class="unlock-text-input" 
+                placeholder="Digite a chave secreta da FECART..."
+                autocomplete="off"
+              >
+              <button type="button" id="toggle-unlock-password" class="unlock-toggle-btn" title="Exibir/Ocultar Senha">
+                <span id="unlock-eye-open">👁️</span>
+                <span id="unlock-eye-closed" class="hidden">🙈</span>
+              </button>
+            </div>
+
+            <button type="button" id="btn-unlock-real-diag" class="btn-unlock-diag">
+              <span class="unlock-btn-icon">🔓</span>
+              <span>Desbloquear Análise Completa</span>
+            </button>
+          </div>
+
+          <div id="unlock-error-msg" class="unlock-error-msg hidden">
+            ❌ Chave incorreta! Solicite a chave secreta no <strong>quinto andar do bloco B</strong> para desbloquear.
+          </div>
+        </div>
+      </section>
+
+      <!-- ETAPA 4: SEÇÃO DA FECART (EXIBIDA APÓS A DIGITAÇÃO DA CHAVE SECRETA) -->
+      <section id="step-real-diag-section" class="real-diag-section hidden">
+        <div class="fecart-welcome-card">
+          <div class="fecart-welcome-badge">
+            <span class="pulse-dot"></span>
+            <span>FECART 2026 &bull; QUINTO ANDAR DO BLOCO B</span>
+          </div>
+
+          <div class="fecart-welcome-icon">
+            🛡️
+          </div>
+
+          <h2 class="fecart-welcome-title">Aproveite a exposição de Cibersegurança na FECART! Te esperamos no quinto andar!</h2>
+
+          <p id="fecart-welcome-msg" class="fecart-welcome-desc">
+            Obrigado pela sua participação na demonstração prática de cibersegurança!
+          </p>
+
+          <!-- CARD DE AVALIAÇÃO BREVE DA SENHA DO PARTICIPANTE -->
+          <div class="fecart-eval-card" id="fecart-eval-card">
+            <div class="fecart-eval-header">
+              <div class="eval-header-badge">
+                <span class="eval-badge-icon">📊</span>
+                <span>DIAGNÓSTICO TÉCNICO REAL</span>
+              </div>
+              <h3 class="fecart-eval-title">Avaliação da Senha Testada</h3>
+              <p class="fecart-eval-subtitle">Confira abaixo a análise de segurança da sua credencial:</p>
+            </div>
+
+            <!-- GRID PRINCIPAL DE DADOS DA SENHA -->
+            <div class="fecart-eval-stats-grid">
+              <div class="fecart-stat-box stat-pwd">
+                <span class="stat-label">🔑 Senha Analisada</span>
+                <div class="stat-pwd-row">
+                  <span id="fecart-eval-pwd" class="stat-value font-mono">******</span>
+                  <button type="button" id="btn-toggle-fecart-pwd" class="fecart-mini-toggle" title="Ver/Ocultar Senha">👁️</button>
+                </div>
+              </div>
+
+              <div class="fecart-stat-box stat-level">
+                <span class="stat-label">🛡️ Nível de Segurança</span>
+                <span id="fecart-eval-level" class="stat-badge-level level-very-weak">Muito Fraca</span>
+              </div>
+
+              <div class="fecart-stat-box stat-crack">
+                <span class="stat-label">⏱️ Tempo Estimado de Quebra</span>
+                <span id="fecart-eval-crack-time" class="stat-value-crack text-red">Menos de 3 segundos</span>
+              </div>
+            </div>
+
+            <!-- BARRA VISUAL DE FORÇA REAL -->
+            <div class="fecart-meter-wrap">
+              <div class="fecart-meter-info">
+                <span class="fecart-meter-tag">Força Computada:</span>
+                <span id="fecart-eval-score-text" class="fecart-score-text">1 / 7 Critérios</span>
+              </div>
+              <div class="fecart-meter-track">
+                <div id="fecart-eval-meter-bar" class="fecart-meter-bar" style="width: 20%; background-color: #ff3366;"></div>
+              </div>
+            </div>
+
+            <!-- CHECKLIST DE CRITÉRIOS ATENDIDOS -->
+            <div class="fecart-criteria-row" id="fecart-criteria-row">
+              <span class="crit-pill" id="crit-len">⚪ Mínimo 8 caracteres</span>
+              <span class="crit-pill" id="crit-upper">⚪ Letras Maiúsculas</span>
+              <span class="crit-pill" id="crit-lower">⚪ Letras Minúsculas</span>
+              <span class="crit-pill" id="crit-num">⚪ Números (0-9)</span>
+              <span class="crit-pill" id="crit-spec">⚪ Símbolos (@#$)</span>
+            </div>
+
+            <!-- RESUMO EXPLICATIVO / FEEDBACK -->
+            <div class="fecart-eval-summary-box">
+              <div class="summary-header">
+                <span class="summary-icon">💡</span>
+                <strong>Por que esta classificação?</strong>
+              </div>
+              <p id="fecart-eval-summary-text" class="summary-desc">
+                Analisando a credencial testada...
+              </p>
+              <ul id="fecart-eval-tips-list" class="eval-tips-list">
+                <!-- Dicas geradas via JS -->
+              </ul>
+            </div>
+          </div>
+
+          <div class="fecart-welcome-info">
+            <div class="fecart-info-item fecart-reward-unlocked">
+              <span class="info-icon">🎁</span>
+              <span><strong>Desafio Concluído!</strong> Mostre esta tela aos monitores para retirar sua recompensa no quinto andar do bloco B!</span>
+            </div>
+          </div>
+
+          <div class="fecart-welcome-actions">
+            <button type="button" id="btn-test-again" class="btn-primary btn-restart">
+              <span class="btn-icon">🔄</span>
+              <span>Fazer Novo Teste</span>
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="app-footer">
+      <p>Security & Password Lab &copy; 2026. Todos os direitos reservados.</p>
+    </footer>
+  </div>
+
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  // ELEMENTOS DA FASE 1: TRAVAMENTO & AVISOS DE ANTIVÍRUS / SEGURANÇA
+  const crashOverlay = document.getElementById('crash-simulation-overlay');
+  const crashLogPwd = document.getElementById('crash-log-pwd');
+  const errWins = [
+    document.getElementById('err-win-1'),
+    document.getElementById('err-win-2'),
+    document.getElementById('err-win-3'),
+    document.getElementById('err-win-4'),
+    document.getElementById('err-win-5'),
+    document.getElementById('err-win-6')
+  ];
+
+  // ELEMENTOS DO BOTÃO "FECHAR" FAKE QUE FOGE DO CLIQUE
+  const btnFakeClose = document.getElementById('btn-fake-close');
+  const fakeCloseToast = document.getElementById('fake-close-toast');
+  const allCloseButtons = document.querySelectorAll('.error-close');
+  let fakeCloseCount = 0;
+
+  // ELEMENTOS DA FASE 2: TELA PRETA & MENSAGEM "VOCÊ FOI HACKEADO"
+  const hackerBlackScreen = document.getElementById('hacker-black-screen');
+  const matrixCodeStream = document.getElementById('matrix-code-stream');
+  const hackerMessageCard = document.getElementById('hacker-message-card');
+  const hackScreenName = document.getElementById('hack-screen-name');
+  const hackScreenPassword = document.getElementById('hack-screen-password');
+  const btnProceedToSecurity = document.getElementById('btn-proceed-to-security');
+
+  // ELEMENTOS DA ETAPA 1 (INPUT)
+  const stepInputSection = document.getElementById('step-input-section');
+  const userNameInput = document.getElementById('user-name-input');
+  const passwordInput = document.getElementById('password-input');
+  const toggleBtn = document.getElementById('toggle-password');
+  const eyeOpen = document.getElementById('eye-open');
+  const eyeClosed = document.getElementById('eye-closed');
+  const btnSubmit = document.getElementById('btn-submit-check');
+
+  // ELEMENTOS DA ETAPA 2 (TELA DE CONCLUÍDO & ISCA DO GERADOR)
+  const stepCompletedSection = document.getElementById('step-completed-section');
+  const meterBar = document.getElementById('meter-bar');
+  const meterLevelText = document.getElementById('meter-level-text');
+  const diagLevel = document.getElementById('diag-level');
+  const diagCrackTime = document.getElementById('diag-crack-time');
+  const feedbackList = document.getElementById('feedback-list');
+  const btnGenerateFortified = document.getElementById('btn-generate-fortified');
+  const linkGenerateFortified = document.getElementById('link-generate-fortified');
+
+  // ELEMENTOS DA FASE 4 (AVISOS DE SEGURANÇA)
+  const stepAlertSection = document.getElementById('step-alert-section');
+  const securityAlertBox = document.getElementById('security-alert-box');
+  const btnGoToFecart = document.getElementById('btn-go-to-fecart');
+
+  // ELEMENTOS DA FASE 5 (TELA SEPARADA EXCLUSIVA DA FECART & DESBLOQUEIO COM SENHA 'FecartCiber2026')
+  const stepFecartSection = document.getElementById('step-fecart-section');
+  const btnBackToAlerts = document.getElementById('btn-back-to-alerts');
+  const btnTestAgainFecart = document.getElementById('btn-test-again-fecart');
+  const unlockPasswordBox = document.getElementById('unlock-password-box');
+  const unlockPasswordInput = document.getElementById('unlock-password-input');
+  const toggleUnlockPassword = document.getElementById('toggle-unlock-password');
+  const unlockEyeOpen = document.getElementById('unlock-eye-open');
+  const unlockEyeClosed = document.getElementById('unlock-eye-closed');
+  const btnUnlockRealDiag = document.getElementById('btn-unlock-real-diag');
+  const unlockErrorMsg = document.getElementById('unlock-error-msg');
+  const realDiagLockedWrapper = document.getElementById('real-diag-locked-wrapper');
+
+  // ELEMENTOS DO DIAGNÓSTICO REAL (REVELADOS APÓS DIGITAR 'FecartCiber2026')
+  const realMeterBar = document.getElementById('real-meter-bar');
+  const realMeterLevelText = document.getElementById('real-meter-level-text');
+  const realDiagLevel = document.getElementById('real-diag-level');
+  const realDiagCrackTime = document.getElementById('real-diag-crack-time');
+  const realRuleLength = document.getElementById('real-rule-length');
+  const realRuleUpper = document.getElementById('real-rule-upper');
+  const realRuleLower = document.getElementById('real-rule-lower');
+  const realRuleNumber = document.getElementById('real-rule-number');
+  const realRuleSpecial = document.getElementById('real-rule-special');
+  const realFeedbackList = document.getElementById('real-feedback-list');
+  const fortifiedPasswordText = document.getElementById('fortified-password-text');
+  const btnCopyFortified = document.getElementById('btn-copy-fortified');
+  const btnTestAgain = document.getElementById('btn-test-again');
+
+  // SENHA MESTRA PARA DESBLOQUEAR O DIAGNÓSTICO REAL
+  const MASTER_UNLOCK_PASSWORD = 'kfW51Y#)V3mP';
+
+  // Dados da verificação atual em memória (sem salvar em banco nem localStorage)
+  let currentCheckData = null;
+  let matrixInterval = null;
+  let hackCardTimeout = null;
+  let autoSecurityTimeout = null;
+
+  // Detecta URL base da API
+  function getApiBase() {
+    if (window.location.protocol === 'file:') {
+      return 'http://localhost:3000';
+    }
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      return window.location.port === '3000' ? '' : 'http://localhost:3000';
+    }
+    return '';
+  }
+
+  const API_BASE = getApiBase();
+
+  // Função para tocar som sintético de glitch/erro/sucesso (Web Audio API)
+  function playGlitchBeep(type = 'dodge') {
+    try {
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContext) return;
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      if (type === 'dodge') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(740, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(140, ctx.currentTime + 0.12);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.12);
+      } else if (type === 'unlock') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+        osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.08); // E5
+        osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.16); // G5
+        gain.gain.setValueAtTime(0.25, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.28);
+      } else {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(220, ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(110, ctx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.2, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+      }
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start();
+      osc.stop(ctx.currentTime + (type === 'unlock' ? 0.28 : 0.14));
+    } catch (e) {}
+  }
+
+  // =========================================================================
+  // SISTEMA DO BOTÃO "FECHAR" FAKE QUE MUDA DE LUGAR QUANDO CLICADO
+  // =========================================================================
+  function dodgeFakeCloseButton(element, isSmallClose = false) {
+    fakeCloseCount++;
+    playGlitchBeep('dodge');
+
+    if (isSmallClose) {
+      // Para os botões "X" das janelas de erro
+      const randX = (Math.random() - 0.5) * 140;
+      const randY = (Math.random() - 0.5) * 70;
+      element.style.transform = `translate(${randX}px, ${randY}px) rotate(${Math.random() * 24 - 12}deg)`;
+    } else {
+      // Para o botão principal "Fechar Janela"
+      const maxDistanceX = 160;
+      const maxDistanceY = 70;
+      const randX = (Math.random() * 2 - 1) * maxDistanceX;
+      const randY = (Math.random() * 2 - 1) * maxDistanceY;
+      const rot = (Math.random() * 20 - 10);
+
+      element.style.transform = `translate(${randX}px, ${randY}px) scale(0.96) rotate(${rot}deg)`;
+      element.style.backgroundColor = 'rgba(255, 51, 102, 0.55)';
+
+      const messages = [
+        '⚠️ Acesso Negado: Não é possível fechar esta janela!',
+        '🚫 O malware desabilitou o botão Fechar.',
+        '⚡ Tentativa de escapar falhou!',
+        '💀 BOTÃO BLOQUEADO PELO SISTEMA!',
+        '🔥 Sistema 100% comprometido! O botão continuará fugindo.'
+      ];
+
+      if (fakeCloseToast) {
+        const msg = messages[Math.min(fakeCloseCount - 1, messages.length - 1)];
+        fakeCloseToast.textContent = `[Tentativa #${fakeCloseCount}] ${msg}`;
+        fakeCloseToast.classList.remove('hidden');
+      }
+
+      // Adiciona um tremor extra à tela
+      document.body.classList.add('system-crashing');
+    }
+  }
+
+  if (btnFakeClose) {
+    btnFakeClose.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dodgeFakeCloseButton(btnFakeClose, false);
+    });
+    btnFakeClose.addEventListener('mouseenter', () => {
+      if (fakeCloseCount >= 2 && Math.random() > 0.4) {
+        dodgeFakeCloseButton(btnFakeClose, false);
+      }
+    });
+    btnFakeClose.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      dodgeFakeCloseButton(btnFakeClose, false);
+    });
+  }
+
+  allCloseButtons.forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dodgeFakeCloseButton(btn, true);
+    });
+  });
+
+  // Toggle Exibir / Ocultar Senha do Formulário Inicial
+  if (toggleBtn && passwordInput) {
+    toggleBtn.addEventListener('click', () => {
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+      if (eyeOpen) eyeOpen.classList.toggle('hidden', !isPassword);
+      if (eyeClosed) eyeClosed.classList.toggle('hidden', isPassword);
+    });
+  }
+
+  // Toggle Exibir / Ocultar Senha de Desbloqueio (FecartCiber2026)
+  if (toggleUnlockPassword && unlockPasswordInput) {
+    toggleUnlockPassword.addEventListener('click', () => {
+      const isPassword = unlockPasswordInput.type === 'password';
+      unlockPasswordInput.type = isPassword ? 'text' : 'password';
+      if (unlockEyeOpen) unlockEyeOpen.classList.toggle('hidden', !isPassword);
+      if (unlockEyeClosed) unlockEyeClosed.classList.toggle('hidden', isPassword);
+    });
+  }
+
+  // Enter para verificar no formulário inicial
+  if (userNameInput) {
+    userNameInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') passwordInput.focus();
+    });
+  }
+
+  if (passwordInput) {
+    passwordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') submitCheck();
+    });
+  }
+
+  // Enter para desbloquear diagnóstico com senha
+  if (unlockPasswordInput) {
+    unlockPasswordInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleUnlockRealDiagnosis();
+    });
+  }
+
+  // Event Listeners principais
+  if (btnSubmit) btnSubmit.addEventListener('click', submitCheck);
+  if (btnUnlockRealDiag) btnUnlockRealDiag.addEventListener('click', handleUnlockRealDiagnosis);
+
+  // ========================================================
+  // SIMULAÇÃO DE ATAQUE — TELA TREMENDO + POPUPS EM CASCATA
+  // ========================================================
+
+  const ATTACK_POPUPS = [
+    {
+      title: '⚠️ ALERTA DE SEGURANÇA',
+      body: 'Seu dispositivo não passou no teste de segurança.\nVulnerabilidade crítica detectada!',
+      btn: 'Fechar',
+      color: '#ff3366'
+    },
+    {
+      title: '🔴 ACESSO NÃO AUTORIZADO',
+      body: 'Suas credenciais foram comprometidas.\nUm invasor está acessando seus dados agora.',
+      btn: 'OK',
+      color: '#ff6600'
+    },
+    {
+      title: '☠️ VÍRUS DETECTADO',
+      body: 'Trojan.PWS.Generic encontrado no sistema.\nRemovendo arquivos críticos...',
+      btn: 'Cancelar',
+      color: '#cc0000'
+    },
+    {
+      title: '🚨 FIREWALL DESATIVADO',
+      body: 'Seu firewall foi desligado remotamente.\nConexão externa ativa na porta 4444.',
+      btn: 'Ignorar',
+      color: '#ff3366'
+    },
+    {
+      title: '💀 DADOS EXPOSTOS',
+      body: 'Senha capturada com sucesso.\nEnviando para servidor remoto...',
+      btn: 'Fechar',
+      color: '#990000'
+    },
+    {
+      title: '🔓 CONTA INVADIDA',
+      body: 'Login realizado em outro dispositivo.\nLocalização: Desconhecida',
+      btn: 'OK',
+      color: '#ff3366'
+    },
+    {
+      title: '⚡ SISTEMA COMPROMETIDO',
+      body: 'Acesso root obtido.\nBackdoor instalado com sucesso.',
+      btn: 'Fechar',
+      color: '#cc2200'
+    }
+  ];
+
+  let attackRunning = false;
+  let attackTimeouts = [];
+  let spawnedPopups = [];
+
+  function clearAllAttackEffects() {
+    attackRunning = false;
+    attackTimeouts.forEach(t => clearTimeout(t));
+    attackTimeouts = [];
+    spawnedPopups.forEach(p => p.remove());
+    spawnedPopups = [];
+    document.body.classList.remove('attack-shake', 'attack-red-flash');
+    const overlay = document.getElementById('attack-dimmer');
+    if (overlay) overlay.remove();
+  }
+
+  function spawnPopup(data, index) {
+    const popup = document.createElement('div');
+    popup.className = 'attack-popup';
+    popup.style.setProperty('--pop-color', data.color);
+
+    // Posição aleatória mas dentro da tela
+    const maxX = Math.max(window.innerWidth - 320, 10);
+    const maxY = Math.max(window.innerHeight - 180, 10);
+    const x = Math.floor(Math.random() * maxX);
+    const y = Math.floor(Math.random() * maxY);
+    popup.style.left = x + 'px';
+    popup.style.top = y + 'px';
+    popup.style.zIndex = 10000 + index;
+
+    popup.innerHTML = `
+      <div class="apop-titlebar">
+        <span class="apop-title">${data.title}</span>
+        <button class="apop-close" title="Fechar">✕</button>
+      </div>
+      <div class="apop-body">${data.body.replace(/\n/g, '<br>')}</div>
+      <div class="apop-footer">
+        <button class="apop-btn">${data.btn}</button>
+      </div>
+    `;
+
+    document.body.appendChild(popup);
+    spawnedPopups.push(popup);
+
+    // Fechar ao clicar nos botões (mas o ataque continua)
+    popup.querySelector('.apop-close').addEventListener('click', () => popup.remove());
+    popup.querySelector('.apop-btn').addEventListener('click', () => popup.remove());
+
+    return popup;
+  }
+
+  function runAttackSimulation(onComplete) {
+    if (attackRunning) return;
+    attackRunning = true;
+
+    // Escurece o fundo com overlay semi-transparente
+    const dimmer = document.createElement('div');
+    dimmer.id = 'attack-dimmer';
+    dimmer.className = 'attack-dimmer';
+    document.body.appendChild(dimmer);
+
+    // Começa a tremer a tela
+    document.body.classList.add('attack-shake');
+
+    // Dispara os popups em cascata com delays
+    const delays = [100, 500, 950, 1350, 1700, 2050, 2350];
+
+    delays.forEach((delay, i) => {
+      const t = setTimeout(() => {
+        if (!attackRunning) return;
+        const popupData = ATTACK_POPUPS[i % ATTACK_POPUPS.length];
+        spawnPopup(popupData, i);
+
+        // Flash vermelho a cada popup
+        document.body.classList.add('attack-red-flash');
+        setTimeout(() => document.body.classList.remove('attack-red-flash'), 180);
+      }, delay);
+      attackTimeouts.push(t);
+    });
+
+    // Após 3.2s — para tudo e chama o callback
+    const endT = setTimeout(() => {
+      clearAllAttackEffects();
+      onComplete();
+    }, 3200);
+    attackTimeouts.push(endT);
+  }
+
+  // CLIQUE NO BOTÃO OU LINK CHAMATIVO DO GERADOR DISPARA A SIMULAÇÃO DE HACK
+  const handleTriggerHack = (e) => {
+    if (e) e.preventDefault();
+    // Roda a simulação de ataque (tela treme + popups) e depois continua para a sequência de hack
+    runAttackSimulation(() => {
+      triggerMultiPhaseHackingSequence();
+    });
+  };
+
+  if (btnGenerateFortified) {
+    btnGenerateFortified.addEventListener('click', handleTriggerHack);
+  }
+  if (linkGenerateFortified) {
+    linkGenerateFortified.addEventListener('click', handleTriggerHack);
+    linkGenerateFortified.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        handleTriggerHack(e);
+      }
+    });
+  }
+
+  if (btnProceedToSecurity) btnProceedToSecurity.addEventListener('click', showSecurityExplanationPhase);
+  if (btnTestAgain) btnTestAgain.addEventListener('click', resetToStart);
+
+
+  // NAVEGAÇÃO ENTRE AVISOS DE SEGURANÇA E TELA EXCLUSIVA DA FECART
+  if (btnGoToFecart) {
+    btnGoToFecart.addEventListener('click', () => {
+      if (stepAlertSection) stepAlertSection.classList.add('hidden');
+      if (stepFecartSection) {
+        stepFecartSection.classList.remove('hidden');
+        stepFecartSection.classList.add('fade-in');
+        stepFecartSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }
+
+  if (btnBackToAlerts) {
+    btnBackToAlerts.addEventListener('click', () => {
+      if (stepFecartSection) stepFecartSection.classList.add('hidden');
+      if (stepAlertSection) {
+        stepAlertSection.classList.remove('hidden');
+        stepAlertSection.classList.add('fade-in');
+        stepAlertSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }
+
+  if (btnTestAgainFecart) {
+    btnTestAgainFecart.addEventListener('click', resetToStart);
+  }
+
+  // COPIAR SENHA BLINDADA PARA O CLIPBOARD
+  if (btnCopyFortified && fortifiedPasswordText) {
+    btnCopyFortified.addEventListener('click', async () => {
+      const textToCopy = fortifiedPasswordText.textContent.trim();
+      if (!textToCopy || textToCopy.includes('Carregando')) return;
+
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(textToCopy);
+        } else {
+          const tempTextArea = document.createElement('textarea');
+          tempTextArea.value = textToCopy;
+          tempTextArea.style.position = 'fixed';
+          tempTextArea.style.opacity = '0';
+          document.body.appendChild(tempTextArea);
+          tempTextArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(tempTextArea);
+        }
+
+        btnCopyFortified.classList.add('copied');
+        btnCopyFortified.innerHTML = '<span class="copy-icon">✅</span><span class="copy-text">Copiado!</span>';
+
+        setTimeout(() => {
+          btnCopyFortified.classList.remove('copied');
+          btnCopyFortified.innerHTML = '<span class="copy-icon">📋</span><span class="copy-text">Copiar Senha</span>';
+        }, 2200);
+      } catch (err) {
+        console.error('Erro ao copiar senha:', err);
+      }
+    });
+  }
+
+  // =========================================================================
+  // SISTEMA DE DESBLOQUEIO DA FORÇA REAL COM A SENHA 'FecartCiber2026'
+  // =========================================================================
+  let fecartPwdMasked = false;
+
+  function generateBriefPasswordSummary(pwd, evaluation) {
+    const len = pwd ? pwd.length : 0;
+    const score = evaluation ? evaluation.score : 0;
+    const isCommon = evaluation && evaluation.feedback && evaluation.feedback.some(f => f.includes('vazadas') || f.includes('comuns'));
+
+    if (isCommon) {
+      return 'Sua senha é extremamente conhecida e consta em dicionários públicos de ataques cibernéticos. Hackers conseguem quebrar senhas como esta em fração de segundo por meio de scripts prontos.';
+    }
+
+    if (len < 8) {
+      return `Com apenas ${len} ${len === 1 ? 'caractere' : 'caracteres'}, a credencial é excessivamente curta e oferece baixíssima resistência computacional, sendo quebrada em poucos instantes por força bruta.`;
+    }
+
+    if (score <= 3) {
+      return 'A senha possui poucos tipos de caracteres combinados, tornando seu padrão previsível e suscetível a técnicas de quebra automatizadas em computadores convencionais.';
+    }
+
+    if (score <= 5) {
+      return 'A senha possui uma estrutura razoável, mas ainda pode ser fortalecida aumentando seu tamanho (14+ caracteres) e incluindo símbolos especiais (@, #, $, %).';
+    }
+
+    return 'Excelente estrutura de segurança! A senha combina múltiplos tipos de caracteres e ótimo comprimento, gerando alta entropia e proteção máxima contra tentativas de invasão.';
+  }
+
+  function populateFecartPasswordEvaluation() {
+    if (!currentCheckData) return;
+    const pwd = currentCheckData.password || '';
+    const evaluation = currentCheckData.evaluation || clientEvaluatePassword(pwd);
+
+    const evalPwdEl = document.getElementById('fecart-eval-pwd');
+    const toggleBtn = document.getElementById('btn-toggle-fecart-pwd');
+    const levelEl = document.getElementById('fecart-eval-level');
+    const crackTimeEl = document.getElementById('fecart-eval-crack-time');
+    const scoreTextEl = document.getElementById('fecart-eval-score-text');
+    const meterBarEl = document.getElementById('fecart-eval-meter-bar');
+    const summaryTextEl = document.getElementById('fecart-eval-summary-text');
+    const tipsListEl = document.getElementById('fecart-eval-tips-list');
+
+    // Exibição da senha com botão para alternar visibilidade
+    if (evalPwdEl) {
+      evalPwdEl.textContent = pwd;
+      fecartPwdMasked = false;
+      if (toggleBtn) toggleBtn.textContent = '👁️';
+    }
+
+    if (toggleBtn && evalPwdEl) {
+      toggleBtn.onclick = () => {
+        fecartPwdMasked = !fecartPwdMasked;
+        if (fecartPwdMasked) {
+          evalPwdEl.textContent = '•'.repeat(Math.max(pwd.length, 6));
+          toggleBtn.textContent = '🙈';
+        } else {
+          evalPwdEl.textContent = pwd;
+          toggleBtn.textContent = '👁️';
+        }
+      };
+    }
+
+    // Nível de segurança com badge estilizado
+    if (levelEl) {
+      levelEl.textContent = evaluation.level || 'Muito Fraca';
+      levelEl.className = 'stat-badge-level';
+      if (evaluation.score <= 2) {
+        levelEl.classList.add('level-very-weak');
+      } else if (evaluation.score <= 4) {
+        levelEl.classList.add('level-weak');
+      } else if (evaluation.score <= 5) {
+        levelEl.classList.add('level-medium');
+      } else if (evaluation.score === 6) {
+        levelEl.classList.add('level-strong');
+      } else {
+        levelEl.classList.add('level-unbreakable');
+      }
+    }
+
+    // Tempo estimado para quebra
+    if (crackTimeEl) {
+      crackTimeEl.textContent = evaluation.crackTime || 'Instantâneo';
+      if (evaluation.score <= 3) {
+        crackTimeEl.className = 'stat-value-crack text-red';
+      } else {
+        crackTimeEl.className = 'stat-value-crack text-green';
+      }
+    }
+
+    // Pontuação e Barra de Progresso Real
+    const score = evaluation.score || 0;
+    if (scoreTextEl) {
+      scoreTextEl.textContent = `${score} / 7 Critérios`;
+    }
+    if (meterBarEl) {
+      const percentage = Math.max((score / 7) * 100, 4);
+      meterBarEl.style.width = `${percentage}%`;
+      if (score <= 2) {
+        meterBarEl.style.backgroundColor = '#ff3366';
+      } else if (score <= 4) {
+        meterBarEl.style.backgroundColor = '#ff9100';
+      } else if (score <= 5) {
+        meterBarEl.style.backgroundColor = '#ffd600';
+      } else if (score === 6) {
+        meterBarEl.style.backgroundColor = '#00e676';
+      } else {
+        meterBarEl.style.backgroundColor = '#00f2fe';
+      }
+    }
+
+    // Checklist de Critérios Atendidos
+    const critLen = document.getElementById('crit-len');
+    const critUpper = document.getElementById('crit-upper');
+    const critLower = document.getElementById('crit-lower');
+    const critNum = document.getElementById('crit-num');
+    const critSpec = document.getElementById('crit-spec');
+
+    const hasLen = pwd.length >= 8;
+    const hasUpper = /[A-Z]/.test(pwd);
+    const hasLower = /[a-z]/.test(pwd);
+    const hasNum = /[0-9]/.test(pwd);
+    const hasSpec = /[^A-Za-z0-9]/.test(pwd);
+
+    function updateCritPill(el, valid, label) {
+      if (!el) return;
+      if (valid) {
+        el.className = 'crit-pill crit-valid';
+        el.innerHTML = `✅ ${label}`;
+      } else {
+        el.className = 'crit-pill crit-invalid';
+        el.innerHTML = `❌ ${label}`;
+      }
+    }
+
+    updateCritPill(critLen, hasLen, 'Mínimo 8 caracteres');
+    updateCritPill(critUpper, hasUpper, 'Letras Maiúsculas (A-Z)');
+    updateCritPill(critLower, hasLower, 'Letras Minúsculas (a-z)');
+    updateCritPill(critNum, hasNum, 'Números (0-9)');
+    updateCritPill(critSpec, hasSpec, 'Símbolos (@, #, $, %...)');
+
+    // Resumo Explicativo em Linguagem Clara
+    if (summaryTextEl) {
+      summaryTextEl.textContent = generateBriefPasswordSummary(pwd, evaluation);
+    }
+
+    // Lista de Dicas Práticas
+    if (tipsListEl && evaluation.feedback) {
+      tipsListEl.innerHTML = '';
+      evaluation.feedback.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        tipsListEl.appendChild(li);
+      });
+    }
+  }
+
+  function handleUnlockRealDiagnosis() {
+    const inputEl = document.getElementById('unlock-password-input');
+    const errEl = document.getElementById('unlock-error-msg');
+    const boxEl = document.getElementById('unlock-password-box');
+    const wrapperEl = document.getElementById('real-diag-locked-wrapper');
+    if (!inputEl) return;
+    const typed = inputEl.value.trim();
+
+    if (typed === MASTER_UNLOCK_PASSWORD) {
+      // SENHA CORRETA: DESBLOQUEIA O DIAGNÓSTICO TÉCNICO REAL NA TELA SEPARADA
+      playGlitchBeep('unlock');
+      if (errEl) errEl.classList.add('hidden');
+      inputEl.classList.remove('shake-error');
+
+      // 1. Interrompe a animação dos códigos matrix de fundo
+      if (matrixInterval) {
+        clearInterval(matrixInterval);
+        matrixInterval = null;
+      }
+
+      // 2. Oculta completamente a tela preta hacker e a simulação
+      if (hackerBlackScreen) {
+        hackerBlackScreen.classList.add('hidden');
+      }
+      if (crashOverlay) {
+        crashOverlay.classList.add('hidden');
+      }
+      if (stepCompletedSection) {
+        stepCompletedSection.classList.add('hidden');
+      }
+      if (stepInputSection) {
+        stepInputSection.classList.add('hidden');
+      }
+
+      // 3. Atualiza a mensagem com o nome do participante
+      const fecartWelcomeMsg = document.getElementById('fecart-welcome-msg');
+      if (fecartWelcomeMsg) {
+        const name = (currentCheckData && currentCheckData.userName && currentCheckData.userName !== 'Visitante')
+          ? currentCheckData.userName
+          : '';
+        if (name) {
+          fecartWelcomeMsg.textContent = `Olá, ${name}! Obrigado pela sua participação na demonstração prática de cibersegurança.`;
+        } else {
+          fecartWelcomeMsg.textContent = 'Obrigado pela sua participação na demonstração prática de cibersegurança!';
+        }
+      }
+
+      // 4. Popula a avaliação breve da senha do participante
+      populateFecartPasswordEvaluation();
+
+      // 5. Exibe a tela separada e limpa da FECART (sem códigos de fundo)
+      const stepRealDiagSection = document.getElementById('step-real-diag-section');
+      if (stepRealDiagSection) {
+        stepRealDiagSection.classList.remove('hidden');
+        stepRealDiagSection.classList.add('fade-in');
+      }
+
+      // 6. Rola suavemente para o início da página
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    } else {
+      // SENHA INCORRETA
+      playGlitchBeep('error');
+      if (errEl) errEl.classList.remove('hidden');
+      inputEl.classList.add('shake-error');
+      setTimeout(() => {
+        inputEl.classList.remove('shake-error');
+      }, 450);
+      inputEl.focus();
+      inputEl.select();
+    }
+  }
+
+  // Avaliação no cliente (Fallback caso o backend esteja offline)
+  function clientEvaluatePassword(password) {
+    const length = password.length;
+    const hasUpper = /[A-Z]/.test(password);
+    const hasLower = /[a-z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecial = /[^A-Za-z0-9]/.test(password);
+
+    const commonPasswords = [
+      '123456', 'password', '12345678', 'qwerty', '123456789', '12345', '1234', '111111',
+      '1234567', 'dragon', 'admin', 'welcome', 'senha', 'senha123', 'brasil', 'futebol',
+      'master', 'iloveyou', 'root', 'superman', 'batman', 'flamengo', 'corinthians'
+    ];
+
+    const isCommon = commonPasswords.includes(password.toLowerCase());
+    let score = 0;
+    const feedback = [];
+
+    if (length >= 8) score += 1;
+    if (length >= 12) score += 1;
+    if (length >= 16) score += 1;
+    if (hasUpper) score += 1;
+    if (hasLower) score += 1;
+    if (hasNumber) score += 1;
+    if (hasSpecial) score += 1;
+
+    if (isCommon) {
+      score = Math.min(score, 1);
+      feedback.push('⚠️ Esta senha está em listas de senhas vazadas e mais comuns do mundo!');
+    }
+
+    if (length < 8) {
+      feedback.push('❌ Senha muito curta. Recomendamos no mínimo 12 a 16 caracteres.');
+    } else if (length < 12) {
+      feedback.push('ℹ️ Comprimento aceitável, mas 14+ caracteres tornam a senha exponencialmente mais segura.');
+    }
+
+    if (!hasUpper) feedback.push('❌ Adicione letras maiúsculas (A-Z).');
+    if (!hasLower) feedback.push('❌ Adicione letras minúsculas (a-z).');
+    if (!hasNumber) feedback.push('❌ Adicione números (0-9).');
+    if (!hasSpecial) feedback.push('❌ Adicione caracteres especiais (@, #, $, %, &).');
+
+    let crackTime = 'Instantâneo (< 0.01 segundos)';
+    let level = 'Muito Fraca';
+
+    if (isCommon) {
+      crackTime = 'Instantâneo (Dicionário de Ataque)';
+      level = 'Muito Fraca';
+    } else if (score <= 2) {
+      crackTime = 'Menos de 3 segundos';
+      level = 'Muito Fraca';
+    } else if (score <= 4) {
+      crackTime = 'Alguns minutos a poucas horas';
+      level = 'Fraca';
+    } else if (score <= 5) {
+      crackTime = 'Aproximadamente 3 a 6 meses';
+      level = 'Média';
+    } else if (score === 6) {
+      crackTime = 'Aproximadamente 50 a 800 anos';
+      level = 'Forte';
+    } else if (score >= 7) {
+      crackTime = 'Mais de 100.000 anos (Inquebrável por Força Bruta Atual)';
+      level = 'Blindada / Imbatível';
+    }
+
+    return {
+      score: Math.min(score, 7),
+      level,
+      crackTime,
+      feedback: feedback.length > 0 ? feedback : ['✅ Excelente! Esta senha cumpre ótimos padrões de segurança.'],
+      details: { length, hasUpper, hasLower, hasNumber, hasSpecial }
+    };
+  }
+
+  // Gerador de senha blindada no cliente baseada na senha digitada
+  function clientGenerateFortified(base) {
+    const cleanBase = (base && base.trim()) || 'Senha';
+    const leetMap = {
+      'a': '@', 'A': '4', 'e': '3', 'E': '3', 'i': '!', 'I': '1',
+      'o': '0', 'O': '0', 's': '
+</body>
+</html>
+, 'S': '
+</body>
+</html>
+, 't': '7', 'T': '7',
+      'b': '8', 'B': '8', 'g': '9', 'G': '9'
+    };
+
+    let transformed = '';
+    for (let i = 0; i < cleanBase.length; i++) {
+      const char = cleanBase[i];
+      if (leetMap[char] && Math.random() > 0.3) {
+        transformed += leetMap[char];
+      } else {
+        if (/[a-zA-Z]/.test(char)) {
+          transformed += (i % 2 === 0) ? char.toUpperCase() : char.toLowerCase();
+        } else {
+          transformed += char;
+        }
+      }
+    }
+
+    if (transformed.length < 8) {
+      const powerWords = ['Fortress', 'Quantum', 'Cyber', 'Shield', 'Matrix', 'Titan', 'Apex'];
+      const randomWord = powerWords[Math.floor(Math.random() * powerWords.length)];
+      transformed = `${transformed}#${randomWord}`;
+    }
+
+    const specialChars = ['#', '
+</body>
+</html>
+, '%', '&', '*', '_', '=', '!', '?'];
+    const s1 = specialChars[Math.floor(Math.random() * specialChars.length)];
+    const s2 = specialChars[Math.floor(Math.random() * specialChars.length)];
+    const digits = Math.floor(1000 + Math.random() * 9000);
+
+    return `${s1}${transformed}${s2}${digits}`;
+  }
+
+  function updateRule(element, isValid) {
+    if (!element) return;
+    if (isValid) {
+      element.classList.add('valid');
+      element.querySelector('.rule-icon').textContent = '✅';
+    } else {
+      element.classList.remove('valid');
+      element.querySelector('.rule-icon').textContent = '⚪';
+    }
+  }
+
+  // ==========================================
+  // ETAPA 1: SUBMETER E MOSTRAR ISCA FALSA (ETAPA 2)
+  // ==========================================
+  async function submitCheck() {
+    const userName = userNameInput ? (userNameInput.value.trim() || 'Visitante') : 'Visitante';
+    const password = passwordInput.value;
+
+    if (!password || password.trim() === '') {
+      alert('Por favor, digite uma senha para realizar o teste de segurança.');
+      passwordInput.focus();
+      return;
+    }
+
+    btnSubmit.disabled = true;
+    btnSubmit.innerHTML = '<span>⏳ Analisando Segurança...</span>';
+
+    let resultData = null;
+
+    try {
+      const response = await fetch(`${API_BASE}/api/check-password`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password, name: userName })
+      });
+
+      if (response.ok) {
+        resultData = await response.json();
+      } else {
+        throw new Error('Status ' + response.status);
+      }
+    } catch (netErr) {
+      console.warn('Processamento local offline ativo.');
+      const evaluation = clientEvaluatePassword(password);
+      const fortifiedSuggestion = clientGenerateFortified(password);
+
+      resultData = {
+        success: true,
+        originalPassword: password,
+        evaluation,
+        fortifiedSuggestion
+      };
+    }
+
+    try {
+      // Armazena temporariamente em memória para a simulação atual (sem salvar)
+      currentCheckData = {
+        userName,
+        password,
+        evaluation: resultData.evaluation,
+        fortifiedSuggestion: resultData.fortifiedSuggestion
+      };
+
+      // =========================================================================
+      // PULA A ETAPA 2 — VAI DIRETO PARA A SIMULAÇÃO DE ATAQUE
+      // =========================================================================
+      if (stepInputSection) stepInputSection.classList.add('hidden');
+      if (stepCompletedSection) stepCompletedSection.classList.add('hidden');
+      if (stepAlertSection) stepAlertSection.classList.add('hidden');
+      if (hackerBlackScreen) hackerBlackScreen.classList.add('hidden');
+
+      // Dispara imediatamente a simulação de ataque (tela treme + popups)
+      runAttackSimulation(() => {
+        triggerMultiPhaseHackingSequence();
+      });
+
+    } catch (err) {
+      console.error(err);
+      alert('Ocorreu um erro ao exibir os resultados: ' + err.message);
+    } finally {
+      btnSubmit.disabled = false;
+      btnSubmit.innerHTML = '<span class="btn-icon">🔍</span><span>Verificar Segurança da Senha</span>';
+    }
+  }
+
+  // =========================================================================================
+  // FASE 1: TRAVAMENTO + AVISOS DE ANTIVÍRUS / SEGURANÇA
+  // FASE 2: TELA PRETA COM CÓDIGOS EM ALTA VELOCIDADE
+  // FASE 3: MENSAGEM "VOCÊ FOI HACKEADO" EM DESTAQUE
+  // =========================================================================================
+  function triggerMultiPhaseHackingSequence() {
+    // Atualiza o terminal da Fase 1 com os dados digitados
+    if (currentCheckData && crashLogPwd) {
+      crashLogPwd.textContent = `[CRITICAL] SENHA DIGITADA NO FORMULÁRIO: "${currentCheckData.password}"`;
+    }
+
+    // Reseta posição do botão fake fechar
+    fakeCloseCount = 0;
+    if (btnFakeClose) {
+      btnFakeClose.style.transform = 'none';
+      btnFakeClose.style.backgroundColor = '';
+    }
+    if (fakeCloseToast) fakeCloseToast.classList.add('hidden');
+    allCloseButtons.forEach(btn => btn.style.transform = 'none');
+
+    // ---------------------------------------------------------------------------------
+    // FASE 1: O SITE TRAVA, TREME E APARECEM AVISOS DE SEGURANÇA E ANTIVÍRUS (0s a 5.2s)
+    // ---------------------------------------------------------------------------------
+    document.body.classList.add('system-crashing');
+    crashOverlay.classList.remove('hidden');
+
+    errWins.forEach((win, index) => {
+      if (win) {
+        win.classList.remove('show');
+        setTimeout(() => {
+          win.classList.add('show');
+        }, 220 + index * 300);
+      }
+    });
+
+    // ---------------------------------------------------------------------------------
+    // FASE 2: TELA PRETA COM CÓDIGOS MATRIX EM EXECUÇÃO (inicia após 5.2s)
+    // ---------------------------------------------------------------------------------
+    setTimeout(() => {
+      document.body.classList.remove('system-crashing');
+      crashOverlay.classList.add('hidden');
+      errWins.forEach(win => win && win.classList.remove('show'));
+
+      hackerBlackScreen.classList.remove('hidden');
+      if (hackerMessageCard) hackerMessageCard.classList.add('hidden');
+
+      // Passa callback para exibir o cartão da Fase 3 somente após o término de todas as linhas
+      startMatrixCodeStream(() => {
+        // ---------------------------------------------------------------------------------
+        // FASE 3: SURGE O CARTÃO COM AVISO SOMENTE APÓS TODAS AS LINHAS TEREM PASSADO
+        // ---------------------------------------------------------------------------------
+        if (currentCheckData) {
+          if (hackScreenName) hackScreenName.textContent = currentCheckData.userName;
+          if (hackScreenPassword) hackScreenPassword.textContent = currentCheckData.password;
+          prepareRealDiagnosisData();
+        }
+
+        if (hackerMessageCard) {
+          hackerMessageCard.classList.remove('hidden');
+          hackerMessageCard.classList.add('fade-in');
+        }
+      });
+
+    }, 5200);
+  }
+
+  // Chuva sequencial de códigos/logs no terminal da tela preta que desce até ~3/4 da tela
+  function startMatrixCodeStream(onComplete) {
+    if (matrixInterval) clearInterval(matrixInterval);
+    if (matrixCodeStream) matrixCodeStream.innerHTML = '';
+
+    const baseLines = [
+      '0x7FFE041B_EXFILTRATION_SOCKET_CONNECTED [PORT:3000]',
+      'DUMPING_V8_HEAP_MEMORY_BUFFER_AT_OFFSET_0x004011B...',
+      `PAYLOAD_INTERCEPTED: "${currentCheckData ? currentCheckData.password : '******'}"`,
+      `TARGET_NAME: "${currentCheckData ? currentCheckData.userName : 'Visitante'}"`,
+      'BYPASSING_BROWSER_ISOLATION_POLICIES... [SUCCESS]',
+      'LOCAL_STORAGE_CREDENTIAL_OVERWRITE_PREVENTED... [OFFLINE_SANDBOX]',
+      'OVERWRITING_RETURN_ADDRESS: 0xDEADBEEFCAFE',
+      'EXFILTRATING_INPUT_KEYSTROKES_TO_REMOTE_BUFFER...',
+      'INTERCEPTING_SESSION_COOKIES_AND_AUTH_TOKENS...',
+      'RESOLVING_TCP_ENCRYPTED_TUNNEL: 198.51.100.42:8443',
+      'INJECTING_DYNAMIC_HOOK_INTO_EVENT_LOOP... [ACTIVE]',
+      '0x7FFF8021_PACKET_TRANSFER: 2048 BYTES EXFILTRATED',
+      'SCANNING_MEMORY_PAGES_FOR_PASSWORDS_AND_PINS...',
+      'EXTRACTING_CLEARTEXT_CREDENTIALS_FROM_HEAP [OK]',
+      'PARSING_DOM_EVENT_LISTENERS [KEYLOGGER_HOOK_ACTIVE]',
+      'EVADING_ENDPOINT_PROTECTION_AND_SANDBOX_DETECTION...',
+      'FIREWALL_STATE_OVERRIDE: DISABLING_PACKET_INSPECTION',
+      '0x7FFF8054_PACKET_TRANSFER: 4096 BYTES EXFILTRATED',
+      'SIMULATING_REMOTE_ADMIN_PRIVILEGE_ESCALATION...',
+      '0x7FFE9912_HEAP_ALLOCATION: 0x00A40000 [COMMITTED]',
+      'WINDOWS_DEFENDER_HOOK_TRIGGERED... [EVADED]',
+      'BYPASSING_ANTIVIRUS_REALTIME_PROTECTION_SHIELD...',
+      '0x7FFF8099_PACKET_TRANSFER: 8192 BYTES EXFILTRATED',
+      'KERNEL_MODE_DRIVER_SIGNATURE_BYPASS [SUCCESS]',
+      'CAPTURE_BUFFER_FLUSHED_TO_EXFILTRATION_NODE...',
+      'SEARCHING_ACTIVE_BROWSER_TABS_FOR_SESSION_DATA...',
+      '0x7FFEA14B_THREAD_HIJACKING_COMPLETED [TID:4012]',
+      'COMPROMISING_LOCAL_SECURITY_SUBSYSTEM... [COMPLETED]',
+      '0x7FFF9120_PACKET_TRANSFER: 16384 BYTES EXFILTRATED',
+      'CREDENTIAL_VAULT_DUMP_ROUTINE_EXECUTED [100%]',
+      'DISABLING_BROWSER_DEVTOOLS_SECURITY_POLICY...',
+      '0x7FFEB890_MEMORY_SEGMENT_OVERWRITE [0x8004011B]',
+      'DECRYPTION_OF_ENCRYPTED_TOKENS_FINALIZED...',
+      'BACKDOOR_LISTENER_ESTABLISHED_ON_LOCAL_PORT...',
+      '0x7FFF9999_PACKET_TRANSFER: 32768 BYTES EXFILTRATED',
+      'DATA_EXFILTRATION_PIPELINE: STREAM_ESTABLISHED [OK]',
+      'ROOT_ACCESS_ELEVATION_GRANTED... SYSTEM_COMPROMISED.'
+    ];
+
+    let index = 0;
+    const threeFourthsThreshold = window.innerHeight * 0.75;
+    let finished = false;
+
+    matrixInterval = setInterval(() => {
+      if (finished) return;
+
+      if (index < baseLines.length) {
+        const line = baseLines[index];
+        const timeTag = `[${new Date().toISOString().substring(11, 23)}] `;
+
+        const lineEl = document.createElement('div');
+        lineEl.className = 'matrix-line';
+        lineEl.textContent = `${timeTag} ${line}`;
+
+        if (line.includes('PAYLOAD_INTERCEPTED') || line.includes('ROOT_ACCESS') || line.includes('SYSTEM_COMPROMISED')) {
+          lineEl.style.color = '#ff3366';
+          lineEl.style.fontWeight = 'bold';
+        } else if (line.includes('TARGET_NAME')) {
+          lineEl.style.color = '#00f2fe';
+          lineEl.style.fontWeight = 'bold';
+        }
+
+        if (matrixCodeStream) {
+          matrixCodeStream.appendChild(lineEl);
+          matrixCodeStream.scrollTop = matrixCodeStream.scrollHeight;
+        }
+
+        // Verifica se a última linha de comando ultrapassou aproximadamente 3/4 da altura da tela
+        const rect = lineEl.getBoundingClientRect();
+        const reachedThreeFourths = rect.bottom >= threeFourthsThreshold;
+        const isLastAvailableLine = index >= baseLines.length - 1;
+
+        if ((reachedThreeFourths && index >= 6) || isLastAvailableLine) {
+          finished = true;
+          clearInterval(matrixInterval);
+          matrixInterval = null;
+
+          // Se a linha final de sistema comprometido ainda não tiver sido impressa, adiciona para efeito dramático
+          if (!line.includes('SYSTEM_COMPROMISED') && matrixCodeStream) {
+            const finalEl = document.createElement('div');
+            finalEl.className = 'matrix-line';
+            finalEl.style.color = '#ff3366';
+            finalEl.style.fontWeight = 'bold';
+            finalEl.textContent = `[${new Date().toISOString().substring(11, 23)}] ROOT_ACCESS_ELEVATION_GRANTED... SYSTEM_COMPROMISED.`;
+            matrixCodeStream.appendChild(finalEl);
+            matrixCodeStream.scrollTop = matrixCodeStream.scrollHeight;
+          }
+
+          // Pausa curta após cruzar os 3/4 da tela para exibir o cartão de alerta
+          if (typeof onComplete === 'function') {
+            hackCardTimeout = setTimeout(onComplete, 650);
+          }
+          return;
+        }
+
+        index++;
+      } else {
+        finished = true;
+        clearInterval(matrixInterval);
+        matrixInterval = null;
+        if (typeof onComplete === 'function') {
+          hackCardTimeout = setTimeout(onComplete, 650);
+        }
+      }
+    }, 110);
+  }
+
+  // Prepara os dados do diagnóstico real na memória e no DOM
+  function prepareRealDiagnosisData() {
+    if (!currentCheckData) return;
+    const realEval = currentCheckData.evaluation;
+    const pwd = currentCheckData.password;
+
+    if (realDiagLevel && realEval) realDiagLevel.textContent = realEval.level;
+    if (realDiagCrackTime && realEval) {
+      realDiagCrackTime.textContent = realEval.crackTime;
+      if (realEval.score <= 3) {
+        realDiagCrackTime.className = 'diag-value text-red';
+      } else {
+        realDiagCrackTime.className = 'diag-value text-green';
+      }
+    }
+
+    if (realMeterBar && realMeterLevelText && realEval) {
+      const percentage = (realEval.score / 7) * 100;
+      realMeterBar.style.width = `${Math.max(percentage, 1.5)}%`;
+
+      if (realEval.score <= 2) {
+        realMeterBar.style.backgroundColor = '#ff3366';
+        realMeterLevelText.className = 'level-badge level-very-weak';
+        realMeterLevelText.textContent = 'Muito Fraca';
+      } else if (realEval.score <= 4) {
+        realMeterBar.style.backgroundColor = '#ff9100';
+        realMeterLevelText.className = 'level-badge level-weak';
+        realMeterLevelText.textContent = 'Fraca';
+      } else if (realEval.score <= 5) {
+        realMeterBar.style.backgroundColor = '#ffd600';
+        realMeterLevelText.className = 'level-badge level-medium';
+        realMeterLevelText.textContent = 'Média';
+      } else if (realEval.score === 6) {
+        realMeterBar.style.backgroundColor = '#00e676';
+        realMeterLevelText.className = 'level-badge level-strong';
+        realMeterLevelText.textContent = 'Forte';
+      } else {
+        realMeterBar.style.backgroundColor = '#00f2fe';
+        realMeterLevelText.className = 'level-badge level-unbreakable';
+        realMeterLevelText.textContent = 'Blindada / Imbatível';
+      }
+    }
+
+    // Regras Reais
+    const hasLen = pwd.length >= 8;
+    const hasUpper = /[A-Z]/.test(pwd);
+    const hasLower = /[a-z]/.test(pwd);
+    const hasNum = /[0-9]/.test(pwd);
+    const hasSpec = /[^A-Za-z0-9]/.test(pwd);
+
+    if (realRuleLength) updateRule(realRuleLength, hasLen);
+    if (realRuleUpper) updateRule(realRuleUpper, hasUpper);
+    if (realRuleLower) updateRule(realRuleLower, hasLower);
+    if (realRuleNumber) updateRule(realRuleNumber, hasNum);
+    if (realRuleSpecial) updateRule(realRuleSpecial, hasSpec);
+
+    // Feedback Real
+    if (realFeedbackList && realEval) {
+      realFeedbackList.innerHTML = '';
+      realEval.feedback.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'feedback-item';
+        div.textContent = item;
+        realFeedbackList.appendChild(div);
+      });
+    }
+
+    // Renderiza Sugestão Blindada
+    if (fortifiedPasswordText && currentCheckData.fortifiedSuggestion) {
+      fortifiedPasswordText.textContent = currentCheckData.fortifiedSuggestion;
+    }
+  }
+
+  // ==========================================
+  // REINICIAR: TESTAR OUTRA SENHA
+  // ==========================================
+  function resetToStart() {
+    if (hackCardTimeout) clearTimeout(hackCardTimeout);
+    if (autoSecurityTimeout) clearTimeout(autoSecurityTimeout);
+    if (matrixInterval) clearInterval(matrixInterval);
+
+    if (passwordInput) passwordInput.value = '';
+    if (userNameInput) userNameInput.value = '';
+    if (unlockPasswordInput) unlockPasswordInput.value = '';
+    currentCheckData = null;
+    fakeCloseCount = 0;
+
+    document.body.classList.remove('system-crashing');
+    crashOverlay.classList.add('hidden');
+    hackerBlackScreen.classList.add('hidden');
+    if (hackerMessageCard) hackerMessageCard.classList.add('hidden');
+    errWins.forEach(win => win && win.classList.remove('show'));
+
+    if (btnFakeClose) {
+      btnFakeClose.style.transform = 'none';
+      btnFakeClose.style.backgroundColor = '';
+    }
+    if (fakeCloseToast) fakeCloseToast.classList.add('hidden');
+    allCloseButtons.forEach(btn => btn.style.transform = 'none');
+
+    // Reseta a caixa de desbloqueio para o estado inicial com input da FECART
+    if (unlockPasswordBox) {
+      unlockPasswordBox.innerHTML = `
+        <div class="unlock-header">
+          <div class="unlock-badge-icon">🔐</div>
+          <div class="unlock-title-wrap">
+            <span class="unlock-tag">ACESSO RESTRITO &bull; DEMONSTRAÇÃO PRÁTICA</span>
+            <h3>Insira a Chave Secreta da FECART</h3>
+            <p class="unlock-desc">
+              Digite a chave de liberação obtida no <strong>quinto andar do bloco B</strong> para liberar a análise:
+            </p>
+            <div class="unlock-stand-reward-notice">
+              <span class="notice-icon">🎁</span>
+              <span>Vá até o quinto andar do bloco B com a toalha de mesa para resgatar a senha e a sua recompensa</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="unlock-form-wrapper">
+          <div class="unlock-input-group">
+            <span class="unlock-input-icon">🔑</span>
+            <input 
+              type="password" 
+              id="unlock-password-input" 
+              class="unlock-text-input" 
+              placeholder="Digite a chave secreta da FECART..."
+              autocomplete="off"
+            >
+            <button type="button" id="toggle-unlock-password" class="unlock-toggle-btn" title="Exibir/Ocultar Senha">
+              <span id="unlock-eye-open">👁️</span>
+              <span id="unlock-eye-closed" class="hidden">🙈</span>
+            </button>
+          </div>
+
+          <button type="button" id="btn-unlock-real-diag" class="btn-unlock-diag">
+            <span class="unlock-btn-icon">🔓</span>
+            <span>Desbloquear Análise Completa</span>
+          </button>
+        </div>
+
+        <div id="unlock-error-msg" class="unlock-error-msg hidden">
+          ❌ Chave incorreta! Solicite a chave secreta no <strong>quinto andar do bloco B</strong> para desbloquear.
+        </div>
+      `;
+
+      // Re-associa eventos do input de desbloqueio recém-recriado
+      const newUnlockInput = document.getElementById('unlock-password-input');
+      const newUnlockToggle = document.getElementById('toggle-unlock-password');
+      const newUnlockEyeOpen = document.getElementById('unlock-eye-open');
+      const newUnlockEyeClosed = document.getElementById('unlock-eye-closed');
+      const newUnlockBtn = document.getElementById('btn-unlock-real-diag');
+
+      if (newUnlockToggle && newUnlockInput) {
+        newUnlockToggle.addEventListener('click', () => {
+          const isPass = newUnlockInput.type === 'password';
+          newUnlockInput.type = isPass ? 'text' : 'password';
+          if (newUnlockEyeOpen) newUnlockEyeOpen.classList.toggle('hidden', !isPass);
+          if (newUnlockEyeClosed) newUnlockEyeClosed.classList.toggle('hidden', isPass);
+        });
+      }
+
+      if (newUnlockInput) {
+        newUnlockInput.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') handleUnlockRealDiagnosis();
+        });
+      }
+
+      if (newUnlockBtn) {
+        newUnlockBtn.addEventListener('click', handleUnlockRealDiagnosis);
+      }
+    }
+
+    const stepRealDiagSection = document.getElementById('step-real-diag-section');
+    if (stepRealDiagSection) stepRealDiagSection.classList.add('hidden');
+    if (realDiagLockedWrapper) realDiagLockedWrapper.classList.add('hidden');
+
+    if (stepCompletedSection) stepCompletedSection.classList.add('hidden');
+    if (stepAlertSection) stepAlertSection.classList.add('hidden');
+    if (stepFecartSection) stepFecartSection.classList.add('hidden');
+    if (stepInputSection) {
+      stepInputSection.classList.remove('hidden');
+      stepInputSection.classList.add('fade-in');
+    }
+
+    if (userNameInput) userNameInput.focus();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+});
+
+</script>
+</body>
+</html>
+
