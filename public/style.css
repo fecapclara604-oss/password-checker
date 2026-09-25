@@ -4324,6 +4324,80 @@ body.system-crashing {
 
 
 /* ============================================================
+   BANNER: DISPOSITIVO NÃO PASSOU NO TESTE
+   ============================================================ */
+
+.device-fail-banner {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: linear-gradient(135deg, rgba(255, 30, 60, 0.18) 0%, rgba(180, 0, 40, 0.12) 100%);
+  border: 2px solid rgba(255, 30, 60, 0.55);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 30px rgba(255, 30, 60, 0.15), inset 0 0 20px rgba(255, 30, 60, 0.05);
+  animation: deviceFailPulse 2s ease-in-out infinite;
+}
+
+@keyframes deviceFailPulse {
+  0%, 100% { border-color: rgba(255, 30, 60, 0.55); box-shadow: 0 0 30px rgba(255, 30, 60, 0.15); }
+  50%       { border-color: rgba(255, 30, 60, 0.9);  box-shadow: 0 0 45px rgba(255, 30, 60, 0.35); }
+}
+
+.device-fail-icon {
+  font-size: 2.4rem;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 10px rgba(255, 30, 60, 0.8));
+  animation: deviceFailIconPulse 1s ease-in-out infinite;
+}
+
+@keyframes deviceFailIconPulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.12); }
+}
+
+.device-fail-text {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.device-fail-tag {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #ff3366;
+  opacity: 0.85;
+}
+
+.device-fail-msg {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.35;
+}
+
+.device-fail-msg strong {
+  color: #ff3366;
+  font-weight: 900;
+}
+
+@media (max-width: 480px) {
+  .device-fail-banner {
+    padding: 16px 18px;
+    gap: 14px;
+  }
+  .device-fail-icon {
+    font-size: 2rem;
+  }
+  .device-fail-msg {
+    font-size: 0.95rem;
+  }
+}
+
+/* ============================================================
    ATTACK SIMULATION — SHAKE + POPUPS
    ============================================================ */
 
